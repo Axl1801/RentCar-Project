@@ -7,13 +7,13 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class AuthModel {
-	AuthModel(){
+	public AuthModel(){
 		
 	}
 	
-	public boolean login(String email, String password) {
+	public boolean login(String user, String password) {
 		
-		String query = "SELECT * FROM users WHERE email = ? AND password = ?";
+		String query = "SELECT * FROM users WHERE username = ? AND password = ?";
 		
 		System.out.println(query);
 		
@@ -24,13 +24,13 @@ public class AuthModel {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://127.0.0.1:3306/application_db",
+					"jdbc:mysql://127.0.0.1:3306/BDP3",
 					"root",
-					"root"
+					"180105"
 					);
 			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setString(1, email);
-			ps.setString(2, password);
+			ps.setString(1, user.trim());
+			ps.setString(2, password.trim());
 			
 			ResultSet rs = ps.executeQuery();
 			
