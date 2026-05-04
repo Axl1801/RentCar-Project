@@ -13,7 +13,7 @@ public class AuthModel {
 	
 	public boolean login(String user, String password) {
 		
-		String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+		String query = "SELECT * FROM agente WHERE usuario = ? AND contrasena = ?";
 		
 		System.out.println(query);
 		
@@ -24,9 +24,9 @@ public class AuthModel {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://127.0.0.1:3306/BDP3",
-					"root",
-					"180105"
+					"jdbc:mysql://127.0.0.1:3306/rentcar_project",
+					"pagrent",
+					"ContraPagRentJava"
 					);
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, user.trim());
@@ -35,6 +35,10 @@ public class AuthModel {
 			ResultSet rs = ps.executeQuery();
 			
 			if (rs.next()) {
+				
+				rs.close();
+				ps.close();
+				conn.close();
 				
 				return true;
 			}  
