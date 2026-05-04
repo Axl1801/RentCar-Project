@@ -10,6 +10,6 @@ public class HomeController {
 	}
 	
 	public void Home() {
-		hv.home();
+		hv.showHome();
 	}
 }

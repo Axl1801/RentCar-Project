@@ -6,15 +6,18 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 public class ButtonRounded extends JButton{
 	 private int radius;
+	 private int ver;
 
-	    public ButtonRounded(String text, int radius) {
+	    public ButtonRounded(String text, int radius, int ver) {
 	        super(text);
 	        this.radius = radius;
-
+	        this.ver = ver;
+	        
 	        setContentAreaFilled(false);
 	        setFocusPainted(false);
 	        setBorderPainted(false);
@@ -29,14 +32,28 @@ public class ButtonRounded extends JButton{
 
 	        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 	                            RenderingHints.VALUE_ANTIALIAS_ON);
-
-	        // Color dinámico (hover / click)
-	        if (getModel().isPressed()) {
-	            g2.setColor(new Color(0x000A40)); // más oscuro
-	        } else if (getModel().isRollover()) {
-	            g2.setColor(new Color(0x001A80)); // hover
-	        } else {
-	            g2.setColor(new Color(0x000D56)); // normal
+	        
+	        if(ver == 1) {
+	        	// Color dinámico (hover / click)
+	        	if (getModel().isPressed()) {
+	        		g2.setColor(new Color(0x000A40)); // más oscuro
+	        	} else if (getModel().isRollover()) {
+	        		g2.setColor(new Color(0x001A80)); // hover
+	        	} else {
+	        		g2.setColor(new Color(0x000D56)); // normal	        	
+	        	}
+	        }
+	        
+	        if(ver == 2) {
+	        	setForeground(Color.decode("#FFFFFF"));
+	        	// Color dinámico (hover / click)
+	        	if (getModel().isPressed()) {
+	        		g2.setColor(Color.decode("#9A3737")); // más oscuro
+	        	} else if (getModel().isRollover()) {
+	        		g2.setColor(Color.decode("#C86565")); // hover
+	        	} else {
+	        		g2.setColor(Color.decode("#C44949")); // normal	        	
+	        	}
 	        }
 
 	        // Fondo redondeado

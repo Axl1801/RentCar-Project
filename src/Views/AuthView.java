@@ -23,11 +23,11 @@ import javax.swing.OverlayLayout;
 
 import Controllers.HomeController;
 import Models.AuthModel;
+import Utilities.Alerts;
 import Utilities.ButtonRounded;
 import Utilities.CheckBoxRounded;
 import Utilities.LabelRounded;
 import Utilities.PasswordFieldRounded;
-import Utilities.Alerts;
 import Utilities.TextFieldRounded;
 
 public class AuthView {
@@ -200,7 +200,7 @@ public class AuthView {
         errorAuth.setForeground(Color.decode("#FFFFFF"));
         loginCont.add(errorAuth);
         
-        ButtonRounded iniciarSesion = new ButtonRounded("Iniciar Sesión", 20);//Boton de inicio de sesion
+        ButtonRounded iniciarSesion = new ButtonRounded("Iniciar Sesión", 20,1);//Boton de inicio de sesion
         iniciarSesion.setBounds(125, 420, 300, 50);
         iniciarSesion.setOpaque(false);
         iniciarSesion.setBackground(Color.decode("#000D56"));
@@ -221,6 +221,12 @@ public class AuthView {
 				if(recordar.isSelected()) {//verificar si recordar esta marcado y guardar datos en caso de que lo este
 					recordar_correo = correoCampo.getText();
 					recordar_contraseña = passText;
+					if(model.login(recordar_correo, recordar_contraseña)){ //verificaicon con BD temporal
+						
+						ventana.dispose();//eliminar ventana
+						HomeController hm = new HomeController(); //llamar al homeController y la vista
+						hm.Home();
+					}
 				}else {
 					recordar_correo = "";
 					recordar_contraseña = "";

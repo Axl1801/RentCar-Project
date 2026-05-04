@@ -1,6 +1,7 @@
 package main;
 
 import Controllers.AuthController;
+
 import Views.AuthView;
 
 public class Aplication {
@@ -9,6 +10,7 @@ public class Aplication {
 		// TODO Auto-generated method stub
 		AuthController auth = new AuthController();
 		auth.login();
+
 	}
 
 }
