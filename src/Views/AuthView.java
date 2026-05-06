@@ -206,7 +206,7 @@ public class AuthView {
         iniciarSesion.setBackground(Color.decode("#000D56"));
         iniciarSesion.setFont(new Font("Poppins",Font.BOLD,12));
         
-      //Action Listener para crear la funcion del boton, validaciones del login
+        //Action Listener para crear la funcion del boton, validaciones del login
         iniciarSesion.addActionListener(new ActionListener() {
 
 			@Override
@@ -272,8 +272,6 @@ public class AuthView {
         
         loginElementos.add(iniciarSesion);//Agregar elementos al contenedor principal
         
-        
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Agregamos paneles al contenedor en orden descendente
         contenedor.add(loginCont);
         contenedor.add(logoFondo);

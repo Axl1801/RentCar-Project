@@ -13,7 +13,7 @@ public class ClientView {
 	public JPanel showClient() {
 		JPanel a = new JPanel();
 		a.setOpaque(true);
-		a.setBackground(Color.red);
+		a.setBackground(Color.decode("#EAEAEA"));
 		a.setVisible(true);
 		return a;
 	}

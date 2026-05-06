@@ -12,7 +12,7 @@ public class RentView {
 	public JPanel Rent() {
 		JPanel d = new JPanel();
 		d.setOpaque(true);
-		d.setBackground(Color.blue);
+		d.setBackground(Color.decode("#EAEAEA"));
 		d.setVisible(true);
 		return d;
 	}

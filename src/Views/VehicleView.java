@@ -12,7 +12,7 @@ public class VehicleView {
 	public JPanel vistaVehiculos() {
 		JPanel e = new JPanel();
 		e.setOpaque(true);
-		e.setBackground(Color.black);
+		e.setBackground(Color.decode("#EAEAEA"));
 		e.setVisible(true);
 		return e;
 	}
