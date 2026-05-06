@@ -1,16 +1,23 @@
 package Views;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.text.DecimalFormat;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -30,6 +37,7 @@ import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
+import Utilities.Activities;
 import Utilities.BarRenderRounded;
 import Utilities.PanelRounded;
 
@@ -72,7 +80,8 @@ public class DashView {
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(20,50,20,20);
         dasboardhPanel.add(totalVehiculos,gbc);
         
         //Panel Vehiculso Disponibles
@@ -101,7 +110,8 @@ public class DashView {
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(20,50,20,20);
         dasboardhPanel.add(totalDisponibles,gbc);
         
         //Panel Vehiculso Rentados
@@ -130,7 +140,7 @@ public class DashView {
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.fill = GridBagConstraints.BOTH;
         dasboardhPanel.add(totalRentados,gbc);
         
         //Panel Vehiculos en Mantenimiento
@@ -159,7 +169,7 @@ public class DashView {
 		gbc.gridy = 0;
 		gbc.weightx = 1;
 		gbc.weighty = 1;
-		gbc.fill = GridBagConstraints.NONE;
+		gbc.fill = GridBagConstraints.BOTH;
 		dasboardhPanel.add(totalMantenimiento,gbc);
 	      
 	    //Panel con grafica semanal de vehiculos
@@ -244,9 +254,9 @@ public class DashView {
 	    
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		gbc.gridwidth = 3;
+		gbc.gridwidth = 4;
 		gbc.weightx = 1;
-		gbc.weighty = 1;
+		gbc.weighty = 2;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(0, 50, 20, 20);
 		dasboardhPanel.add(panelStatsMens,gbc);
@@ -291,8 +301,6 @@ public class DashView {
 		plotPie.setLabelGenerator(null);
 		plotPie.setLabelLinksVisible(false);
 		
-		LegendTitle legend = chart.getLegend();
-		
 		plotPie.setLegendLabelGenerator(
 		    new StandardPieSectionLabelGenerator(
 		        "{0}: {2}", // nombre + porcentaje
@@ -320,8 +328,8 @@ public class DashView {
 		gbc.gridx = 0;
 	    gbc.gridy = 3;
 	    gbc.gridwidth = 3;
-	    gbc.weightx = 1;
-	    gbc.weighty = 1;
+	    gbc.weightx = 2;
+	    gbc.weighty = 0;
 	    gbc.fill = GridBagConstraints.BOTH;
 	    gbc.insets = new Insets(20,50,20,20);
 	    
@@ -355,13 +363,15 @@ public class DashView {
 		panelContPer.add(panelPer,BorderLayout.CENTER);
 		
 		JLabel percentage = new JLabel("94%");
-		percentage.setFont(new Font("Poppins",Font.BOLD,18));
+		percentage.setFont(new Font("Poppins",Font.BOLD,50));
+		percentage.setHorizontalAlignment(JLabel.CENTER);
 		percentage.setForeground(Color.white);
 		percentage.setVisible(true);
 		percentage.setOpaque(false);
 		panelPer.add(percentage,BorderLayout.CENTER);
 		
 		JLabel cambioRend = new JLabel("+2.4% vs mes anterior");
+		cambioRend.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 80));
 		cambioRend.setForeground(Color.decode("#308C52"));
 		cambioRend.setFont(new Font("Poppins",Font.BOLD,12));
 		cambioRend.setVisible(true);
@@ -372,32 +382,94 @@ public class DashView {
 		
 		panelRendimiento.add(panelContPer, BorderLayout.CENTER);
 		
-		JPanel panelBarra = new JPanel();
+		JPanel panelBarra = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		panelBarra.setOpaque(false);
 		panelBarra.setVisible(true);
-		panelBarra.setLayout(new BorderLayout());
 		panelContPer.add(panelBarra,BorderLayout.CENTER);
 		
 		//Barra de porcentaje
 		JProgressBar barra = new JProgressBar(0, 100);
+		barra.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
+		    @Override
+		    protected void paintDeterminate(Graphics g, JComponent c) {
+		        Graphics2D g2 = (Graphics2D) g;
+		        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		        int width = barra.getWidth();
+		        int height = barra.getHeight();
+
+		        // fondo
+		        g2.setColor(Color.decode("#515151"));
+		        g2.fillRoundRect(0, 0, width, height, 20, 20);
+
+		        // progreso
+		        int progressWidth = (int) (width * barra.getPercentComplete());
+		        g2.setColor(Color.decode("#FFFFFF"));
+		        g2.fillRoundRect(0, 0, progressWidth, height, 20, 20);
+		    }
+		});
+		barra.setPreferredSize(new Dimension(300, 10)); // tamaño exacto de la barra para que se vea estetica
 		barra.setValue(94); // porcentaje (0–100)
 		barra.setStringPainted(false);
-		
-		barra.setBackground(Color.decode("#515151")); // fondo
-		barra.setForeground(Color.decode("#FFFFFF")); // color de progreso
+		barra.setBackground(Color.decode("#000D56")); // fondo
 		barra.setBorderPainted(false);
 		
 		panelBarra.add(barra,BorderLayout.NORTH);
 		
-		gbc.gridx = 4;
+		gbc.gridx = 3;
 	    gbc.gridy = 3;
-	    gbc.gridwidth = 3;
+	    gbc.gridwidth = 1;
 	    gbc.weightx = 1;
 	    gbc.weighty = 1;
 	    gbc.fill = GridBagConstraints.BOTH;
-	    gbc.insets = new Insets(20,50,20,20);
+	    gbc.insets = new Insets(20,0,20,20);
 	    
 	    dasboardhPanel.add(panelRendimiento, gbc);
+	    
+	    PanelRounded PanelActReciente = new PanelRounded(10,true,true,true,true);
+	    PanelActReciente.setBackground(Color.white);
+	    PanelActReciente.setVisible(true);
+	    PanelActReciente.setOpaque(false);
+	    PanelActReciente.setLayout(new BorderLayout());
+	    
+	    JPanel panelActividades = new JPanel() {
+	        protected void paintComponent(Graphics g) {
+	            super.paintComponent(g);
+	            Graphics2D g2 = (Graphics2D) g;
+
+	            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+	            int xLinea = 12;
+	            int yInicio = 0;
+	            int yFin = getHeight();
+
+	            g2.setColor(new Color(200,200,200));
+	            g2.setStroke(new BasicStroke(2));
+
+	            g2.drawLine(xLinea, yInicio, xLinea, yFin);
+	        }
+	    };
+	    panelActividades.setLayout(new BoxLayout(panelActividades, BoxLayout.Y_AXIS));
+	    panelActividades.setOpaque(false);
+	    
+	    panelActividades.add(new Activities( "Nueva renta creada","Cliente: Ana Lopez","Hace 5 min",Color.decode("#4C75B7")),0);
+	    panelActividades.add(new Activities( "Vehiculo en Mantenimiento","V-003 Sentra","Hace 5 min",Color.decode("#C79E59")),0);
+	    panelActividades.add(new Activities( "Vehiculo Entregado","V-001 Corolla","Hace 1 Hora",Color.decode("#308C52")),0);
+	    panelActividades.add(new Activities( "Nueva renta creada","Cliente: Esau Garcia","Hace 3 Horas",Color.decode("#4C75B7")),0);
+	    panelActividades.add(new Activities( "Vehiculo en Mantenimiento","V-007 Versa ","Hace 7 Horas",Color.decode("#C79E59")),0);
+	    
+	    PanelActReciente.add(panelActividades,BorderLayout.CENTER);
+	    
+		gbc.gridx = 4;
+	    gbc.gridy = 2;
+	    gbc.gridwidth = 1;
+	    gbc.gridheight = 2;
+	    gbc.weightx = 1;
+	    gbc.weighty = 3;
+	    gbc.fill = GridBagConstraints.BOTH;
+	    gbc.insets = new Insets(0,0,20,20);
+	    
+	    dasboardhPanel.add(PanelActReciente, gbc);
 	    
 		return dasboardhPanel;
 	}
