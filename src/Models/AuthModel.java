@@ -24,9 +24,9 @@ public class AuthModel {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://127.0.0.1:3306/BDP3",
+					"jdbc:mysql://127.0.0.1:3306/P3",
 					"root",
-					"180105"
+					""
 					);
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, user.trim());

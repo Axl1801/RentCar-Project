@@ -153,7 +153,7 @@ public class AuthView {
         titulo_correo.setForeground(Color.black);
         loginElementos.add(titulo_correo);
         
-        TextFieldRounded correoCampo = new TextFieldRounded(20,20);//Campo de texto para el correo
+        TextFieldRounded correoCampo = new TextFieldRounded(20,20,true);//Campo de texto para el correo
         correoCampo.setBounds(75,195,400,40);
         correoCampo.setOpaque(false);
         correoCampo.setFont(new Font("Poppins",Font.BOLD,12));
