@@ -67,6 +67,18 @@ public class ButtonRounded extends JButton{
 	        		g2.setColor(Color.decode("#D9D9D9")); // normal	        	
 	        	}
 	        }
+	        
+	        if(ver == 4) {
+	        	setForeground(Color.decode("#000000"));
+	        	// Color dinámico (hover / click)
+	        	if (getModel().isPressed()) {
+	        		g2.setColor(Color.decode("#CFCFCF")); // más oscuro
+	        	} else if (getModel().isRollover()) {
+	        		g2.setColor(Color.decode("#E7E7E7")); // hover
+	        	} else {
+	        		g2.setColor(Color.decode("#FFFFFF")); // normal	        	
+	        	}
+	        }
 
 	        // Fondo redondeado
 	        g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);

@@ -204,7 +204,7 @@ public class AuthView {
         iniciarSesion.setBounds(125, 420, 300, 50);
         iniciarSesion.setOpaque(false);
         iniciarSesion.setBackground(Color.decode("#000D56"));
-        iniciarSesion.setFont(new Font("Poppins",Font.BOLD,12));
+        iniciarSesion.setFont(new Font("Poppins",Font.BOLD,15));
         
         //Action Listener para crear la funcion del boton, validaciones del login
         iniciarSesion.addActionListener(new ActionListener() {
