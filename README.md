@@ -1,4 +1,7 @@
 Sistema de Renta de Vehículos – Paz Drive
+--CREDENCIAL DE INICIO DE SESION TEMPORAL--
+Usuario: 1
+Contraseña: 1
 
 -- Descripción --
 
