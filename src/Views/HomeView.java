@@ -226,13 +226,13 @@ public class HomeView {
         menuOpciones.add(Locales,gbc);
         
         ButtonRounded cerrarSesion = new ButtonRounded("Cerrar Sesión",10,2);
-	    url = getClass().getResource("/iconos/barra_lateral/cerra_sesion.png");//Carga ubi imagen
+	    url = getClass().getResource("/iconos/barra_lateral/cerrar_sesion_black.png");//Carga ubi imagen
 	    
 	    if (url != null) {
 	    	cerrarSesion.setIcon(new ImageIcon(url));
 	    }
 	    
-	    cerrarSesion.setFont(new Font("Poppins",Font.BOLD,15));
+	    cerrarSesion.setFont(new Font("Poppins",Font.PLAIN,15));
 	    cerrarSesion.setContentAreaFilled(false);
 	    cerrarSesion.setFocusPainted(false);
 	    cerrarSesion.setHorizontalAlignment(JLabel.CENTER);  

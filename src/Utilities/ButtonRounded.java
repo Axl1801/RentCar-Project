@@ -45,14 +45,16 @@ public class ButtonRounded extends JButton{
 	        }
 	        
 	        if(ver == 2) {
-	        	setForeground(Color.decode("#FFFFFF"));
+	        	setForeground(Color.decode("#000000"));
+	        	setBorderPainted(true);
+	        	setBorder(BorderFactory.createLineBorder(Color.decode("#D32F2F"), 1));
 	        	// Color dinámico (hover / click)
 	        	if (getModel().isPressed()) {
-	        		g2.setColor(Color.decode("#9A3737")); // más oscuro
+	        		g2.setColor(Color.decode("#BD4747")); // más oscuro
 	        	} else if (getModel().isRollover()) {
-	        		g2.setColor(Color.decode("#C86565")); // hover
+	        		g2.setColor(Color.decode("#E0A9A9")); // hover
 	        	} else {
-	        		g2.setColor(Color.decode("#C44949")); // normal	        	
+	        		g2.setColor(Color.decode("#FFFFFF")); // normal	        	
 	        	}
 	        }
 	        
@@ -72,11 +74,22 @@ public class ButtonRounded extends JButton{
 	        	setForeground(Color.decode("#000000"));
 	        	// Color dinámico (hover / click)
 	        	if (getModel().isPressed()) {
-	        		g2.setColor(Color.decode("#CFCFCF")); // más oscuro
+	        		g2.setColor(Color.decode("#B6B6B6")); // más oscuro
 	        	} else if (getModel().isRollover()) {
-	        		g2.setColor(Color.decode("#E7E7E7")); // hover
+	        		g2.setColor(Color.decode("#CFCFCF")); // hover
 	        	} else {
 	        		g2.setColor(Color.decode("#FFFFFF")); // normal	        	
+	        	}
+	        }
+	        
+	        if(ver == 5) {
+	        	// Color dinámico (hover / click)
+	        	if (getModel().isPressed()) {
+	        		g2.setColor(Color.decode("#0026FF")); // más oscuro
+	        	} else if (getModel().isRollover()) {
+	        		g2.setColor(Color.decode("#2E4DFF")); // hover
+	        	} else {
+	        		g2.setColor(Color.decode("#5C74FF")); // normal	        	
 	        	}
 	        }
 

@@ -36,7 +36,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
         //Panel redondeado para que se vea horizontal y asignamos un flowLayout para que muestre en orden las opcioens
         panelMenu = new PanelRounded(20, true, true, true, true);
         panelMenu.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        panelMenu.setBackground(Color.decode("#D9D9D9"));
+        panelMenu.setBackground(Color.decode("#FFFFFF"));
         panelMenu.setBorder(BorderFactory.createLineBorder(Color.decode("#EAEAEA"), 1));
 
         //Crear botones de los iconos
