@@ -3,6 +3,7 @@ package Views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,8 +14,10 @@ import java.awt.event.FocusEvent;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,6 +35,7 @@ import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
 import Utilities.ComboBoxRounded;
+import Utilities.LabelRounded;
 import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
@@ -249,6 +253,9 @@ public class RentView {
 		filtros.setHorizontalAlignment(JLabel.CENTER);  
 		filtros.setIconTextGap(10);                      
 		filtros.setHorizontalTextPosition(JLabel.LEFT);
+		filtros.addActionListener(e->{
+			filtrosAvanzados();
+		});
 		panelFiltros.add(filtros);	
 		
 		gbc.gridx = 3;
@@ -272,12 +279,15 @@ public class RentView {
 		ImageIcon añadirEscalada = new ImageIcon(añadirEscalar);
 		
 		//Boton Añadir
-		ButtonRounded añadirCliente = new ButtonRounded("Añadir Cliente",10,1);
-		añadirCliente.setOpaque(false);
-		añadirCliente.setBackground(Color.decode("#000D56"));
-		añadirCliente.setForeground(Color.white);
-		añadirCliente.setFont(new Font("Poppins",Font.BOLD,20));
-		añadirCliente.setIcon(añadirEscalada);
+		ButtonRounded añadirRenta = new ButtonRounded("Añadir Renta",10,1);
+		añadirRenta.setOpaque(false);
+		añadirRenta.setBackground(Color.decode("#000D56"));
+		añadirRenta.setForeground(Color.white);
+		añadirRenta.setFont(new Font("Poppins",Font.BOLD,20));
+		añadirRenta.addActionListener(e->{
+			addRent();
+		});
+		añadirRenta.setIcon(añadirEscalada);
 		//Posicionamiento del boton en el GridBagLayout
 		gbc.gridx = 4;
 		gbc.gridy = 1;
@@ -286,7 +296,7 @@ public class RentView {
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(10, 20, 10, 20);
-		RentPanel.add(añadirCliente, gbc);
+		RentPanel.add(añadirRenta, gbc);
 		//Panel con la tabla de clientes
 		PanelRounded tablaClientes = new PanelRounded(10, true, true, true, true);
 		tablaClientes.setOpaque(false);
@@ -393,7 +403,7 @@ public class RentView {
 		ImageIcon btnDescargar = new ImageIcon(iconDescargar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		//Agregamos botones customizados con popup a la 5ta columna de la tabla y personalizamos la columna	
 		clientes_table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
-		clientes_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar));
+		clientes_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Rentas"));
 		clientes_table.setRowHeight(40);
 		clientes_table.getColumnModel().getColumn(7).setPreferredWidth(60);
 		clientes_table.setBackground(Color.decode("#D9D9D9"));
@@ -428,5 +438,873 @@ public class RentView {
 		RentPanel.add(tablaClientes, gbc);
 
 		return RentPanel;
+	}
+
+	public void addRent() {
+        // Crear Ventana
+        JDialog ventana = new JDialog();
+        ventana.setModal(true);
+        ventana.setUndecorated(true);
+        ventana.setSize(800, 500);
+        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        ventana.setLocationRelativeTo(null);
+        ventana.setLayout(new BorderLayout(0,0));
+		//Panel sobre el cual se trabajara
+		PanelRounded añadirRenta = new PanelRounded(10,true,true,true,true);
+		añadirRenta.setLayout(new BorderLayout());
+		añadirRenta.setPreferredSize(new Dimension(600,600));
+		añadirRenta.setBackground(Color.white);
+		añadirRenta.setOpaque(false);
+		ventana.add(añadirRenta, BorderLayout.CENTER);
+		//Label superior con nombre de pestaña
+		JLabel tituloAñadir = new JLabel("Añadir Renta");
+		tituloAñadir.setOpaque(true);
+		tituloAñadir.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		tituloAñadir.setBackground(Color.decode("#000D56"));
+		tituloAñadir.setForeground(Color.WHITE);
+		tituloAñadir.setHorizontalAlignment(JLabel.LEFT);
+		tituloAñadir.setFont(new Font("Poppins",Font.PLAIN,25));
+		añadirRenta.add(tituloAñadir, BorderLayout.NORTH);
+		//Panel izq para los datos
+		JPanel panelDatos = new JPanel();
+		panelDatos.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+		panelDatos.setLayout(new BoxLayout(panelDatos, BoxLayout.Y_AXIS));
+		panelDatos.setOpaque(false);
+		añadirRenta.add(panelDatos, BorderLayout.WEST);
+		//Label nombre y su respectivo campo de texto
+		JLabel cliente = new JLabel("Cliente");
+		cliente.setOpaque(false);
+		cliente.setForeground(Color.black);
+		cliente.setHorizontalAlignment(JLabel.LEFT);
+		cliente.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(cliente);
+		
+		TextFieldRounded campoCliente = new TextFieldRounded(20,20,true);
+		campoCliente.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoCliente.setForeground(Color.decode("#8B8B8B"));
+		campoCliente.setOpaque(false);
+		campoCliente.setText("---");
+		campoCliente.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoCliente.getText().equals("---")) {
+		        	campoCliente.setText(""); // Vaciar la caja
+		        	campoCliente.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoCliente.getText().isEmpty()) {
+		        	campoCliente.setText("---"); // Restaurar el mensaje
+		        	campoCliente.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoCliente);
+		//Label correo y su respectivo campo de texto
+		JLabel vehiculo = new JLabel("Vehiculo");
+		vehiculo.setOpaque(false);
+		vehiculo.setForeground(Color.black);
+		vehiculo.setHorizontalAlignment(JLabel.LEFT);
+		vehiculo.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(vehiculo);
+		
+		TextFieldRounded campoVehiculo = new TextFieldRounded(20,20,true);
+		campoVehiculo.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoVehiculo.setForeground(Color.decode("#8B8B8B"));
+		campoVehiculo.setOpaque(false);
+		campoVehiculo.setText("---");
+		campoVehiculo.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoVehiculo.getText().equals("---")) {
+		        	campoVehiculo.setText(""); // Vaciar la caja
+		        	campoVehiculo.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoVehiculo.getText().isEmpty()) {
+		        	campoVehiculo.setText("---"); // Restaurar el mensaje
+		        	campoVehiculo.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoVehiculo);
+		//Label telefono y su respectivo campo de texto
+		JLabel fechaInicio = new JLabel("Fecha de inicio");
+		fechaInicio.setOpaque(false);
+		fechaInicio.setForeground(Color.black);
+		fechaInicio.setHorizontalAlignment(JLabel.LEFT);
+		fechaInicio.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(fechaInicio);
+		
+		TextFieldRounded campoFechaInicio = new TextFieldRounded(20,20,true);
+		campoFechaInicio.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoFechaInicio.setForeground(Color.decode("#8B8B8B"));
+		campoFechaInicio.setOpaque(false);
+		campoFechaInicio.setText("--/--/--");
+		campoFechaInicio.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoFechaInicio.getText().equals("--/--/--")) {
+		        	campoFechaInicio.setText(""); // Vaciar la caja
+		        	campoFechaInicio.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoFechaInicio.getText().isEmpty()) {
+		        	campoFechaInicio.setForeground(Color.decode("#8B8B8B"));
+		        	campoFechaInicio.setText("--/--/--"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoFechaInicio);
+		
+		JLabel fechaFin = new JLabel("Fecha de fin");
+		fechaFin.setOpaque(false);
+		fechaFin.setForeground(Color.black);
+		fechaFin.setHorizontalAlignment(JLabel.LEFT);
+		fechaFin.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(fechaFin);
+		
+		TextFieldRounded campoFechaFin = new TextFieldRounded(20,20,true);
+		campoFechaFin.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoFechaFin.setForeground(Color.decode("#8B8B8B"));
+		campoFechaFin.setOpaque(false);
+		campoFechaFin.setText("--/--/--");
+		campoFechaFin.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoFechaFin.getText().equals("--/--/--")) {
+		        	campoFechaFin.setText(""); // Vaciar la caja
+		        	campoFechaFin.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoFechaFin.getText().isEmpty()) {
+		        	campoFechaFin.setForeground(Color.decode("#8B8B8B"));
+		        	campoFechaFin.setText("--/--/--"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoFechaFin);
+		
+		JLabel precio = new JLabel("Precio por Dia");
+		precio.setOpaque(false);
+		precio.setForeground(Color.black);
+		precio.setHorizontalAlignment(JLabel.LEFT);
+		precio.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(precio);
+		
+		TextFieldRounded campoPrecio = new TextFieldRounded(20,20,true);
+		campoPrecio.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoPrecio.setForeground(Color.decode("#8B8B8B"));
+		campoPrecio.setOpaque(false);
+		campoPrecio.setText("---");
+		campoPrecio.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoPrecio.getText().equals("---")) {
+		        	campoPrecio.setText(""); // Vaciar la caja
+		        	campoPrecio.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoPrecio.getText().isEmpty()) {
+		        	campoPrecio.setForeground(Color.decode("#8B8B8B"));
+		        	campoPrecio.setText("---"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoPrecio);
+		
+		JLabel sucursal = new JLabel("Precio de Recolección");
+		sucursal.setOpaque(false);
+		sucursal.setForeground(Color.black);
+		sucursal.setHorizontalAlignment(JLabel.LEFT);
+		sucursal.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(sucursal);
+		
+		TextFieldRounded campoSucursal = new TextFieldRounded(20,20,true);
+		campoSucursal.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoSucursal.setForeground(Color.decode("#8B8B8B"));
+		campoSucursal.setOpaque(false);
+		campoSucursal.setText("---");
+		campoSucursal.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoSucursal.getText().equals("---")) {
+		        	campoSucursal.setText(""); // Vaciar la caja
+		        	campoSucursal.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoSucursal.getText().isEmpty()) {
+		        	campoSucursal.setForeground(Color.decode("#8B8B8B"));
+		        	campoSucursal.setText("---"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoSucursal);
+		
+		//Panel DER donde colocar el campo de la foto
+		JPanel fotoCont = new JPanel();
+		fotoCont.setLayout(new BoxLayout(fotoCont, BoxLayout.Y_AXIS));
+		fotoCont.setOpaque(false);
+		añadirRenta.add(fotoCont, BorderLayout.CENTER);
+		
+		JLabel titulofoto = new JLabel("foto del Cliente");
+		titulofoto.setOpaque(false);
+		titulofoto.setForeground(Color.black);
+		titulofoto.setHorizontalAlignment(JLabel.LEFT);
+		titulofoto.setFont(new Font("Poppins",Font.PLAIN,15));
+		fotoCont.add(titulofoto);
+		
+		//Contorno redondeado
+		LabelRounded foto = new LabelRounded("",10,Color.decode("#FFFFFF"));
+		foto.setPreferredSize(new Dimension(500,500));
+		foto.setBorder(BorderFactory.createCompoundBorder(
+		        BorderFactory.createLineBorder(
+		                Color.black,3,true),
+		            BorderFactory.createEmptyBorder(10,20,10,00)
+		        ));
+		fotoCont.add(foto);
+		
+		JLabel titulofotoVehiculo = new JLabel("foto del Vehiculo");
+		titulofotoVehiculo.setOpaque(false);
+		titulofotoVehiculo.setForeground(Color.black);
+		titulofotoVehiculo.setHorizontalAlignment(JLabel.LEFT);
+		titulofotoVehiculo.setFont(new Font("Poppins",Font.PLAIN,15));
+		fotoCont.add(titulofotoVehiculo);
+		
+		//Contorno redondeado
+		LabelRounded fotoVehiculo = new LabelRounded("",10,Color.decode("#FFFFFF"));
+		fotoVehiculo.setPreferredSize(new Dimension(500,500));
+		fotoVehiculo.setBorder(BorderFactory.createCompoundBorder(
+		        BorderFactory.createLineBorder(
+		                Color.black,3,true),
+		            BorderFactory.createEmptyBorder(5,5,5,0)
+		        ));
+		fotoCont.add(fotoVehiculo);
+		
+		//Panel de botones
+		JPanel botonesCont = new JPanel();
+		botonesCont.setLayout(new FlowLayout());
+		botonesCont.setOpaque(false);
+        
+		ButtonRounded registrarRenta = new ButtonRounded("Registrar Renta",10,1);
+		registrarRenta.setOpaque(false);
+		registrarRenta.setForeground(Color.white);
+		registrarRenta.setHorizontalAlignment(JLabel.CENTER);
+		registrarRenta.setFont(new Font("Poppins",Font.BOLD,20));
+		registrarRenta.addActionListener(e->{
+        	ventana.dispose();
+     
+		});
+		botonesCont.add(registrarRenta);
+		
+		ButtonRounded cancelarRenta = new ButtonRounded("Cancelar",10,5);
+		cancelarRenta.setOpaque(false);
+		cancelarRenta.setForeground(Color.white);
+		cancelarRenta.setHorizontalAlignment(JLabel.CENTER);
+		cancelarRenta.setFont(new Font("Poppins",Font.BOLD,20));
+		cancelarRenta.addActionListener(e->{
+        	ventana.dispose();
+		});
+		botonesCont.add(cancelarRenta);
+		añadirRenta.add(botonesCont,BorderLayout.SOUTH);
+		
+		ventana.revalidate();
+		ventana.repaint();
+		ventana.setVisible(true);
+	
+	}
+
+	public void editRent() {
+
+        // Crear Ventana
+        JDialog ventana = new JDialog();
+        ventana.setModal(true);
+        ventana.setUndecorated(true);
+        ventana.setSize(800, 500);
+        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        ventana.setLocationRelativeTo(null);
+        ventana.setLayout(new BorderLayout(0,0));
+		//Panel sobre el cual se trabajara
+		PanelRounded añadirRenta = new PanelRounded(10,true,true,true,true);
+		añadirRenta.setLayout(new BorderLayout());
+		añadirRenta.setPreferredSize(new Dimension(600,600));
+		añadirRenta.setBackground(Color.white);
+		añadirRenta.setOpaque(false);
+		ventana.add(añadirRenta, BorderLayout.CENTER);
+		//Label superior con nombre de pestaña
+		JLabel tituloAñadir = new JLabel("Editar Renta");
+		tituloAñadir.setOpaque(true);
+		tituloAñadir.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		tituloAñadir.setBackground(Color.decode("#000D56"));
+		tituloAñadir.setForeground(Color.WHITE);
+		tituloAñadir.setHorizontalAlignment(JLabel.LEFT);
+		tituloAñadir.setFont(new Font("Poppins",Font.PLAIN,25));
+		añadirRenta.add(tituloAñadir, BorderLayout.NORTH);
+		//Panel izq para los datos
+		JPanel panelDatos = new JPanel();
+		panelDatos.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+		panelDatos.setLayout(new BoxLayout(panelDatos, BoxLayout.Y_AXIS));
+		panelDatos.setOpaque(false);
+		añadirRenta.add(panelDatos, BorderLayout.WEST);
+		//Label nombre y su respectivo campo de texto
+		JLabel cliente = new JLabel("Cliente");
+		cliente.setOpaque(false);
+		cliente.setForeground(Color.black);
+		cliente.setHorizontalAlignment(JLabel.LEFT);
+		cliente.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(cliente);
+		
+		TextFieldRounded campoCliente = new TextFieldRounded(20,20,true);
+		campoCliente.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoCliente.setForeground(Color.decode("#8B8B8B"));
+		campoCliente.setOpaque(false);
+		campoCliente.setText("---");
+		campoCliente.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoCliente.getText().equals("---")) {
+		        	campoCliente.setText(""); // Vaciar la caja
+		        	campoCliente.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoCliente.getText().isEmpty()) {
+		        	campoCliente.setText("---"); // Restaurar el mensaje
+		        	campoCliente.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoCliente);
+		//Label correo y su respectivo campo de texto
+		JLabel vehiculo = new JLabel("Vehiculo");
+		vehiculo.setOpaque(false);
+		vehiculo.setForeground(Color.black);
+		vehiculo.setHorizontalAlignment(JLabel.LEFT);
+		vehiculo.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(vehiculo);
+		
+		TextFieldRounded campoVehiculo = new TextFieldRounded(20,20,true);
+		campoVehiculo.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoVehiculo.setForeground(Color.decode("#8B8B8B"));
+		campoVehiculo.setOpaque(false);
+		campoVehiculo.setText("---");
+		campoVehiculo.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoVehiculo.getText().equals("---")) {
+		        	campoVehiculo.setText(""); // Vaciar la caja
+		        	campoVehiculo.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoVehiculo.getText().isEmpty()) {
+		        	campoVehiculo.setText("---"); // Restaurar el mensaje
+		        	campoVehiculo.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoVehiculo);
+		//Label telefono y su respectivo campo de texto
+		JLabel fechaInicio = new JLabel("Fecha de inicio");
+		fechaInicio.setOpaque(false);
+		fechaInicio.setForeground(Color.black);
+		fechaInicio.setHorizontalAlignment(JLabel.LEFT);
+		fechaInicio.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(fechaInicio);
+		
+		TextFieldRounded campoFechaInicio = new TextFieldRounded(20,20,true);
+		campoFechaInicio.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoFechaInicio.setForeground(Color.decode("#8B8B8B"));
+		campoFechaInicio.setOpaque(false);
+		campoFechaInicio.setText("--/--/--");
+		campoFechaInicio.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoFechaInicio.getText().equals("--/--/--")) {
+		        	campoFechaInicio.setText(""); // Vaciar la caja
+		        	campoFechaInicio.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoFechaInicio.getText().isEmpty()) {
+		        	campoFechaInicio.setForeground(Color.decode("#8B8B8B"));
+		        	campoFechaInicio.setText("--/--/--"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoFechaInicio);
+		
+		JLabel fechaFin = new JLabel("Fecha de fin");
+		fechaFin.setOpaque(false);
+		fechaFin.setForeground(Color.black);
+		fechaFin.setHorizontalAlignment(JLabel.LEFT);
+		fechaFin.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(fechaFin);
+		
+		TextFieldRounded campoFechaFin = new TextFieldRounded(20,20,true);
+		campoFechaFin.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoFechaFin.setForeground(Color.decode("#8B8B8B"));
+		campoFechaFin.setOpaque(false);
+		campoFechaFin.setText("--/--/--");
+		campoFechaFin.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoFechaFin.getText().equals("--/--/--")) {
+		        	campoFechaFin.setText(""); // Vaciar la caja
+		        	campoFechaFin.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoFechaFin.getText().isEmpty()) {
+		        	campoFechaFin.setForeground(Color.decode("#8B8B8B"));
+		        	campoFechaFin.setText("--/--/--"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoFechaFin);
+		
+		JLabel precio = new JLabel("Precio por Dia");
+		precio.setOpaque(false);
+		precio.setForeground(Color.black);
+		precio.setHorizontalAlignment(JLabel.LEFT);
+		precio.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(precio);
+		
+		TextFieldRounded campoPrecio = new TextFieldRounded(20,20,true);
+		campoPrecio.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoPrecio.setForeground(Color.decode("#8B8B8B"));
+		campoPrecio.setOpaque(false);
+		campoPrecio.setText("---");
+		campoPrecio.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoPrecio.getText().equals("---")) {
+		        	campoPrecio.setText(""); // Vaciar la caja
+		        	campoPrecio.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoPrecio.getText().isEmpty()) {
+		        	campoPrecio.setForeground(Color.decode("#8B8B8B"));
+		        	campoPrecio.setText("---"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoPrecio);
+		
+		JLabel sucursal = new JLabel("Precio de Recolección");
+		sucursal.setOpaque(false);
+		sucursal.setForeground(Color.black);
+		sucursal.setHorizontalAlignment(JLabel.LEFT);
+		sucursal.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(sucursal);
+		
+		TextFieldRounded campoSucursal = new TextFieldRounded(20,20,true);
+		campoSucursal.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoSucursal.setForeground(Color.decode("#8B8B8B"));
+		campoSucursal.setOpaque(false);
+		campoSucursal.setText("---");
+		campoSucursal.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoSucursal.getText().equals("---")) {
+		        	campoSucursal.setText(""); // Vaciar la caja
+		        	campoSucursal.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoSucursal.getText().isEmpty()) {
+		        	campoSucursal.setForeground(Color.decode("#8B8B8B"));
+		        	campoSucursal.setText("---"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoSucursal);
+		
+		//Panel DER donde colocar el campo de la foto
+		JPanel fotoCont = new JPanel();
+		fotoCont.setLayout(new BoxLayout(fotoCont, BoxLayout.Y_AXIS));
+		fotoCont.setOpaque(false);
+		añadirRenta.add(fotoCont, BorderLayout.CENTER);
+		
+		JLabel titulofoto = new JLabel("foto del Cliente");
+		titulofoto.setOpaque(false);
+		titulofoto.setForeground(Color.black);
+		titulofoto.setHorizontalAlignment(JLabel.LEFT);
+		titulofoto.setFont(new Font("Poppins",Font.PLAIN,15));
+		fotoCont.add(titulofoto);
+		
+		//Contorno redondeado
+		LabelRounded foto = new LabelRounded("",10,Color.decode("#FFFFFF"));
+		foto.setPreferredSize(new Dimension(500,500));
+		foto.setBorder(BorderFactory.createCompoundBorder(
+		        BorderFactory.createLineBorder(
+		                Color.black,3,true),
+		            BorderFactory.createEmptyBorder(10,20,10,00)
+		        ));
+		fotoCont.add(foto);
+		
+		JLabel titulofotoVehiculo = new JLabel("foto del Vehiculo");
+		titulofotoVehiculo.setOpaque(false);
+		titulofotoVehiculo.setForeground(Color.black);
+		titulofotoVehiculo.setHorizontalAlignment(JLabel.LEFT);
+		titulofotoVehiculo.setFont(new Font("Poppins",Font.PLAIN,15));
+		fotoCont.add(titulofotoVehiculo);
+		
+		//Contorno redondeado
+		LabelRounded fotoVehiculo = new LabelRounded("",10,Color.decode("#FFFFFF"));
+		fotoVehiculo.setPreferredSize(new Dimension(500,500));
+		fotoVehiculo.setBorder(BorderFactory.createCompoundBorder(
+		        BorderFactory.createLineBorder(
+		                Color.black,3,true),
+		            BorderFactory.createEmptyBorder(5,5,5,0)
+		        ));
+		fotoCont.add(fotoVehiculo);
+		
+		//Panel de botones
+		JPanel botonesCont = new JPanel();
+		botonesCont.setLayout(new FlowLayout());
+		botonesCont.setOpaque(false);
+        
+		ButtonRounded registrarRenta = new ButtonRounded("Aplicar Cambios",10,1);
+		registrarRenta.setOpaque(false);
+		registrarRenta.setForeground(Color.white);
+		registrarRenta.setHorizontalAlignment(JLabel.CENTER);
+		registrarRenta.setFont(new Font("Poppins",Font.BOLD,20));
+		registrarRenta.addActionListener(e->{
+        	ventana.dispose();
+     
+		});
+		botonesCont.add(registrarRenta);
+		
+		ButtonRounded cancelarRenta = new ButtonRounded("Cancelar",10,5);
+		cancelarRenta.setOpaque(false);
+		cancelarRenta.setForeground(Color.white);
+		cancelarRenta.setHorizontalAlignment(JLabel.CENTER);
+		cancelarRenta.setFont(new Font("Poppins",Font.BOLD,20));
+		cancelarRenta.addActionListener(e->{
+        	ventana.dispose();
+		});
+		botonesCont.add(cancelarRenta);
+		añadirRenta.add(botonesCont,BorderLayout.SOUTH);
+		
+		ventana.revalidate();
+		ventana.repaint();
+		ventana.setVisible(true);
+	
+	
+	}
+	public void filtrosAvanzados() {
+		// Crear Ventana
+        JDialog ventana = new JDialog();
+        ventana.setModal(true);
+        ventana.setUndecorated(true);
+        ventana.setSize(720, 500);
+        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        ventana.setLocationRelativeTo(null);
+        ventana.setLayout(new BorderLayout(0,0));
+		//Panel sobre el cual se trabajara
+		PanelRounded añadirVehiculo = new PanelRounded(10,true,true,true,true);
+		añadirVehiculo.setLayout(new BorderLayout());
+		añadirVehiculo.setPreferredSize(new Dimension(600,600));
+		añadirVehiculo.setBackground(Color.white);
+		añadirVehiculo.setOpaque(false);
+		ventana.add(añadirVehiculo, BorderLayout.CENTER);
+		//Label superior con nombre de pestaña
+		JLabel tituloAñadir = new JLabel("Filtros Avanzados - Rentas");
+		tituloAñadir.setOpaque(true);
+		tituloAñadir.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		tituloAñadir.setBackground(Color.decode("#000D56"));
+		tituloAñadir.setForeground(Color.WHITE);
+		tituloAñadir.setHorizontalAlignment(JLabel.LEFT);
+		tituloAñadir.setFont(new Font("Poppins",Font.PLAIN,25));
+		añadirVehiculo.add(tituloAñadir, BorderLayout.NORTH);
+		//Panel izq para los datos
+		JPanel panelDatosRenta = new JPanel();
+		panelDatosRenta.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+		panelDatosRenta.setLayout(new BoxLayout(panelDatosRenta, BoxLayout.Y_AXIS));
+		panelDatosRenta.setOpaque(false);
+		añadirVehiculo.add(panelDatosRenta, BorderLayout.WEST);
+		//Label nombre y su respectivo campo de texto
+		JLabel tituloCliente = new JLabel("Cliente");
+		tituloCliente.setOpaque(false);
+		tituloCliente.setForeground(Color.black);
+		tituloCliente.setHorizontalAlignment(JLabel.LEFT);
+		tituloCliente.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatosRenta.add(tituloCliente);
+		
+		TextFieldRounded campoCliente = new TextFieldRounded(20,20,true);
+		campoCliente.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoCliente.setForeground(Color.decode("#8B8B8B"));
+		campoCliente.setOpaque(false);
+		campoCliente.setText("---");
+		campoCliente.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoCliente.getText().equals("---")) {
+		        	campoCliente.setText(""); // Vaciar la caja
+		        	campoCliente.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoCliente.getText().isEmpty()) {
+		        	campoCliente.setText("---"); // Restaurar el mensaje
+		        	campoCliente.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatosRenta.add(campoCliente);
+		//Label correo y su respectivo campo de texto
+		JLabel Estado = new JLabel("Estado");
+		Estado.setOpaque(false);
+		Estado.setForeground(Color.black);
+		Estado.setHorizontalAlignment(JLabel.LEFT);
+		Estado.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatosRenta.add(Estado);
+		
+		TextFieldRounded campoEstado = new TextFieldRounded(20,20,true);
+		campoEstado.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoEstado.setForeground(Color.decode("#8B8B8B"));
+		campoEstado.setOpaque(false);
+		campoEstado.setText("Activo/Finalizado");
+		campoEstado.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoEstado.getText().equals("Activo/Finalizado")) {
+		        	campoEstado.setText(""); // Vaciar la caja
+		        	campoEstado.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoEstado.getText().isEmpty()) {
+		        	campoEstado.setText("Activo/Finalizado"); // Restaurar el mensaje
+		        	campoEstado.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatosRenta.add(campoEstado);
+		//Label telefono y su respectivo campo de texto
+		JLabel idRenta = new JLabel("ID Renta");
+		idRenta.setOpaque(false);
+		idRenta.setForeground(Color.black);
+		idRenta.setHorizontalAlignment(JLabel.LEFT);
+		idRenta.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatosRenta.add(idRenta);
+		
+		TextFieldRounded campoId = new TextFieldRounded(20,20,true);
+		campoId.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoId.setForeground(Color.decode("#8B8B8B"));
+		campoId.setOpaque(false);
+		campoId.setText("Activo/Finalizado");
+		campoId.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoId.getText().equals("Activo/Finalizado")) {
+		        	campoId.setText(""); // Vaciar la caja
+		        	campoId.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoId.getText().isEmpty()) {
+		        	campoId.setForeground(Color.decode("#8B8B8B"));
+		        	campoId.setText("Activo/Finalizado"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatosRenta.add(campoId);
+		//Panel DER donde colocar el campo de la foto
+		JPanel contDer = new JPanel();
+		contDer.setLayout(new BoxLayout(contDer, BoxLayout.Y_AXIS));
+		contDer.setOpaque(false);
+		añadirVehiculo.add(contDer, BorderLayout.EAST);
+		
+		JLabel fecha = new JLabel("Fecha");
+		fecha.setOpaque(false);
+		fecha.setForeground(Color.black);
+		fecha.setHorizontalAlignment(JLabel.LEFT);
+		fecha.setFont(new Font("Poppins",Font.PLAIN,15));
+		contDer.add(fecha);
+		
+		TextFieldRounded campoAño = new TextFieldRounded(20,20,true);
+		campoAño.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoAño.setForeground(Color.decode("#8B8B8B"));
+		campoAño.setOpaque(false);
+		campoAño.setText("---");
+		campoAño.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoAño.getText().equals("---")) {
+		        	campoAño.setText(""); // Vaciar la caja
+		        	campoAño.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoAño.getText().isEmpty()) {
+		        	campoAño.setText("---"); // Restaurar el mensaje
+		        	campoAño.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		contDer.add(campoAño);
+		
+		JLabel precio = new JLabel("Precio P/Dia");
+		precio.setOpaque(false);
+		precio.setForeground(Color.black);
+		precio.setHorizontalAlignment(JLabel.LEFT);
+		precio.setFont(new Font("Poppins",Font.PLAIN,15));
+		contDer.add(precio);
+		
+		TextFieldRounded campoPrecioMin = new TextFieldRounded(20,20,true);
+		campoPrecioMin.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoPrecioMin.setForeground(Color.decode("#8B8B8B"));
+		campoPrecioMin.setOpaque(false);
+		campoPrecioMin.setText("Min.$");
+		campoPrecioMin.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoPrecioMin.getText().equals("$")) {
+		        	campoPrecioMin.setText(""); // Vaciar la caja
+		        	campoPrecioMin.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoPrecioMin.getText().isEmpty()) {
+		        	campoPrecioMin.setText("$"); // Restaurar el mensaje
+		        	campoPrecioMin.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		contDer.add(campoPrecioMin);
+		
+		TextFieldRounded campoPrecioMax = new TextFieldRounded(20,20,true);
+		campoPrecioMax.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoPrecioMax.setForeground(Color.decode("#8B8B8B"));
+		campoPrecioMax.setOpaque(false);
+		campoPrecioMax.setText("Max.$");
+		campoPrecioMin.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoPrecioMax.getText().equals("$")) {
+		        	campoPrecioMax.setText(""); // Vaciar la caja
+		        	campoPrecioMax.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoPrecioMax.getText().isEmpty()) {
+		        	campoPrecioMax.setText("$"); // Restaurar el mensaje
+		        	campoPrecioMax.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		contDer.add(campoPrecioMax);
+		
+		
+		//Panel de botones
+		JPanel botonesCont = new JPanel();
+		botonesCont.setLayout(new FlowLayout());
+		botonesCont.setOpaque(false);
+        
+		ButtonRounded registrarCliente = new ButtonRounded("Aplicar Filtros",10,1);
+		registrarCliente.setOpaque(false);
+		registrarCliente.setForeground(Color.white);
+		registrarCliente.setHorizontalAlignment(JLabel.CENTER);
+		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
+		registrarCliente.addActionListener(e->{
+        	ventana.dispose();
+     
+		});
+		panelDatosRenta.add(registrarCliente);
+		
+		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
+		cancelarCliente.setOpaque(false);
+		cancelarCliente.setForeground(Color.white);
+		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
+		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
+		cancelarCliente.addActionListener(e->{
+        	ventana.dispose();
+		});
+		botonesCont.add(cancelarCliente);
+		contDer.add(botonesCont,BorderLayout.SOUTH);
+		
+		ventana.revalidate();
+		ventana.repaint();
+		ventana.setVisible(true);
 	}
 }

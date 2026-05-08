@@ -3,6 +3,7 @@ package Views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -13,8 +14,11 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,9 +32,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
+import Controllers.HomeController;
+import Utilities.Alerts;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
+import Utilities.LabelRounded;
 import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
@@ -222,6 +229,9 @@ public class ClientView {
 		añadirCliente.setForeground(Color.white);
 		añadirCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		añadirCliente.setIcon(añadirEscalada);
+		añadirCliente.addActionListener(e->{
+			addClient();
+		});
 		//Posicionamiento del boton en el GridBagLayout
 		gbc.gridx = 4;
 		gbc.gridy = 1;
@@ -301,7 +311,7 @@ public class ClientView {
 		    public void focusGained(FocusEvent e) {
 		        // Cuando el usuario hace clic en la caja
 		        if (busqueda.getText().equals("Buscar Cliente")) {
-		            busqueda.setText(""); // Vaciamos la caja
+		            busqueda.setText(""); // Vaciar la caja
 		        }
 		    }
 
@@ -309,7 +319,7 @@ public class ClientView {
 		    public void focusLost(FocusEvent e) {
 		        // Cuando el usuario hace clic en otro lado
 		        if (busqueda.getText().isEmpty()) {
-		            busqueda.setText("Buscar Cliente"); // Restauramos el mensaje
+		            busqueda.setText("Buscar Cliente"); // Restaurar el mensaje
 		        }
 		    }
 		});
@@ -337,7 +347,7 @@ public class ClientView {
 		ImageIcon btnDescargar = new ImageIcon(iconDescargar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		//Agregamos botones customizados con popup a la 5ta columna de la tabla y personalizamos la columna	
 		clientes_table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
-		clientes_table.getColumnModel().getColumn(5).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar));
+		clientes_table.getColumnModel().getColumn(5).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Clientes"));
 		clientes_table.setRowHeight(40);
 		clientes_table.getColumnModel().getColumn(5).setPreferredWidth(60);
 		clientes_table.setBackground(Color.decode("#D9D9D9"));
@@ -372,5 +382,549 @@ public class ClientView {
 		clientPanel.add(tablaClientes, gbc);
 
 		return clientPanel;
+	}
+	
+	public void addClient() {
+        // Crear Ventana
+        JDialog ventana = new JDialog();
+        ventana.setModal(true);
+        ventana.setUndecorated(true);
+        ventana.setSize(720, 500);
+        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        ventana.setLocationRelativeTo(null);
+        ventana.setLayout(new BorderLayout(0,0));
+		//Panel sobre el cual se trabajara
+		PanelRounded añadirCliente = new PanelRounded(10,true,true,true,true);
+		añadirCliente.setLayout(new BorderLayout());
+		añadirCliente.setPreferredSize(new Dimension(600,600));
+		añadirCliente.setBackground(Color.white);
+		añadirCliente.setOpaque(false);
+		ventana.add(añadirCliente, BorderLayout.CENTER);
+		//Label superior con nombre de pestaña
+		JLabel tituloAñadir = new JLabel("Añadir Cliente");
+		tituloAñadir.setOpaque(true);
+		tituloAñadir.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		tituloAñadir.setBackground(Color.decode("#000D56"));
+		tituloAñadir.setForeground(Color.WHITE);
+		tituloAñadir.setHorizontalAlignment(JLabel.LEFT);
+		tituloAñadir.setFont(new Font("Poppins",Font.PLAIN,25));
+		añadirCliente.add(tituloAñadir, BorderLayout.NORTH);
+		//Panel izq para los datos
+		JPanel panelDatos = new JPanel();
+		panelDatos.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+		panelDatos.setLayout(new BoxLayout(panelDatos, BoxLayout.Y_AXIS));
+		panelDatos.setOpaque(false);
+		añadirCliente.add(panelDatos, BorderLayout.WEST);
+		//Label nombre y su respectivo campo de texto
+		JLabel nombre = new JLabel("Nombre");
+		nombre.setOpaque(false);
+		nombre.setForeground(Color.black);
+		nombre.setHorizontalAlignment(JLabel.LEFT);
+		nombre.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(nombre);
+		
+		TextFieldRounded campoNombre = new TextFieldRounded(20,20,true);
+		campoNombre.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoNombre.setForeground(Color.decode("#8B8B8B"));
+		campoNombre.setOpaque(false);
+		campoNombre.setText("---");
+		campoNombre.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoNombre.getText().equals("---")) {
+		        	campoNombre.setText(""); // Vaciar la caja
+		        	campoNombre.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoNombre.getText().isEmpty()) {
+		        	campoNombre.setText("---"); // Restaurar el mensaje
+		        	campoNombre.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoNombre);
+		//Label correo y su respectivo campo de texto
+		JLabel correo = new JLabel("Correo");
+		correo.setOpaque(false);
+		correo.setForeground(Color.black);
+		correo.setHorizontalAlignment(JLabel.LEFT);
+		correo.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(correo);
+		
+		TextFieldRounded campoCorreo = new TextFieldRounded(20,20,true);
+		campoCorreo.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoCorreo.setForeground(Color.decode("#8B8B8B"));
+		campoCorreo.setOpaque(false);
+		campoCorreo.setText("---");
+		campoCorreo.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoCorreo.getText().equals("---")) {
+		        	campoCorreo.setText(""); // Vaciar la caja
+		        	campoCorreo.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoCorreo.getText().isEmpty()) {
+		        	campoCorreo.setText("---"); // Restaurar el mensaje
+		        	campoCorreo.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoCorreo);
+		//Label telefono y su respectivo campo de texto
+		JLabel telefono = new JLabel("Teléfono");
+		telefono.setOpaque(false);
+		telefono.setForeground(Color.black);
+		telefono.setHorizontalAlignment(JLabel.LEFT);
+		telefono.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(telefono);
+		
+		TextFieldRounded campoTelefono = new TextFieldRounded(20,20,true);
+		campoTelefono.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoTelefono.setForeground(Color.decode("#8B8B8B"));
+		campoTelefono.setOpaque(false);
+		campoTelefono.setText("---");
+		campoTelefono.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoTelefono.getText().equals("---")) {
+		        	campoTelefono.setText(""); // Vaciar la caja
+		        	campoTelefono.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoTelefono.getText().isEmpty()) {
+		        	campoTelefono.setForeground(Color.decode("#8B8B8B"));
+		        	campoTelefono.setText("---"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoTelefono);
+		//Panel DER donde colocar el campo de la foto
+		JPanel fotoCont = new JPanel();
+		fotoCont.setLayout(new BoxLayout(fotoCont, BoxLayout.Y_AXIS));
+		fotoCont.setOpaque(false);
+		añadirCliente.add(fotoCont, BorderLayout.CENTER);
+		
+		JLabel titulofoto = new JLabel("foto");
+		titulofoto.setOpaque(false);
+		titulofoto.setForeground(Color.black);
+		titulofoto.setHorizontalAlignment(JLabel.LEFT);
+		titulofoto.setFont(new Font("Poppins",Font.PLAIN,15));
+		fotoCont.add(titulofoto);
+		
+		//Contorno redondeado
+		LabelRounded foto = new LabelRounded("",10,Color.decode("#FFFFFF"));
+		foto.setPreferredSize(new Dimension(500,500));
+		foto.setBorder(BorderFactory.createCompoundBorder(
+		        BorderFactory.createLineBorder(
+		                Color.black,3,true),
+		            BorderFactory.createEmptyBorder(10,20,10,00)
+		        ));
+		fotoCont.add(foto);
+		
+		//Panel de botones
+		JPanel botonesCont = new JPanel();
+		botonesCont.setLayout(new FlowLayout());
+		botonesCont.setOpaque(false);
+        
+		ButtonRounded registrarCliente = new ButtonRounded("Registrar Cliente",10,1);
+		registrarCliente.setOpaque(false);
+		registrarCliente.setForeground(Color.white);
+		registrarCliente.setHorizontalAlignment(JLabel.CENTER);
+		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
+		registrarCliente.addActionListener(e->{
+        	ventana.dispose();
+     
+		});
+		botonesCont.add(registrarCliente);
+		
+		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
+		cancelarCliente.setOpaque(false);
+		cancelarCliente.setForeground(Color.white);
+		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
+		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
+		cancelarCliente.addActionListener(e->{
+        	ventana.dispose();
+		});
+		botonesCont.add(cancelarCliente);
+		añadirCliente.add(botonesCont,BorderLayout.SOUTH);
+		
+		ventana.revalidate();
+		ventana.repaint();
+		ventana.setVisible(true);
+	}
+
+	public void editClient() {
+        // Crear Ventana
+        JDialog ventana = new JDialog();
+        ventana.setModal(true);
+        ventana.setUndecorated(true);
+        ventana.setSize(720, 500);
+        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        ventana.setLocationRelativeTo(null);
+        ventana.setLayout(new BorderLayout(0,0));
+		//Panel sobre el cual se trabajara
+		PanelRounded editarCliente = new PanelRounded(10,true,true,true,true);
+		editarCliente.setLayout(new BorderLayout());
+		editarCliente.setPreferredSize(new Dimension(600,600));
+		editarCliente.setBackground(Color.white);
+		editarCliente.setOpaque(false);
+		ventana.add(editarCliente, BorderLayout.CENTER);
+		//Label superior con nombre de pestaña
+		JLabel tituloEditar = new JLabel("Editar Cliente");
+		tituloEditar.setOpaque(true);
+		tituloEditar.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		tituloEditar.setBackground(Color.decode("#000D56"));
+		tituloEditar.setForeground(Color.WHITE);
+		tituloEditar.setHorizontalAlignment(JLabel.LEFT);
+		tituloEditar.setFont(new Font("Poppins",Font.PLAIN,25));
+		editarCliente.add(tituloEditar, BorderLayout.NORTH);
+		//Panel izq para los datos
+		JPanel panelDatos = new JPanel();
+		panelDatos.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+		panelDatos.setLayout(new BoxLayout(panelDatos, BoxLayout.Y_AXIS));
+		panelDatos.setOpaque(false);
+		editarCliente.add(panelDatos, BorderLayout.WEST);
+		//Label nombre y su respectivo campo de texto
+		JLabel nombre = new JLabel("Nombre");
+		nombre.setOpaque(false);
+		nombre.setForeground(Color.black);
+		nombre.setHorizontalAlignment(JLabel.LEFT);
+		nombre.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(nombre);
+		
+		TextFieldRounded campoNombre = new TextFieldRounded(20,20,true);
+		campoNombre.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoNombre.setForeground(Color.decode("#8B8B8B"));
+		campoNombre.setOpaque(false);
+		campoNombre.setText("---");
+		campoNombre.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoNombre.getText().equals("---")) {
+		        	campoNombre.setText(""); // Vaciar la caja
+		        	campoNombre.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoNombre.getText().isEmpty()) {
+		        	campoNombre.setText("---"); // Restaurar el mensaje
+		        	campoNombre.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoNombre);
+		//Label correo y su respectivo campo de texto
+		JLabel correo = new JLabel("Correo");
+		correo.setOpaque(false);
+		correo.setForeground(Color.black);
+		correo.setHorizontalAlignment(JLabel.LEFT);
+		correo.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(correo);
+		
+		TextFieldRounded campoCorreo = new TextFieldRounded(20,20,true);
+		campoCorreo.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoCorreo.setForeground(Color.decode("#8B8B8B"));
+		campoCorreo.setOpaque(false);
+		campoCorreo.setText("---");
+		campoCorreo.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoCorreo.getText().equals("---")) {
+		        	campoCorreo.setText(""); // Vaciar la caja
+		        	campoCorreo.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoCorreo.getText().isEmpty()) {
+		        	campoCorreo.setText("---"); // Restaurar el mensaje
+		        	campoCorreo.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoCorreo);
+		//Label telefono y su respectivo campo de texto
+		JLabel telefono = new JLabel("Teléfono");
+		telefono.setOpaque(false);
+		telefono.setForeground(Color.black);
+		telefono.setHorizontalAlignment(JLabel.LEFT);
+		telefono.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(telefono);
+		
+		TextFieldRounded campoTelefono = new TextFieldRounded(20,20,true);
+		campoTelefono.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoTelefono.setForeground(Color.decode("#8B8B8B"));
+		campoTelefono.setOpaque(false);
+		campoTelefono.setText("---");
+		campoTelefono.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoTelefono.getText().equals("---")) {
+		        	campoTelefono.setText(""); // Vaciar la caja
+		        	campoTelefono.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoTelefono.getText().isEmpty()) {
+		        	campoTelefono.setForeground(Color.decode("#8B8B8B"));
+		        	campoTelefono.setText("---"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoTelefono);
+		//Panel DER donde colocar el campo de la foto
+		JPanel fotoCont = new JPanel();
+		fotoCont.setLayout(new BoxLayout(fotoCont, BoxLayout.Y_AXIS));
+		fotoCont.setOpaque(false);
+		editarCliente.add(fotoCont, BorderLayout.CENTER);
+		
+		JLabel titulofoto = new JLabel("foto");
+		titulofoto.setOpaque(false);
+		titulofoto.setForeground(Color.black);
+		titulofoto.setHorizontalAlignment(JLabel.LEFT);
+		titulofoto.setFont(new Font("Poppins",Font.PLAIN,15));
+		fotoCont.add(titulofoto);
+		
+		//Contorno redondeado
+		LabelRounded foto = new LabelRounded("",10,Color.decode("#FFFFFF"));
+		foto.setPreferredSize(new Dimension(500,500));
+		foto.setBorder(BorderFactory.createCompoundBorder(
+		        BorderFactory.createLineBorder(
+		                Color.black,3,true),
+		            BorderFactory.createEmptyBorder(10,20,10,00)
+		        ));
+		fotoCont.add(foto);
+		
+		//Panel de botones
+		JPanel botonesCont = new JPanel();
+		botonesCont.setLayout(new FlowLayout());
+		botonesCont.setOpaque(false);
+        
+		ButtonRounded guardarCambios = new ButtonRounded("Guardar Cambios",10,1);
+		guardarCambios.setOpaque(false);
+		guardarCambios.setForeground(Color.white);
+		guardarCambios.setHorizontalAlignment(JLabel.CENTER);
+		guardarCambios.setFont(new Font("Poppins",Font.BOLD,20));
+		guardarCambios.addActionListener(e->{
+        	ventana.dispose();
+     
+		});
+		botonesCont.add(guardarCambios);
+		
+		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
+		cancelarCliente.setOpaque(false);
+		cancelarCliente.setForeground(Color.white);
+		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
+		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
+		cancelarCliente.addActionListener(e->{
+        	ventana.dispose();
+		});
+		botonesCont.add(cancelarCliente);
+		editarCliente.add(botonesCont,BorderLayout.SOUTH);
+		
+		ventana.revalidate();
+		ventana.repaint();
+		ventana.setVisible(true);
+	}
+
+	public void detailClient() {
+		 // Crear Ventana
+        JDialog ventana = new JDialog();
+        ventana.setModal(true);
+        ventana.setUndecorated(true);
+        ventana.setSize(720, 500);
+        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        ventana.setLocationRelativeTo(null);
+        ventana.setLayout(new BorderLayout(0,0));
+		//Panel sobre el cual se trabajara
+		PanelRounded editarCliente = new PanelRounded(10,true,true,true,true);
+		editarCliente.setLayout(new BorderLayout());
+		editarCliente.setPreferredSize(new Dimension(600,600));
+		editarCliente.setBackground(Color.white);
+		editarCliente.setOpaque(false);
+		ventana.add(editarCliente, BorderLayout.CENTER);
+		//Label superior con nombre de pestaña
+		JLabel tituloEditar = new JLabel("Detalles de Cliente");
+		tituloEditar.setOpaque(true);
+		tituloEditar.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		tituloEditar.setBackground(Color.decode("#000D56"));
+		tituloEditar.setForeground(Color.WHITE);
+		tituloEditar.setHorizontalAlignment(JLabel.LEFT);
+		tituloEditar.setFont(new Font("Poppins",Font.PLAIN,25));
+		editarCliente.add(tituloEditar, BorderLayout.NORTH);
+		//Panel izq para los datos
+		JPanel panelDatos = new JPanel();
+		panelDatos.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+		panelDatos.setLayout(new BoxLayout(panelDatos, BoxLayout.Y_AXIS));
+		panelDatos.setOpaque(false);
+		editarCliente.add(panelDatos, BorderLayout.WEST);
+		//Label nombre y su respectivo campo de texto
+		JLabel nombre = new JLabel("Nombre");
+		nombre.setOpaque(false);
+		nombre.setForeground(Color.black);
+		nombre.setHorizontalAlignment(JLabel.LEFT);
+		nombre.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(nombre);
+		
+		TextFieldRounded campoNombre = new TextFieldRounded(20,20,true);
+		campoNombre.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoNombre.setForeground(Color.decode("#8B8B8B"));
+		campoNombre.setOpaque(false);
+		campoNombre.setText("---");
+		campoNombre.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoNombre.getText().equals("---")) {
+		        	campoNombre.setText(""); // Vaciar la caja
+		        	campoNombre.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoNombre.getText().isEmpty()) {
+		        	campoNombre.setText("---"); // Restaurar el mensaje
+		        	campoNombre.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoNombre);
+		//Label correo y su respectivo campo de texto
+		JLabel correo = new JLabel("Correo");
+		correo.setOpaque(false);
+		correo.setForeground(Color.black);
+		correo.setHorizontalAlignment(JLabel.LEFT);
+		correo.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(correo);
+		
+		TextFieldRounded campoCorreo = new TextFieldRounded(20,20,true);
+		campoCorreo.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoCorreo.setForeground(Color.decode("#8B8B8B"));
+		campoCorreo.setOpaque(false);
+		campoCorreo.setText("---");
+		campoCorreo.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoCorreo.getText().equals("---")) {
+		        	campoCorreo.setText(""); // Vaciar la caja
+		        	campoCorreo.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoCorreo.getText().isEmpty()) {
+		        	campoCorreo.setText("---"); // Restaurar el mensaje
+		        	campoCorreo.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		panelDatos.add(campoCorreo);
+		//Label telefono y su respectivo campo de texto
+		JLabel telefono = new JLabel("Teléfono");
+		telefono.setOpaque(false);
+		telefono.setForeground(Color.black);
+		telefono.setHorizontalAlignment(JLabel.LEFT);
+		telefono.setFont(new Font("Poppins",Font.PLAIN,15));
+		panelDatos.add(telefono);
+		
+		TextFieldRounded campoTelefono = new TextFieldRounded(20,20,true);
+		campoTelefono.setFont(new Font("Poppins", Font.PLAIN, 15));
+		campoTelefono.setForeground(Color.decode("#8B8B8B"));
+		campoTelefono.setOpaque(false);
+		campoTelefono.setText("---");
+		campoTelefono.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (campoTelefono.getText().equals("---")) {
+		        	campoTelefono.setText(""); // Vaciar la caja
+		        	campoTelefono.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (campoTelefono.getText().isEmpty()) {
+		        	campoTelefono.setForeground(Color.decode("#8B8B8B"));
+		        	campoTelefono.setText("---"); // Restaurar el mensaje
+		        }
+		    }
+		});
+		panelDatos.add(campoTelefono);
+		//Panel DER donde colocar el campo de la foto
+		JPanel fotoCont = new JPanel();
+		fotoCont.setLayout(new BoxLayout(fotoCont, BoxLayout.Y_AXIS));
+		fotoCont.setOpaque(false);
+		editarCliente.add(fotoCont, BorderLayout.CENTER);
+		
+		JLabel titulofoto = new JLabel("foto");
+		titulofoto.setOpaque(false);
+		titulofoto.setForeground(Color.black);
+		titulofoto.setHorizontalAlignment(JLabel.LEFT);
+		titulofoto.setFont(new Font("Poppins",Font.PLAIN,15));
+		fotoCont.add(titulofoto);
+		
+		//Contorno redondeado
+		LabelRounded foto = new LabelRounded("",10,Color.decode("#FFFFFF"));
+		foto.setPreferredSize(new Dimension(500,500));
+		foto.setBorder(BorderFactory.createCompoundBorder(
+		        BorderFactory.createLineBorder(
+		                Color.black,3,true),
+		            BorderFactory.createEmptyBorder(10,20,10,00)
+		        ));
+		fotoCont.add(foto);
+		
+		//Panel de botones
+		JPanel botonesCont = new JPanel();
+		botonesCont.setLayout(new FlowLayout());
+		botonesCont.setOpaque(false);
+		
+		ButtonRounded cancelarCliente = new ButtonRounded("Volver",10,5);
+		cancelarCliente.setOpaque(false);
+		cancelarCliente.setForeground(Color.white);
+		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
+		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
+		cancelarCliente.addActionListener(e->{
+        	ventana.dispose();
+		});
+		botonesCont.add(cancelarCliente);
+		editarCliente.add(botonesCont,BorderLayout.SOUTH);
+		
+		ventana.revalidate();
+		ventana.repaint();
+		ventana.setVisible(true);
 	}
 }

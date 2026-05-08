@@ -14,4 +14,12 @@ public class VehicleController {
 	public JPanel showVehicle() {
 		return vv.vistaVehiculos();
 	}
+	
+	public void añadirVehicle() {
+		vv.addVehicle();
+	}
+	
+	public void EditVehicleView() {
+		vv.editVehicle();
+	}
 }

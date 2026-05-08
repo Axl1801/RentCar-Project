@@ -32,7 +32,7 @@ public class ButtonRounded extends JButton{
 
 	        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 	                            RenderingHints.VALUE_ANTIALIAS_ON);
-	        
+	        //Boton Azul
 	        if(ver == 1) {
 	        	// Color dinámico (hover / click)
 	        	if (getModel().isPressed()) {
@@ -43,7 +43,7 @@ public class ButtonRounded extends JButton{
 	        		g2.setColor(new Color(0x000D56)); // normal	        	
 	        	}
 	        }
-	        
+	        //Boton Rojo
 	        if(ver == 2) {
 	        	setForeground(Color.decode("#000000"));
 	        	setBorderPainted(true);
@@ -57,9 +57,9 @@ public class ButtonRounded extends JButton{
 	        		g2.setColor(Color.decode("#FFFFFF")); // normal	        	
 	        	}
 	        }
-	        
+	      //Boton Gris
 	        if(ver == 3) {
-	        	setForeground(Color.decode("#D9D9D9"));
+	        	setForeground(Color.decode("000000"));
 	        	// Color dinámico (hover / click)
 	        	if (getModel().isPressed()) {
 	        		g2.setColor(Color.decode("#969696")); // más oscuro
@@ -69,7 +69,7 @@ public class ButtonRounded extends JButton{
 	        		g2.setColor(Color.decode("#D9D9D9")); // normal	        	
 	        	}
 	        }
-	        
+	        //Boton Blanco
 	        if(ver == 4) {
 	        	setForeground(Color.decode("#000000"));
 	        	// Color dinámico (hover / click)
@@ -81,15 +81,16 @@ public class ButtonRounded extends JButton{
 	        		g2.setColor(Color.decode("#FFFFFF")); // normal	        	
 	        	}
 	        }
-	        
+	        //Boton Rojo full
 	        if(ver == 5) {
+	        	setForeground(Color.white);
 	        	// Color dinámico (hover / click)
 	        	if (getModel().isPressed()) {
-	        		g2.setColor(Color.decode("#0026FF")); // más oscuro
+	        		g2.setColor(Color.decode("#782B2B")); // más oscuro
 	        	} else if (getModel().isRollover()) {
-	        		g2.setColor(Color.decode("#2E4DFF")); // hover
+	        		g2.setColor(Color.decode("#9A3737")); // hover
 	        	} else {
-	        		g2.setColor(Color.decode("#5C74FF")); // normal	        	
+	        		g2.setColor(Color.decode("#BD4747")); // normal	        	
 	        	}
 	        }
 

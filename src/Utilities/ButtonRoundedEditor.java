@@ -14,19 +14,31 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+
+import Controllers.ClientController;
+import Controllers.HomeController;
+import Controllers.RentController;
+import Controllers.VehicleController;
 
 public class ButtonRoundedEditor extends DefaultCellEditor {
     private ButtonRounded button;
     private JPopupMenu popupMenu;
+    private String accion;
     private int currentRow;
     private PanelRounded panelMenu;
+    private ClientController cc = new ClientController();
+    private VehicleController vc = new VehicleController();
+    private RentController rc = new RentController();
 
     // Ahora pedimos 4 iconos: El principal (los 3 puntitos) y los 3 del submenú
-    public ButtonRoundedEditor(JCheckBox checkBox, Icon iconPrincipal, Icon iconVer, Icon iconEditar, Icon iconEliminar, Icon iconDescargar) {
+    public ButtonRoundedEditor(JCheckBox checkBox, Icon iconPrincipal, Icon iconVer, Icon iconEditar, Icon iconEliminar, Icon iconDescargar, String accion) {
         super(checkBox);
+        
+        
         button = new ButtonRounded("", 15, 3);
         button.setIcon(iconPrincipal);
-
+        
         // POPUP invisible
         popupMenu = new JPopupMenu();
         popupMenu.setOpaque(false); // Fondo transparente
@@ -49,13 +61,35 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
         btnVer.addActionListener(e -> {
             popupMenu.setVisible(false); // Oculta el menú
             fireEditingStopped(); //Evita la edicion de la zelda
-            JOptionPane.showMessageDialog(null, "Ver detalles de la fila: " + currentRow);
+            SwingUtilities.invokeLater(()->{
+            	if(accion.equals("Clientes")) {
+            		cc.showDetails();
+            	}
+            	else if(accion.equals("Vehiculos")) {
+            	}
+            	else if(accion.equals("Rentas")) {
+            		
+            	}
+            	
+            });
         });
 
         btnEditar.addActionListener(e -> {
             popupMenu.setVisible(false);
+            
             fireEditingStopped();
-            JOptionPane.showMessageDialog(null, "Editando fila: " + currentRow);
+            SwingUtilities.invokeLater(()->{
+            	if(accion.equals("Clientes")) {
+            		cc.showEdit();
+            	}
+            	else if(accion.equals("Vehiculos")) {
+            		vc.EditVehicleView();
+            	}
+            	else if(accion.equals("Rentas")) {
+            		rc.editRent();
+            	}
+            	
+            });
         });
 
         btnEliminar.addActionListener(e -> {

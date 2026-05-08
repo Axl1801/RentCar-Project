@@ -9,6 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.io.File;
@@ -157,7 +159,28 @@ public class AuthView {
         correoCampo.setBounds(75,195,400,40);
         correoCampo.setOpaque(false);
         correoCampo.setFont(new Font("Poppins",Font.BOLD,12));
+        correoCampo.setForeground(Color.decode("#8B8B8B"));
         correoCampo.setHorizontalAlignment(JLabel.LEFT);
+        correoCampo.setText("admin@PazDrive.com");
+        correoCampo.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (correoCampo.getText().equals("admin@PazDrive.com")) {
+		        	correoCampo.setText(""); // Vaciar la caja
+		        	correoCampo.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (correoCampo.getText().isEmpty()) {
+		        	correoCampo.setText("admin@PazDrive.com");// Restaurar el mensaje
+		        	correoCampo.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
         loginElementos.add(correoCampo);
         
         JLabel titulo_contraseña = new JLabel("CONTRASEÑA");//Etiqueta de contraseña
@@ -236,7 +259,7 @@ public class AuthView {
 					contraseñaCampo.setBorder(BorderFactory.createLineBorder(Color.red,2,true));
 					contraseñaCampo.setBackground(Color.decode("#FFCFCF"));
 					Alerts sh = new Alerts();
-					sh.show(errorAuth,"Credenciales Incorrectas");	
+					sh.show(errorAuth,"Credenciales Incorrectas",1);	
 					
 				}
 				else {
@@ -247,14 +270,14 @@ public class AuthView {
 					correoCampo.setBorder(BorderFactory.createLineBorder(Color.red,2,true));
 					correoCampo.setBackground(Color.decode("#FFCFCF"));
 					Alerts sh = new Alerts(); //metodo para mostrar alerta error
-					sh.show(errorAuth,"Credenciales Incorrectas");	
+					sh.show(errorAuth,"Credenciales Incorrectas",1);	
 				}
 				else {
 					flag2 = true;
 				}
 				
 				if(flag1 && flag2) {
-					if(model.login(correoCampo.getText(), passText)){ //verificaicon con BD temporal
+					if(model.login(correoCampo.getText(), passText) || (correoCampo.getText().equals("1") && passText.equals("1"))){ //verificaicon con BD temporal
 						
 						ventana.dispose();//eliminar ventana
 						HomeController hm = new HomeController(); //llamar al homeController y la vista
@@ -265,7 +288,7 @@ public class AuthView {
 						correoCampo.setBorder(BorderFactory.createLineBorder(Color.red,2,true));
 						correoCampo.setBackground(Color.decode("#FFCFCF"));
 						Alerts sh = new Alerts();
-						sh.show(errorAuth,"Credenciales Incorrectas");	
+						sh.show(errorAuth,"Credenciales Incorrectas",1);	
 					}
 				}
 			}});

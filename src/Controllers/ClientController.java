@@ -14,5 +14,13 @@ public class ClientController {
 	public JPanel showClientView() {
 		 return cv.showClient();
 	}
+	
+	public void showEdit() {
+		cv.editClient();
+	}
+	
+	public void showDetails() {
+		cv.detailClient();
+	}
 
 }

@@ -14,4 +14,8 @@ public class RentController {
 	public JPanel showRent() {
 		return rv.Rent();
 	}
+	
+	public void editRent() {
+		rv.editRent();
+	}
 }
