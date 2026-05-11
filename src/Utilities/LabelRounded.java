@@ -43,7 +43,7 @@ public class LabelRounded extends JLabel{
                             RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Borde
-        g2.setColor(new Color(200, 200, 200));
+        g2.setColor(Color.decode("#000D56"));
         g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, radius, radius);
 
         g2.dispose();

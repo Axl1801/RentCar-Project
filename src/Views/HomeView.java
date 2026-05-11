@@ -311,6 +311,9 @@ public class HomeView {
         botonNotificaciones.setBorder(null);
         botonNotificaciones.setContentAreaFilled(false);
         botonNotificaciones.setFocusPainted(false);
+        botonNotificaciones.addActionListener(e->{
+        	showNotification();
+        });
         panelBotones.add(botonNotificaciones);
         
         JButton botonAjustes = new JButton();
@@ -321,6 +324,9 @@ public class HomeView {
 	    botonAjustes.setBorder(null);
 	    botonAjustes.setContentAreaFilled(false);
 	    botonAjustes.setFocusPainted(false);
+	    botonAjustes.addActionListener(e->{
+	    	showSettings();
+	    });
         panelBotones.add(botonAjustes);
         
         JButton botonPerfil = new JButton();
@@ -391,8 +397,6 @@ public class HomeView {
         panelContenido.add(ec.showEstablishment(),"vistaEstablecimiento");
         panelContenido.add(rc.showRent(),"vistaRentas");
         panelContenido.add(vc.showVehicle(),"vistaVehiculos");
-        panelContenido.add(hc.showNotification(),"vistaNotificaciones");
-        panelContenido.add(hc.showSettings(),"vistaAjustes");
         panelContenido.add(hc.showUser(),"vistaUsuario");
         
         //Mostrar vista de clientes
@@ -425,11 +429,7 @@ public class HomeView {
         	botonOpciones.setVisible(true);
         	cl.show(panelContenido,"vistaVehiculos");
         });
-      //Mostrar vista home Notificaciones
-        botonNotificaciones.addActionListener(e->{
-        	botonOpciones.setVisible(false);
-        	cl.show(panelContenido,"vistaNotificaciones");
-        });
+        
         botonAjustes.addActionListener(e->{
         	botonOpciones.setVisible(false);
         	cl.show(panelContenido,"vistaAjustes");
@@ -451,230 +451,160 @@ public class HomeView {
         ventana.repaint();
 	}
 	
-	public JPanel showNotification(){
-		JPanel fondoOscuro = new JPanel();
-		fondoOscuro.setVisible(true);
-		fondoOscuro.setEnabled(true);
-		fondoOscuro.setSize(1920,1080);
-		fondoOscuro.setOpaque(true);
-		fondoOscuro.setLayout(new GridBagLayout());
-		fondoOscuro.setBackground(new Color(0, 0, 0, 150));
+	public void showNotification(){
+		 // Crear Ventana JDialog
+        JDialog ventana = new JDialog();
+        ventana.setModal(true);
+        ventana.setUndecorated(true);
+        ventana.setSize(1920, 1080);
+        ventana.setBackground(new Color(0, 0, 0, 120)); 
+        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        ventana.setLocationRelativeTo(null);
+        ventana.setLayout(null);
+		//Panel sobre el cual se trabajara
+		PanelRounded Notificaciones = new PanelRounded(20,true,true,true,true);
+		Notificaciones.setLayout(new BorderLayout());
+		Notificaciones.setSize(300,400);
+		Notificaciones.setLocation(810,340);
+		Notificaciones.setBackground(Color.decode("#000D56"));
+		Notificaciones.setOpaque(false);
+		ventana.add(Notificaciones);
 		
-		GridBagConstraints gbc = new GridBagConstraints();
-		
-		PanelRounded notificacionesPanel = new PanelRounded(10,true,true,true,true);
-		notificacionesPanel.setBackground(Color.white);
-		notificacionesPanel.setLayout(new BorderLayout());
-		notificacionesPanel.setOpaque(false);
-		
-		PanelRounded panelSupNotificaciones = new PanelRounded(10,true,true,false,false);
-		panelSupNotificaciones.setBackground(Color.decode("#000D56"));
-		panelSupNotificaciones.setLayout(new BorderLayout());
-		panelSupNotificaciones.setOpaque(false);
+		PanelRounded panelSup = new PanelRounded(20,true,true,false,false);
+		panelSup.setOpaque(false);
+		panelSup.setLayout(new BorderLayout());
+		panelSup.setBackground(Color.decode("#000D56"));
+		Notificaciones.add(panelSup,BorderLayout.NORTH);
 		
 		JLabel tituNotificaciones = new JLabel("Notificaciones");
 		tituNotificaciones.setOpaque(false);
 		tituNotificaciones.setForeground(Color.white);
-		tituNotificaciones.setHorizontalAlignment(JLabel.LEFT);
+		tituNotificaciones.setHorizontalAlignment(JLabel.CENTER);
 		tituNotificaciones.setFont(new Font("Poppins",Font.BOLD,15));
 		tituNotificaciones.setHorizontalTextPosition(JLabel.CENTER);
-		panelSupNotificaciones.add(tituNotificaciones,BorderLayout.CENTER);
+		tituNotificaciones.setBounds(75,0,225,75);
+		panelSup.add(tituNotificaciones, BorderLayout.CENTER);
 		
 		URL url = getClass().getResource("/iconos/adicionales/anterior.png");//Carga ubi imagen
 		
-		JButton regresar = new JButton();
+		ButtonRounded regresar = new ButtonRounded("",20,1);
+		regresar.setOpaque(false);
 		regresar.setContentAreaFilled(false); // Sin fondo
 		regresar.setBorderPainted(false); // Sin borde
 		regresar.setFocusPainted(false); // Sin línea de focus
+		regresar.setPreferredSize(new Dimension(74,74));
 		if (url != null) {
 			regresar.setIcon(new ImageIcon(url));
 		}
-		panelSupNotificaciones.add(regresar,BorderLayout.WEST);
+		panelSup.add(regresar, BorderLayout.WEST);
 		
-		notificacionesPanel.add(panelSupNotificaciones,BorderLayout.NORTH);
-		
-		JPanel panelActividades = new JPanel();
+		PanelRounded panelActividades = new PanelRounded(20,false,false,true,true);
+		panelActividades.setBackground(Color.white);
 	    panelActividades.setLayout(new BoxLayout(panelActividades, BoxLayout.Y_AXIS));
+	    panelActividades.setBounds(0, 75, 300, 325);
 	    panelActividades.setOpaque(false);
 	    
 	    panelActividades.add(new Activities( "Vehiculo Entregado","V-001 Corolla","Hace 1 Hora",Color.decode("#308C52")),0);
 	    panelActividades.add(new Activities( "Nueva renta creada","Cliente: Esau Garcia","Hace 3 Horas",Color.decode("#4C75B7")),0);
 	    panelActividades.add(new Activities( "Vehiculo en Mantenimiento","V-007 Versa ","Hace 7 Horas",Color.decode("#C79E59")),0);
 		
-	    notificacionesPanel.add(panelActividades,BorderLayout.CENTER);
-	    
-	    //Posicionamiento del logo
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.insets = new Insets(0, 0, 0, 0); // 
-        gbc.fill = GridBagConstraints.NONE;
-        fondoOscuro.add(notificacionesPanel,gbc);
+	    Notificaciones.add(panelActividades,BorderLayout.CENTER);
         
         regresar.addActionListener(e->{
-        	fondoOscuro.setVisible(false);
+        	ventana.dispose();
         });
         
-        return fondoOscuro;
+        ventana.setVisible(true);
 	}
 	
-	public JPanel showSettings() {
-		JPanel fondoOscuro = new JPanel();
-		fondoOscuro.setVisible(true);
-		fondoOscuro.setEnabled(true);
-		fondoOscuro.setSize(1920,1080);
-		fondoOscuro.setOpaque(true);
-		fondoOscuro.setLayout(new GridBagLayout());
-		fondoOscuro.setBackground(new Color(0, 0, 0, 150));
+	public void showSettings() {
+
+		 // Crear Ventana JDialog
+		JDialog ventana = new JDialog();
+		ventana.setModal(true);
+		ventana.setUndecorated(true);
+		ventana.setSize(1920, 1080);
+		ventana.setBackground(new Color(0, 0, 0, 120)); 
+		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		ventana.setLocationRelativeTo(null);
+		ventana.setLayout(null);
+		//Panel sobre el cual se trabajara
+		PanelRounded Ajustes = new PanelRounded(20,true,true,true,true);
+		Ajustes.setLayout(new BorderLayout());
+		Ajustes.setSize(300,400);
+		Ajustes.setLocation(810,340);
+		Ajustes.setBackground(Color.decode("#000D56"));
+		Ajustes.setOpaque(false);
+		ventana.add(Ajustes);
 		
-		GridBagConstraints gbc = new GridBagConstraints();
-		
-		PanelRounded AjustesPanel = new PanelRounded(10,true,true,true,true);
-		AjustesPanel.setBackground(Color.white);
-		AjustesPanel.setLayout(new BorderLayout());
-		AjustesPanel.setOpaque(false);
-		
-		PanelRounded panelSupAjustes = new PanelRounded(10,true,true,false,false);
-		panelSupAjustes.setBackground(Color.decode("#000D56"));
-		panelSupAjustes.setLayout(new BorderLayout());
-		panelSupAjustes.setOpaque(false);
+		PanelRounded panelSup = new PanelRounded(20,true,true,false,false);
+		panelSup.setOpaque(false);
+		panelSup.setLayout(new BorderLayout());
+		panelSup.setBackground(Color.decode("#000D56"));
+		Ajustes.add(panelSup,BorderLayout.NORTH);
 		
 		JLabel tituAjustes = new JLabel("Ajustes");
 		tituAjustes.setOpaque(false);
 		tituAjustes.setForeground(Color.white);
-		tituAjustes.setHorizontalAlignment(JLabel.LEFT);
+		tituAjustes.setHorizontalAlignment(JLabel.CENTER);
 		tituAjustes.setFont(new Font("Poppins",Font.BOLD,15));
 		tituAjustes.setHorizontalTextPosition(JLabel.CENTER);
-		panelSupAjustes.add(tituAjustes,BorderLayout.CENTER);
+		tituAjustes.setBounds(75,0,225,75);
+		panelSup.add(tituAjustes, BorderLayout.CENTER);
 		
 		URL url = getClass().getResource("/iconos/adicionales/anterior.png");//Carga ubi imagen
 		
-		JButton Ajustes = new JButton();
-		Ajustes.setContentAreaFilled(false); // Sin fondo
-		Ajustes.setBorderPainted(false); // Sin borde
-		Ajustes.setFocusPainted(false); // Sin línea de focus
+		ButtonRounded regresar = new ButtonRounded("",20,1);
+		regresar.setOpaque(false);
+		regresar.setContentAreaFilled(false); // Sin fondo
+		regresar.setBorderPainted(false); // Sin borde
+		regresar.setFocusPainted(false); // Sin línea de focus
+		regresar.setPreferredSize(new Dimension(74,74));
 		if (url != null) {
-			Ajustes.setIcon(new ImageIcon(url));
+			regresar.setIcon(new ImageIcon(url));
 		}
-		panelSupAjustes.add(Ajustes,BorderLayout.WEST);
-		
-		AjustesPanel.add(panelSupAjustes,BorderLayout.NORTH);
-		
-		//Panel del contenido de ajustes
-		GridBagConstraints gbc2 = new GridBagConstraints();
-		JPanel panelAjusCont = new JPanel();
-		panelAjusCont.setLayout(new GridBagLayout());
-		panelAjusCont.setOpaque(false);
-		
-		JLabel notiActivas = new JLabel("Notificaciones Activas");
-		notiActivas.setOpaque(false);
-		notiActivas.setForeground(Color.black);
-		notiActivas.setHorizontalAlignment(JLabel.LEFT);
-		notiActivas.setFont(new Font("Poppins",Font.PLAIN,16));
-		notiActivas.setHorizontalTextPosition(JLabel.LEFT);
-		
-        gbc2.gridx = 0;
-        gbc2.gridy = 0;
-        gbc2.weightx = 1;
-        gbc2.weighty = 1;
-        gbc2.insets = new Insets(10, 0, 10, 15);
-        gbc2.fill = GridBagConstraints.NONE;
-        panelAjusCont.add(notiActivas,gbc2);
-        
-        //Toggle button de notificacioens activadas
-        ToggleButtonRounded toggleNoti = new ToggleButtonRounded();
-        //Posicionamiento toggleButton
-        gbc2.gridx = 1;
-        gbc2.gridy = 0;
-        gbc2.weightx = 1;
-        gbc2.weighty = 1;
-        gbc2.insets = new Insets(10, 0, 10, 0);
-        gbc2.fill = GridBagConstraints.NONE;
-        panelAjusCont.add(toggleNoti,gbc2);
-        
-		JLabel idiomas = new JLabel("Idioma");
-		idiomas.setOpaque(false);
-		idiomas.setForeground(Color.black);
-		idiomas.setHorizontalAlignment(JLabel.LEFT);
-		idiomas.setFont(new Font("Poppins",Font.PLAIN,16));
-		idiomas.setHorizontalTextPosition(JLabel.LEFT);
-		
-        //Posicionamiento JLabel idiomas
-        gbc2.gridx = 0;
-        gbc2.gridy = 1;
-        gbc2.weightx = 1;
-        gbc2.weighty = 1;
-        gbc2.insets = new Insets(10, 0, 10, 0);
-        gbc2.fill = GridBagConstraints.NONE;
-        panelAjusCont.add(idiomas,gbc2);
-        
-		//Creacion de un arreglo para introducir cada copcion dentro de un ComboBox
-		String[] idiomasOpciones = {"Español", "Ingles"};
-		ComboBoxRounded<String> opIdiomas = new ComboBoxRounded<>(idiomasOpciones);
-		
-        //Posicionamiento Desplegable de idiomas
-        gbc2.gridx = 0;
-        gbc2.gridy = 2;
-        gbc2.weightx = 1;
-        gbc2.weighty = 1;
-        gbc2.insets = new Insets(10, 0, 10, 0);
-        gbc2.fill = GridBagConstraints.NONE;
-        panelAjusCont.add(opIdiomas,gbc2);
-        
-        //Etiqueta de cambios aplicados
-        LabelRounded cambiosAplicados = new LabelRounded("",10,Color.decode("#308C52"));
-        cambiosAplicados.setVisible(false);
-        cambiosAplicados.setOpaque(false);
-        cambiosAplicados.setFont(new Font("Poppins",Font.BOLD,15));
-        cambiosAplicados.setForeground(Color.decode("#FFFFFF"));
-        cambiosAplicados.setBounds(810,600,300,60);
-        
-        gbc2.gridx = 0;
-        gbc2.gridy = 2;
-        gbc2.weightx = 1;
-        gbc2.weighty = 1;
-        gbc2.insets = new Insets(30, 0, 10, 0);
-        gbc2.fill = GridBagConstraints.NONE;
-        fondoOscuro.add(cambiosAplicados,gbc2);
-        
-        ButtonRounded aplicarCambios = new ButtonRounded("Aplicar Cambios",10,1);
-        aplicarCambios.setFont(new Font("Poppins",Font.PLAIN,15));
-        aplicarCambios.setContentAreaFilled(false);
-        aplicarCambios.setFocusPainted(false);
-        aplicarCambios.setHorizontalAlignment(JLabel.CENTER);
-        aplicarCambios.addActionListener(e->{
-        	Alerts sh = new Alerts();
-        	sh.show(cambiosAplicados, "Cambios Aplicados", 2);
-        });
-        
-        //Posicionamiento Desplegable de idiomas
-        gbc2.gridx = 0;
-        gbc2.gridy = 3;
-        gbc2.gridwidth = 2;
-        gbc2.gridy = 3;
-        gbc2.weightx = 1;
-        gbc2.weighty = 1;
-        gbc2.insets = new Insets(10, 0, 10, 0);
-        gbc2.fill = GridBagConstraints.NONE;
-        panelAjusCont.add(aplicarCambios,gbc2);
-        
-	    AjustesPanel.add(panelAjusCont,BorderLayout.CENTER);
-	    
-	    
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.insets = new Insets(10, 0, 10, 0); // 
-        gbc.fill = GridBagConstraints.NONE;
-        fondoOscuro.add(AjustesPanel,gbc);
-        
-        Ajustes.addActionListener(e->{
-        	fondoOscuro.setVisible(false);
-        });
-        
-        return fondoOscuro;
+		panelSup.add(regresar, BorderLayout.WEST);
+
+       regresar.addActionListener(e->{
+       	ventana.dispose();
+       });
+       
+       PanelRounded panelCentral = new PanelRounded(20,false,false,false,false);
+       panelCentral.setBackground(Color.white);
+       panelCentral.setLayout(null);
+	   panelCentral.setBounds(0, 75, 300, 325);
+	   panelCentral.setOpaque(false);
+	   Ajustes.add(panelCentral,BorderLayout.CENTER);
+	   
+       JLabel nitsAct = new JLabel("Notificaciones Activas");
+       nitsAct.setBounds(30,50,150,30);
+       nitsAct.setOpaque(false);
+       nitsAct.setForeground(Color.BLACK);
+       nitsAct.setHorizontalAlignment(JLabel.CENTER);
+       nitsAct.setFont(new Font("Poppins",Font.PLAIN,14));
+       panelCentral.add(nitsAct);
+       
+       //Toggle button de notificacioens activadas
+       ToggleButtonRounded toggleNoti = new ToggleButtonRounded();
+       toggleNoti.setBounds(200,50,50,30);
+       if(toggleNoti.isSelected()) {
+       }
+       toggleNoti.setOpaque(false);
+       panelCentral.add(toggleNoti);
+       
+       ButtonRounded apliCambios = new ButtonRounded("Aplicar Cambios", 10, 1);
+       apliCambios.setBounds(50, 200, 200, 70);
+       apliCambios.setOpaque(false);
+       apliCambios.setBackground(Color.decode("#000D56"));
+       apliCambios.setFont(new Font("Poppins",Font.BOLD,15));
+       
+       apliCambios.addActionListener(e->{
+    	   ventana.dispose();
+       });
+       
+       panelCentral.add(apliCambios);
+       ventana.setVisible(true);
+	
 	}
 	
 	public JPanel showProfile() {

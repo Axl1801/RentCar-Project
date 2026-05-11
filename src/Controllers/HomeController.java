@@ -17,14 +17,6 @@ public class HomeController {
 		hv.showHome();
 	}
 	
-	public JPanel showNotification() {
-		return hv.showNotification();
-	}
-	
-	public JPanel showSettings() {
-		return hv.showSettings();
-	}
-	
 	public JPanel showUser() {
 		return hv.showProfile();
 	}

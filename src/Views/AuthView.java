@@ -146,7 +146,7 @@ public class AuthView {
         subTituloLogin.setForeground(Color.decode("#99A1AF"));
         loginElementos.add(subTituloLogin);
         
-        JLabel titulo_correo = new JLabel("CORREO ELECTRÓNICO");//Etiqueta Subtitulo
+        JLabel titulo_correo = new JLabel("USUARIO");//Etiqueta Subtitulo
         titulo_correo.setOpaque(true);
         titulo_correo.setBounds(75,150,400,30);
         titulo_correo.setFont(new Font("Poppins",Font.BOLD,12));
@@ -266,7 +266,7 @@ public class AuthView {
 					flag1 = true;
 				}
 				
-				if(correoCampo.getText().equals("") ) {//verificacion vacia y mostrar etiqueta error
+				if(correoCampo.getText().equals("") || correoCampo.getText().equals("admin@PazDrive.com1	11") ) {//verificacion vacia y mostrar etiqueta error
 					correoCampo.setBorder(BorderFactory.createLineBorder(Color.red,2,true));
 					correoCampo.setBackground(Color.decode("#FFCFCF"));
 					Alerts sh = new Alerts(); //metodo para mostrar alerta error

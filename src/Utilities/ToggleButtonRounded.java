@@ -83,7 +83,7 @@ public class ToggleButtonRounded extends JToggleButton{
 	            g2.setFont(font);
 
 	            g2.drawString(
-	                    "/",
+	                    "",
 	                    x + 6,
 	                    height - 9
 	            );
@@ -95,7 +95,7 @@ public class ToggleButtonRounded extends JToggleButton{
 	            g2.setFont(font);
 
 	            g2.drawString(
-	                    "X",
+	                    "",
 	                    x + 6,
 	                    height - 9
 	            );
