@@ -18,4 +18,8 @@ public class RentController {
 	public void editRent() {
 		rv.editRent();
 	}
+	
+	public void showHistorial() {
+		rv.historialRenta();
+	}
 }

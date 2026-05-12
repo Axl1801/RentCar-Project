@@ -22,4 +22,8 @@ public class VehicleController {
 	public void EditVehicleView() {
 		vv.editVehicle();
 	}
+	
+	public void showHistorial() {
+		vv.historialVehiculos();
+	}
 }

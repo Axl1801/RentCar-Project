@@ -19,8 +19,8 @@ public class ClientController {
 		cv.editClient();
 	}
 	
-	public void showDetails() {
-		cv.detailClient();
+	public void showHistorial() {
+		cv.historialCliente();
 	}
 
 }

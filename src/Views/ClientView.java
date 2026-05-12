@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -37,6 +38,7 @@ import Utilities.Alerts;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
+import Utilities.ComboBoxRounded;
 import Utilities.LabelRounded;
 import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
@@ -177,7 +179,7 @@ public class ClientView {
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(20, 20, 20, 20);
 		clientPanel.add(totalMantenimiento, gbc);
-		
+
 		//Panel para la barra de busqueda
 		PanelRounded barraBusqueda = new PanelRounded(10, true, true, true, true);
 		barraBusqueda.setOpaque(false);
@@ -185,7 +187,7 @@ public class ClientView {
 		barraBusqueda.setBackground(Color.white);
 		barraBusqueda.setBorder(null);
 		barraBusqueda.setLayout(new BorderLayout());
-		
+
 		//Icono de la barra de busqueda
 		ImageIcon busquedaIcon = new ImageIcon(getClass().getResource("/Iconos/adicionales/buscar.png"));
 		//Escalamos la imagen y la asignamos a un ImageIcon
@@ -202,7 +204,7 @@ public class ClientView {
 		busqueda.setOpaque(false);
 		busqueda.setText("Buscar Cliente");
 		barraBusqueda.add(busqueda,BorderLayout.CENTER);
-		
+
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		gbc.gridwidth = 1;
@@ -216,12 +218,12 @@ public class ClientView {
 		panelboton.setOpaque(false);
 		panelboton.setVisible(true);
 		panelboton.setLayout(new BorderLayout());
-		
+
 		//Icono y escalador del boton añadir
 		ImageIcon añadirIcon = new ImageIcon(getClass().getResource("/Iconos/adicionales/agregar_white.png"));
 		Image añadirEscalar = añadirIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		ImageIcon añadirEscalada = new ImageIcon(añadirEscalar);
-		
+
 		//Boton Añadir
 		ButtonRounded añadirCliente = new ButtonRounded("Añadir Cliente",10,1);
 		añadirCliente.setOpaque(false);
@@ -248,7 +250,7 @@ public class ClientView {
 		tablaClientes.setBackground(Color.decode("#D9D9D9"));
 		//Creacion del panel para la tabla de clientes
 		tablaClientes.setLayout(new BorderLayout());
-		
+
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID","Nombre","Correo Electronico","Teléfono","Rentas","Acciones"};
 		//Creacion de una matriz para los datos de una tabla 
@@ -269,62 +271,62 @@ public class ClientView {
 				{"C-014", "Israel Duran", "oso.pardo3@gmail.com", "615-778-9021", "18", ""},
 				{"C-015", "Arturo Decasso", "oso.pardo4@gmail.com", "615-778-9021", "15", ""}
 		};
-		
+
 		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
 		DefaultTableModel modeloClientes = new DefaultTableModel(table_content,table_head) {
 			@Override
-		    public boolean isCellEditable(int row, int column) {
-		        return column == 5; 
-		    }
+			public boolean isCellEditable(int row, int column) {
+				return column == 5; 
+			}
 		};
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
 		JTable clientes_table = new JTable(modeloClientes);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloClientes);
 		clientes_table.setRowSorter(sorter);
-		
+
 		/*Agregamos el metodo para que el campo de texto busqueda filtre en tiempo real la tabla 
 		mediante un DocumentListener*/
 		busqueda.getDocument().addDocumentListener(new DocumentListener() {
-		    @Override
-		    public void insertUpdate(DocumentEvent e) { buscar(); }
-		    @Override
-		    public void removeUpdate(DocumentEvent e) { buscar(); }
-		    @Override
-		    public void changedUpdate(DocumentEvent e) { buscar(); }
+			@Override
+			public void insertUpdate(DocumentEvent e) { buscar(); }
+			@Override
+			public void removeUpdate(DocumentEvent e) { buscar(); }
+			@Override
+			public void changedUpdate(DocumentEvent e) { buscar(); }
 
-		    private void buscar() {
-		        String textoBusqueda = busqueda.getText();
+			private void buscar() {
+				String textoBusqueda = busqueda.getText();
 
-		        // Si la barra está vacía o tiene el texto por defecto, mostramos toda la tabla
-		        if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar Cliente")) {
-		            sorter.setRowFilter(null);
-		        } else {
-		            // El "(?i)" sirve para que la búsqueda ignore mayúsculas y minúsculas
-		            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
-		        }
-		    }
+				// Si la barra está vacía o tiene el texto por defecto, mostramos toda la tabla
+				if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar Cliente")) {
+					sorter.setRowFilter(null);
+				} else {
+					// El "(?i)" sirve para que la búsqueda ignore mayúsculas y minúsculas
+					sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
+				}
+			}
 		});
-		
+
 		//Agregamos un Focus listener para que al ingresar texto se desaparezca el texto por defecto como un placeHolder
 		busqueda.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (busqueda.getText().equals("Buscar Cliente")) {
-		            busqueda.setText(""); // Vaciar la caja
-		        }
-		    }
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (busqueda.getText().equals("Buscar Cliente")) {
+					busqueda.setText(""); // Vaciar la caja
+				}
+			}
 
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (busqueda.getText().isEmpty()) {
-		            busqueda.setText("Buscar Cliente"); // Restaurar el mensaje
-		        }
-		    }
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (busqueda.getText().isEmpty()) {
+					busqueda.setText("Buscar Cliente"); // Restaurar el mensaje
+				}
+			}
 		});
-		
-		
+
+
 		//creacion y customización del scroll pane
 		JScrollPane scrollPane = new JScrollPane(clientes_table);
 		scrollPane.getVerticalScrollBar().setUI(new ScrollBarCustom());
@@ -334,7 +336,7 @@ public class ClientView {
 		ImageIcon iconOpciones = new ImageIcon(getClass().getResource("/Iconos/acciones/acciones.png"));
 		Image imgOpciones = iconOpciones.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
 		ImageIcon btnPrincipal = new ImageIcon(imgOpciones);
-		
+
 		//Cargamos los iconos del submenu (editar,descargar pdf y mostrar el historial del cliente, ademas de eliminar)
 		ImageIcon iconVer = new ImageIcon(getClass().getResource("/Iconos/acciones/historial.png"));
 		ImageIcon iconEditar = new ImageIcon(getClass().getResource("/Iconos/acciones/editar.png"));
@@ -347,18 +349,18 @@ public class ClientView {
 		ImageIcon btnDescargar = new ImageIcon(iconDescargar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		//Agregamos botones customizados con popup a la 5ta columna de la tabla y personalizamos la columna	
 		clientes_table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
-		clientes_table.getColumnModel().getColumn(5).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Clientes"));
+		clientes_table.getColumnModel().getColumn(5).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Clientes",clientes_table));
 		clientes_table.setRowHeight(40);
 		clientes_table.getColumnModel().getColumn(5).setPreferredWidth(60);
 		clientes_table.setBackground(Color.decode("#D9D9D9"));
 		clientes_table.setShowVerticalLines(false);
 		clientes_table.setShowHorizontalLines(true);
 		tablaClientes.add(scrollPane, BorderLayout.CENTER);
-		
+
 		//Personalizacion de la tabla
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();//Render para centrar el texto
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		
+
 		for (int i = 0; i < 5; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
 			clientes_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
@@ -366,11 +368,11 @@ public class ClientView {
 		header.setBackground(Color.decode("#AFAFAF"));
 		header.setFont(new Font("Poppins", Font.BOLD, 18));
 		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();
-			headerRenderer.setOpaque(true);
-			headerRenderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		headerRenderer.setOpaque(true);
+		headerRenderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		header.setOpaque(true);
-		
-		
+
+
 		//Posicionamiento del boton en el GridBagLayout
 		gbc.gridx = 1;
 		gbc.gridy = 2;
@@ -383,17 +385,17 @@ public class ClientView {
 
 		return clientPanel;
 	}
-	
+
 	public void addClient() {
-        // Crear Ventana JDialog
-        JDialog ventana = new JDialog();
-        ventana.setModal(true);
-        ventana.setUndecorated(true);
-        ventana.setSize(1920, 1080);
-        ventana.setBackground(new Color(0, 0, 0, 120)); 
-        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        ventana.setLocationRelativeTo(null);
-        ventana.setLayout(null);
+		// Crear Ventana JDialog
+		JDialog ventana = new JDialog();
+		ventana.setModal(true);
+		ventana.setUndecorated(true);
+		ventana.setSize(1920, 1080);
+		ventana.setBackground(new Color(0, 0, 0, 120)); 
+		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		ventana.setLocationRelativeTo(null);
+		ventana.setLayout(null);
 		//Panel sobre el cual se trabajara
 		PanelRounded añadirCliente = new PanelRounded(20,true,true,true,true);
 		añadirCliente.setLayout(null);
@@ -422,7 +424,7 @@ public class ClientView {
 		nombre.setSize(70,25);
 		nombre.setLocation(80,130);
 		añadirCliente.add(nombre);
-		
+
 		TextFieldRounded campoNombre = new TextFieldRounded(20,20,true);
 		campoNombre.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoNombre.setForeground(Color.decode("#8B8B8B"));
@@ -431,23 +433,23 @@ public class ClientView {
 		campoNombre.setSize(280,40);
 		campoNombre.setLocation(80,160);
 		campoNombre.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (campoNombre.getText().equals("---")) {
-		        	campoNombre.setText(""); // Vaciar la caja
-		        	campoNombre.setForeground(Color.decode("#000000"));
-		        }
-		    }
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (campoNombre.getText().equals("---")) {
+					campoNombre.setText(""); // Vaciar la caja
+					campoNombre.setForeground(Color.decode("#000000"));
+				}
+			}
 
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (campoNombre.getText().isEmpty()) {
-		        	campoNombre.setText("---"); // Restaurar el mensaje
-		        	campoNombre.setForeground(Color.decode("#8B8B8B"));
-		        }
-		    }
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (campoNombre.getText().isEmpty()) {
+					campoNombre.setText("---"); // Restaurar el mensaje
+					campoNombre.setForeground(Color.decode("#8B8B8B"));
+				}
+			}
 		});
 		añadirCliente.add(campoNombre);
 		//Label correo y su respectivo campo de texto
@@ -459,7 +461,7 @@ public class ClientView {
 		correo.setSize(70,25);
 		correo.setLocation(80,230);
 		añadirCliente.add(correo);
-		
+
 		TextFieldRounded campoCorreo = new TextFieldRounded(20,20,true);
 		campoCorreo.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoCorreo.setForeground(Color.decode("#8B8B8B"));
@@ -468,23 +470,23 @@ public class ClientView {
 		campoCorreo.setSize(280,40);
 		campoCorreo.setLocation(80,260);
 		campoCorreo.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (campoCorreo.getText().equals("---")) {
-		        	campoCorreo.setText(""); // Vaciar la caja
-		        	campoCorreo.setForeground(Color.decode("#000000"));
-		        }
-		    }
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (campoCorreo.getText().equals("---")) {
+					campoCorreo.setText(""); // Vaciar la caja
+					campoCorreo.setForeground(Color.decode("#000000"));
+				}
+			}
 
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (campoCorreo.getText().isEmpty()) {
-		        	campoCorreo.setText("---"); // Restaurar el mensaje
-		        	campoCorreo.setForeground(Color.decode("#8B8B8B"));
-		        }
-		    }
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (campoCorreo.getText().isEmpty()) {
+					campoCorreo.setText("---"); // Restaurar el mensaje
+					campoCorreo.setForeground(Color.decode("#8B8B8B"));
+				}
+			}
 		});
 		añadirCliente.add(campoCorreo);
 		//Label telefono y su respectivo campo de texto
@@ -496,7 +498,7 @@ public class ClientView {
 		telefono.setSize(70,25);
 		telefono.setLocation(80,330);
 		añadirCliente.add(telefono);
-		
+
 		TextFieldRounded campoTelefono = new TextFieldRounded(20,20,true);
 		campoTelefono.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoTelefono.setForeground(Color.decode("#8B8B8B"));
@@ -505,26 +507,26 @@ public class ClientView {
 		campoTelefono.setSize(280,40);
 		campoTelefono.setLocation(80,360);
 		campoTelefono.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (campoTelefono.getText().equals("---")) {
-		        	campoTelefono.setText(""); // Vaciar la caja
-		        	campoTelefono.setForeground(Color.decode("#000000"));
-		        }
-		    }
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (campoTelefono.getText().equals("---")) {
+					campoTelefono.setText(""); // Vaciar la caja
+					campoTelefono.setForeground(Color.decode("#000000"));
+				}
+			}
 
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (campoTelefono.getText().isEmpty()) {
-		        	campoTelefono.setForeground(Color.decode("#8B8B8B"));
-		        	campoTelefono.setText("---"); // Restaurar el mensaje
-		        }
-		    }
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (campoTelefono.getText().isEmpty()) {
+					campoTelefono.setForeground(Color.decode("#8B8B8B"));
+					campoTelefono.setText("---"); // Restaurar el mensaje
+				}
+			}
 		});
 		añadirCliente.add(campoTelefono);
-		
+
 		JLabel titulofoto = new JLabel("foto");
 		titulofoto.setOpaque(false);
 		titulofoto.setForeground(Color.black);
@@ -533,7 +535,7 @@ public class ClientView {
 		titulofoto.setSize(70,25);
 		titulofoto.setLocation(400,130);
 		añadirCliente.add(titulofoto);
-		
+
 		//Contorno redondeado
 		LabelRounded foto = new LabelRounded("",20,Color.decode("#FFFFFF"));
 		foto.setOpaque(false);
@@ -541,12 +543,12 @@ public class ClientView {
 		foto.setLocation(400,160);
 		foto.setPreferredSize(new Dimension(500,500));
 		foto.setBorder(BorderFactory.createCompoundBorder(
-		        BorderFactory.createLineBorder(
-		                Color.black,3,true),
-		            BorderFactory.createEmptyBorder(10,20,10,00)
-		        ));
+				BorderFactory.createLineBorder(
+						Color.black,3,true),
+				BorderFactory.createEmptyBorder(10,20,10,00)
+				));
 		añadirCliente.add(foto);
-		
+
 		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
 		cancelarCliente.setSize(150,60);
 		cancelarCliente.setLocation(150,500);
@@ -555,38 +557,38 @@ public class ClientView {
 		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
 		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		cancelarCliente.addActionListener(e->{
-        	ventana.dispose();
-     
+			ventana.dispose();
+
 		});
 		añadirCliente.add(cancelarCliente);
-		
+
 		ButtonRounded registrarCliente = new ButtonRounded("Registrar cliente",10,1);
 		registrarCliente.setOpaque(false);
 		registrarCliente.setForeground(Color.white);
 		registrarCliente.setHorizontalAlignment(JLabel.CENTER);
 		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarCliente.addActionListener(e->{
-        	ventana.dispose();
+			ventana.dispose();
 		});
 		registrarCliente.setSize(200,60);
 		registrarCliente.setLocation(350,500);
 		añadirCliente.add(registrarCliente);
-		
+
 		ventana.revalidate();
 		ventana.repaint();
 		ventana.setVisible(true);
 	}
 
 	public void editClient() {
-        // Crear Ventana
-        JDialog ventana = new JDialog();
-        ventana.setModal(true);
-        ventana.setUndecorated(true);
-        ventana.setSize(1920, 1080);
-        ventana.setBackground(new Color(0, 0, 0, 120)); 
-        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        ventana.setLocationRelativeTo(null);
-        ventana.setLayout(null);
+		// Crear Ventana
+		JDialog ventana = new JDialog();
+		ventana.setModal(true);
+		ventana.setUndecorated(true);
+		ventana.setSize(1920, 1080);
+		ventana.setBackground(new Color(0, 0, 0, 120)); 
+		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		ventana.setLocationRelativeTo(null);
+		ventana.setLayout(null);
 		//Panel sobre el cual se trabajara
 		PanelRounded editarCliente = new PanelRounded(20,true,true,true,true);
 		editarCliente.setLayout(null);
@@ -615,7 +617,7 @@ public class ClientView {
 		nombre.setSize(70,25);
 		nombre.setLocation(80,130);
 		editarCliente.add(nombre);
-		
+
 		TextFieldRounded campoNombre = new TextFieldRounded(20,20,true);
 		campoNombre.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoNombre.setForeground(Color.decode("#8B8B8B"));
@@ -624,23 +626,23 @@ public class ClientView {
 		campoNombre.setSize(280,40);
 		campoNombre.setLocation(80,160);
 		campoNombre.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (campoNombre.getText().equals("---")) {
-		        	campoNombre.setText(""); // Vaciar la caja
-		        	campoNombre.setForeground(Color.decode("#000000"));
-		        }
-		    }
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (campoNombre.getText().equals("---")) {
+					campoNombre.setText(""); // Vaciar la caja
+					campoNombre.setForeground(Color.decode("#000000"));
+				}
+			}
 
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (campoNombre.getText().isEmpty()) {
-		        	campoNombre.setText("---"); // Restaurar el mensaje
-		        	campoNombre.setForeground(Color.decode("#8B8B8B"));
-		        }
-		    }
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (campoNombre.getText().isEmpty()) {
+					campoNombre.setText("---"); // Restaurar el mensaje
+					campoNombre.setForeground(Color.decode("#8B8B8B"));
+				}
+			}
 		});
 		editarCliente.add(campoNombre);
 		//Label correo y su respectivo campo de texto
@@ -652,7 +654,7 @@ public class ClientView {
 		correo.setSize(70,25);
 		correo.setLocation(80,230);
 		editarCliente.add(correo);
-		
+
 		TextFieldRounded campoCorreo = new TextFieldRounded(20,20,true);
 		campoCorreo.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoCorreo.setForeground(Color.decode("#8B8B8B"));
@@ -661,23 +663,23 @@ public class ClientView {
 		campoCorreo.setSize(280,40);
 		campoCorreo.setLocation(80,260);
 		campoCorreo.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (campoCorreo.getText().equals("---")) {
-		        	campoCorreo.setText(""); // Vaciar la caja
-		        	campoCorreo.setForeground(Color.decode("#000000"));
-		        }
-		    }
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (campoCorreo.getText().equals("---")) {
+					campoCorreo.setText(""); // Vaciar la caja
+					campoCorreo.setForeground(Color.decode("#000000"));
+				}
+			}
 
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (campoCorreo.getText().isEmpty()) {
-		        	campoCorreo.setText("---"); // Restaurar el mensaje
-		        	campoCorreo.setForeground(Color.decode("#8B8B8B"));
-		        }
-		    }
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (campoCorreo.getText().isEmpty()) {
+					campoCorreo.setText("---"); // Restaurar el mensaje
+					campoCorreo.setForeground(Color.decode("#8B8B8B"));
+				}
+			}
 		});
 		editarCliente.add(campoCorreo);
 		//Label telefono y su respectivo campo de texto
@@ -689,7 +691,7 @@ public class ClientView {
 		telefono.setSize(70,25);
 		telefono.setLocation(80,330);
 		editarCliente.add(telefono);
-		
+
 		TextFieldRounded campoTelefono = new TextFieldRounded(20,20,true);
 		campoTelefono.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoTelefono.setForeground(Color.decode("#8B8B8B"));
@@ -698,26 +700,26 @@ public class ClientView {
 		campoTelefono.setSize(280,40);
 		campoTelefono.setLocation(80,360);
 		campoTelefono.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (campoTelefono.getText().equals("---")) {
-		        	campoTelefono.setText(""); // Vaciar la caja
-		        	campoTelefono.setForeground(Color.decode("#000000"));
-		        }
-		    }
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (campoTelefono.getText().equals("---")) {
+					campoTelefono.setText(""); // Vaciar la caja
+					campoTelefono.setForeground(Color.decode("#000000"));
+				}
+			}
 
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (campoTelefono.getText().isEmpty()) {
-		        	campoTelefono.setForeground(Color.decode("#8B8B8B"));
-		        	campoTelefono.setText("---"); // Restaurar el mensaje
-		        }
-		    }
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (campoTelefono.getText().isEmpty()) {
+					campoTelefono.setForeground(Color.decode("#8B8B8B"));
+					campoTelefono.setText("---"); // Restaurar el mensaje
+				}
+			}
 		});
 		editarCliente.add(campoTelefono);
-		
+
 		JLabel titulofoto = new JLabel("foto");
 		titulofoto.setOpaque(false);
 		titulofoto.setForeground(Color.black);
@@ -726,7 +728,7 @@ public class ClientView {
 		titulofoto.setSize(70,25);
 		titulofoto.setLocation(400,130);
 		editarCliente.add(titulofoto);
-		
+
 		//Contorno redondeado
 		LabelRounded foto = new LabelRounded("",20,Color.decode("#FFFFFF"));
 		foto.setOpaque(false);
@@ -734,12 +736,12 @@ public class ClientView {
 		foto.setLocation(400,160);
 		foto.setPreferredSize(new Dimension(500,500));
 		foto.setBorder(BorderFactory.createCompoundBorder(
-		        BorderFactory.createLineBorder(
-		                Color.black,3,true),
-		            BorderFactory.createEmptyBorder(10,20,10,00)
-		        ));
+				BorderFactory.createLineBorder(
+						Color.black,3,true),
+				BorderFactory.createEmptyBorder(10,20,10,00)
+				));
 		editarCliente.add(foto);
-		
+
 		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
 		cancelarCliente.setSize(150,60);
 		cancelarCliente.setLocation(150,500);
@@ -748,38 +750,38 @@ public class ClientView {
 		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
 		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		cancelarCliente.addActionListener(e->{
-        	ventana.dispose();
-     
+			ventana.dispose();
+
 		});
 		editarCliente.add(cancelarCliente);
-		
+
 		ButtonRounded registrarCliente = new ButtonRounded("Guardar Cambios",10,1);
 		registrarCliente.setOpaque(false);
 		registrarCliente.setForeground(Color.white);
 		registrarCliente.setHorizontalAlignment(JLabel.CENTER);
 		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarCliente.addActionListener(e->{
-        	ventana.dispose();
+			ventana.dispose();
 		});
 		registrarCliente.setSize(200,60);
 		registrarCliente.setLocation(350,500);
 		editarCliente.add(registrarCliente);
-		
+
 		ventana.revalidate();
 		ventana.repaint();
 		ventana.setVisible(true);
 	}
 
 	public void detailClient() {
-		 // Crear Ventana JDialog
-        JDialog ventana = new JDialog();
-        ventana.setModal(true);
-        ventana.setUndecorated(true);
-        ventana.setSize(1920, 1080);
-        ventana.setBackground(new Color(0, 0, 0, 120)); 
-        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        ventana.setLocationRelativeTo(null);
-        ventana.setLayout(null);
+		// Crear Ventana JDialog
+		JDialog ventana = new JDialog();
+		ventana.setModal(true);
+		ventana.setUndecorated(true);
+		ventana.setSize(1920, 1080);
+		ventana.setBackground(new Color(0, 0, 0, 120)); 
+		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		ventana.setLocationRelativeTo(null);
+		ventana.setLayout(null);
 		//Panel sobre el cual se trabajara
 		PanelRounded detallesCliente = new PanelRounded(20,true,true,true,true);
 		detallesCliente.setLayout(null);
@@ -808,7 +810,7 @@ public class ClientView {
 		nombre.setSize(70,25);
 		nombre.setLocation(80,130);
 		detallesCliente.add(nombre);
-		
+
 		TextFieldRounded campoNombre = new TextFieldRounded(20,20,true);
 		campoNombre.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoNombre.setForeground(Color.black);
@@ -818,7 +820,7 @@ public class ClientView {
 		campoNombre.setSize(280,40);
 		campoNombre.setLocation(80,160);
 		detallesCliente.add(campoNombre);
-		
+
 		//Label correo y su respectivo campo de texto
 		JLabel correo = new JLabel("Correo");
 		correo.setOpaque(false);
@@ -828,7 +830,7 @@ public class ClientView {
 		correo.setSize(70,25);
 		correo.setLocation(80,230);
 		detallesCliente.add(correo);
-		
+
 		TextFieldRounded campoCorreo = new TextFieldRounded(20,20,true);
 		campoCorreo.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoCorreo.setForeground(Color.black);
@@ -838,7 +840,7 @@ public class ClientView {
 		campoCorreo.setSize(280,40);
 		campoCorreo.setLocation(80,260);
 		detallesCliente.add(campoCorreo);
-		
+
 		//Label telefono y su respectivo campo de texto
 		JLabel telefono = new JLabel("Teléfono");
 		telefono.setOpaque(false);
@@ -848,7 +850,7 @@ public class ClientView {
 		telefono.setSize(70,25);
 		telefono.setLocation(80,330);
 		detallesCliente.add(telefono);
-		
+
 		TextFieldRounded campoTelefono = new TextFieldRounded(20,20,true);
 		campoTelefono.setFont(new Font("Poppins", Font.PLAIN, 15));
 		campoTelefono.setForeground(Color.black);
@@ -858,7 +860,7 @@ public class ClientView {
 		campoTelefono.setSize(280,40);
 		campoTelefono.setLocation(80,360);
 		detallesCliente.add(campoTelefono);
-		
+
 		JLabel titulofoto = new JLabel("foto");
 		titulofoto.setOpaque(false);
 		titulofoto.setForeground(Color.black);
@@ -867,7 +869,7 @@ public class ClientView {
 		titulofoto.setSize(70,25);
 		titulofoto.setLocation(400,130);
 		detallesCliente.add(titulofoto);
-		
+
 		//Contorno redondeado
 		LabelRounded foto = new LabelRounded("",20,Color.decode("#FFFFFF"));
 		foto.setOpaque(false);
@@ -875,12 +877,12 @@ public class ClientView {
 		foto.setLocation(400,160);
 		foto.setPreferredSize(new Dimension(500,500));
 		foto.setBorder(BorderFactory.createCompoundBorder(
-		        BorderFactory.createLineBorder(
-		                Color.black,3,true),
-		            BorderFactory.createEmptyBorder(10,20,10,00)
-		        ));
+				BorderFactory.createLineBorder(
+						Color.black,3,true),
+				BorderFactory.createEmptyBorder(10,20,10,00)
+				));
 		detallesCliente.add(foto);
-		
+
 		ButtonRounded volver = new ButtonRounded("Volver",10,5);
 		volver.setSize(150,60);
 		volver.setLocation(275,500);
@@ -889,13 +891,233 @@ public class ClientView {
 		volver.setHorizontalAlignment(JLabel.CENTER);
 		volver.setFont(new Font("Poppins",Font.BOLD,20));
 		volver.addActionListener(e->{
-        	ventana.dispose();
-     
+			ventana.dispose();
+
 		});
 		detallesCliente.add(volver);
-		
+
 		ventana.revalidate();
 		ventana.repaint();
+		ventana.setVisible(true);
+	}
+
+	public void historialCliente() {
+		JDialog ventana = new JDialog();
+		ventana.setModal(true);
+		ventana.setUndecorated(true);
+		ventana.setSize(1920, 1080);
+		ventana.setBackground(new Color(0, 0, 0, 120)); 
+		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		ventana.setLocationRelativeTo(null);
+		ventana.setLayout(null);
+		//Panel sobre el cual se trabajara
+		PanelRounded detallesCliente = new PanelRounded(20,true,true,true,true);
+		detallesCliente.setLayout(null);
+		detallesCliente.setSize(1720,990);
+		detallesCliente.setLocation(100,50);
+		detallesCliente.setBackground(Color.white);
+		detallesCliente.setOpaque(false);
+		ventana.add(detallesCliente);
+
+		LabelRounded etiquetaHistorial = new LabelRounded("HISTORIAL DEL CLIENTE", 10, Color.decode("#000D56"));
+		etiquetaHistorial.setBounds(0, 0, 1720, 50);
+		etiquetaHistorial.setOpaque(false);
+		etiquetaHistorial.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		etiquetaHistorial.setForeground(Color.WHITE);
+		etiquetaHistorial.setHorizontalAlignment(JLabel.LEFT);
+		etiquetaHistorial.setFont(new Font("Poppins",Font.BOLD,25));
+		detallesCliente.add(etiquetaHistorial);
+
+		PanelRounded barraBusqueda = new PanelRounded(10,true,true,true,true);
+		barraBusqueda.setLayout(new BorderLayout());
+		barraBusqueda.setSize(200,50);
+		barraBusqueda.setLocation(100,100);
+		barraBusqueda.setBackground(Color.white);
+		barraBusqueda.setOpaque(false);
+		detallesCliente.add(barraBusqueda);
+
+		//Icono de la barra de busqueda
+		ImageIcon busquedaIcon = new ImageIcon(getClass().getResource("/Iconos/adicionales/buscar.png"));
+		//Escalamos la imagen y la asignamos a un ImageIcon
+		Image imagenEscalada = busquedaIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+		ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
+		JLabel labelIcono = new JLabel(iconoEscalado);
+		labelIcono.setBounds(100, 100, 18, 18);
+		barraBusqueda.add(labelIcono, BorderLayout.WEST);
+
+		//Creacion del campo de texto para la barra de busqueda de clientes
+		TextFieldRounded busqueda = new TextFieldRounded(10, 10,true);
+		busqueda.setFont(new Font("Poppins", Font.PLAIN, 15));
+		busqueda.setBounds(120, 100, 150, 50);
+		busqueda.setForeground(Color.decode("#8B8B8B"));
+		busqueda.setOpaque(false);
+		busqueda.setText("Buscar");
+		busqueda.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (busqueda.getText().equals("Buscar")) {
+					busqueda.setText(""); // Vaciar la caja
+					busqueda.setForeground(Color.decode("#000000"));
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (busqueda.getText().isEmpty()) {
+					busqueda.setText("Buscar"); // Restaurar el mensaje
+					busqueda.setForeground(Color.decode("#8B8B8B"));
+				}
+			}
+		});
+		barraBusqueda.add(busqueda,BorderLayout.CENTER);
+
+		PanelRounded panelOrdenar = new PanelRounded(10, true, true, true, true);
+		panelOrdenar.setBackground(Color.decode("#AFAFAF"));
+		panelOrdenar.setOpaque(false);
+		panelOrdenar.setBounds(1300, 100, 150, 50);
+		panelOrdenar.setBorder(null);
+		panelOrdenar.setLayout(new BorderLayout());
+		detallesCliente.add(panelOrdenar);
+
+		//Creacion de un arreglo para introducir cada copcion dentro de un ComboBox
+		String[] Ordenamientos = {"TODOS", "Fecha Inicio", "Fecha Final", "Estado"};
+		ComboBoxRounded<String> list = new ComboBoxRounded<>(Ordenamientos);
+		//Personalizacion del comboBox
+		list.setFont(new Font("Poppins", Font.BOLD, 15));
+		panelOrdenar.add(list, BorderLayout.CENTER);
+
+		//Panel para filtros avanzados
+		PanelRounded panelFiltros = new PanelRounded(10, true, true, true, true);
+		panelFiltros.setOpaque(false);
+		panelFiltros.setBounds(1500, 100, 120, 50);
+		panelFiltros.setBackground(Color.decode("#AFAFAF"));
+		panelFiltros.setBorder(null);
+		panelFiltros.setLayout(new BorderLayout());
+		detallesCliente.add(panelFiltros);
+		//Creacion boton filtros con icono
+		ButtonRounded filtros = new ButtonRounded("Filtros",10,4);
+		URL url = getClass().getResource("/iconos/adicionales/filtros.png");//Carga ubi imagen
+
+		if (url != null) {
+			filtros.setIcon(new ImageIcon(url));
+		}
+		//Personalizacion
+		filtros.setPreferredSize(new Dimension(60,30));
+		filtros.setFont(new Font("Poppins",Font.BOLD,15));
+		filtros.setHorizontalAlignment(JLabel.CENTER);  
+		filtros.setIconTextGap(10);                      
+		filtros.setHorizontalTextPosition(JLabel.LEFT);
+		panelFiltros.add(filtros, BorderLayout.CENTER);
+
+		PanelRounded panelTabla = new PanelRounded(10, true, true, true, true);
+		panelTabla.setOpaque(false);
+		panelTabla.setBounds(100, 180, 1520, 700);
+		panelTabla.setBackground(Color.white);
+		panelTabla.setBorder(null);
+		panelTabla.setLayout(new BorderLayout());
+		detallesCliente.add(panelTabla);
+
+		//Creacion de un arreglo de opciones  para los apartados de una tabla
+		Object [] table_head = {"Vehiculo","Feha Inicio","Fecha Fin","Estado"};
+		//Creacion de una matriz para los datos de una tabla 
+		Object [][] table_content = {
+				{"Corolla", "01/03/2024", "05/03/2024", "Finalizado"},
+				{"CR-V", "04/05/2024", "18/05/2024", "Finalizado"},
+				{"Sentra", "12/04/2024", "15/04/2024", "Finalizado"},
+		};
+
+		DefaultTableModel modeloCliente = new DefaultTableModel(table_content,table_head){
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false; // Ninguna celda será editable
+			}
+		};
+		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
+		JTable clientes_table = new JTable(modeloCliente);
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloCliente);
+		clientes_table.setRowSorter(sorter);
+
+		busqueda.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) { buscar(); }
+			@Override
+			public void removeUpdate(DocumentEvent e) { buscar(); }
+			@Override
+			public void changedUpdate(DocumentEvent e) { buscar(); }
+
+			private void buscar() {
+				String textoBusqueda = busqueda.getText();
+
+				// Si la barra está vacía o tiene el texto por defecto, mostramos toda la tabla
+				if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar")) {
+					sorter.setRowFilter(null);
+				} else {
+					// El "(?i)" sirve para que la búsqueda ignore mayúsculas y minúsculas
+					sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
+				}
+			}
+		});
+
+		//Agregamos un Focus listener para que al ingresar texto se desaparezca el texto por defecto como un placeHolder
+		busqueda.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (busqueda.getText().equals("Buscar")) {
+					busqueda.setText(""); // Vaciamos la caja
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (busqueda.getText().isEmpty()) {
+					busqueda.setText("Buscar"); // Restauramos el mensaje
+				}
+			}
+		});
+
+		//creacion y customización del scroll pane
+		JScrollPane scrollPane = new JScrollPane(clientes_table);
+		scrollPane.getVerticalScrollBar().setUI(new ScrollBarCustom());
+		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+		clientes_table.setRowHeight(40);
+		clientes_table.setBackground(Color.decode("#D9D9D9"));
+		clientes_table.setShowVerticalLines(false);
+		clientes_table.setShowHorizontalLines(true);
+		panelTabla.add(scrollPane, BorderLayout.CENTER);
+
+		//Personalizacion de la tabla
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();//Render para centrar el texto
+		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+		for (int i = 0; i < 4; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
+			clientes_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+		}
+
+		JTableHeader header = clientes_table.getTableHeader();
+		header.setBackground(Color.decode("#AFAFAF"));
+		header.setFont(new Font("Poppins", Font.BOLD, 18));
+		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();
+		headerRenderer.setOpaque(true);
+		headerRenderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		header.setOpaque(true);
+
+		ButtonRounded volver = new ButtonRounded("Salir",10,5);
+		volver.setBounds(785, 900,150, 50);
+		volver.setOpaque(false);
+		volver.setForeground(Color.WHITE);
+		volver.setHorizontalAlignment(JLabel.CENTER);
+		volver.setFont(new Font("Poppins",Font.BOLD,15));
+		volver.addActionListener(e->{
+			ventana.dispose();
+		});
+		detallesCliente.add(volver);
+
 		ventana.setVisible(true);
 	}
 }

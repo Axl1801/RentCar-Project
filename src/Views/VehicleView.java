@@ -405,7 +405,7 @@ public class VehicleView {
 		ImageIcon btnDescargar = new ImageIcon(iconDescargar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		//Agregamos botones customizados con popup a la 5ta columna de la tabla y personalizamos la columna	
 		clientes_table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
-		clientes_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Vehiculos"));
+		clientes_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Vehiculos",clientes_table));
 		clientes_table.setRowHeight(40);
 		clientes_table.getColumnModel().getColumn(7).setPreferredWidth(60);
 		clientes_table.setBackground(Color.decode("#D9D9D9"));
@@ -424,8 +424,8 @@ public class VehicleView {
 		header.setBackground(Color.decode("#AFAFAF"));
 		header.setFont(new Font("Poppins", Font.BOLD, 18));
 		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();
-			headerRenderer.setOpaque(true);
-			headerRenderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		headerRenderer.setOpaque(true);
+		headerRenderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		header.setOpaque(true);
 		
 		
@@ -581,7 +581,7 @@ public class VehicleView {
 		añadirVehiculo.add(tituloAño);
 		
 		String[] años = {"2025", "2024", "2023", "2022","2021","2020","2019", "2018", "2017", "2016", "2015"};
-		ComboBoxRounded<String> listAños = new ComboBoxRounded<>(categorias);
+		ComboBoxRounded<String> listAños = new ComboBoxRounded<>(años);
 		listAños.setFont(new Font("Poppins", Font.BOLD, 15));
 		listAños.setForeground(Color.black);
 		listAños.setOpaque(false);
@@ -947,7 +947,7 @@ public class VehicleView {
 		añadirVehiculo.add(tituloAño);
 		
 		String[] años = {"2025", "2024", "2023", "2022","2021","2020","2019", "2018", "2017", "2016", "2015"};
-		ComboBoxRounded<String> listAños = new ComboBoxRounded<>(categorias);
+		ComboBoxRounded<String> listAños = new ComboBoxRounded<>(años);
 		listAños.setFont(new Font("Poppins", Font.BOLD, 15));
 		listAños.setForeground(Color.black);
 		listAños.setOpaque(false);
@@ -1004,4 +1004,223 @@ public class VehicleView {
 		ventana.setVisible(true);
 	}
 
+	public void historialVehiculos() {
+        JDialog ventana = new JDialog();
+        ventana.setModal(true);
+        ventana.setUndecorated(true);
+        ventana.setSize(1920, 1080);
+        ventana.setBackground(new Color(0, 0, 0, 120)); 
+        ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        ventana.setLocationRelativeTo(null);
+        ventana.setLayout(null);
+		//Panel sobre el cual se trabajara
+		PanelRounded detallesCliente = new PanelRounded(20,true,true,true,true);
+		detallesCliente.setLayout(null);
+		detallesCliente.setSize(1720,990);
+		detallesCliente.setLocation(100,50);
+		detallesCliente.setBackground(Color.white);
+		detallesCliente.setOpaque(false);
+		ventana.add(detallesCliente);
+		
+		LabelRounded etiquetaHistorial = new LabelRounded("HISTORIAL DEL VEHICULO", 10, Color.decode("#000D56"));
+		etiquetaHistorial.setBounds(0, 0, 1720, 50);
+		etiquetaHistorial.setOpaque(false);
+		etiquetaHistorial.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		etiquetaHistorial.setForeground(Color.WHITE);
+		etiquetaHistorial.setHorizontalAlignment(JLabel.LEFT);
+		etiquetaHistorial.setFont(new Font("Poppins",Font.BOLD,25));
+		detallesCliente.add(etiquetaHistorial);
+		
+		PanelRounded barraBusqueda = new PanelRounded(10,true,true,true,true);
+		barraBusqueda.setLayout(new BorderLayout());
+		barraBusqueda.setSize(200,50);
+		barraBusqueda.setLocation(100,100);
+		barraBusqueda.setBackground(Color.white);
+		barraBusqueda.setOpaque(false);
+		detallesCliente.add(barraBusqueda);
+		
+		//Icono de la barra de busqueda
+		ImageIcon busquedaIcon = new ImageIcon(getClass().getResource("/Iconos/adicionales/buscar.png"));
+		//Escalamos la imagen y la asignamos a un ImageIcon
+		Image imagenEscalada = busquedaIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+		ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
+		JLabel labelIcono = new JLabel(iconoEscalado);
+		labelIcono.setBounds(100, 100, 18, 18);
+		barraBusqueda.add(labelIcono, BorderLayout.WEST);
+		
+		//Creacion del campo de texto para la barra de busqueda de clientes
+		TextFieldRounded busqueda = new TextFieldRounded(10, 10,true);
+		busqueda.setFont(new Font("Poppins", Font.PLAIN, 15));
+		busqueda.setBounds(120, 100, 150, 50);
+		busqueda.setForeground(Color.decode("#8B8B8B"));
+		busqueda.setOpaque(false);
+		busqueda.setText("Buscar");
+		busqueda.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (busqueda.getText().equals("Buscar")) {
+		        	busqueda.setText(""); // Vaciar la caja
+		        	busqueda.setForeground(Color.decode("#000000"));
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (busqueda.getText().isEmpty()) {
+		        	busqueda.setText("Buscar"); // Restaurar el mensaje
+		        	busqueda.setForeground(Color.decode("#8B8B8B"));
+		        }
+		    }
+		});
+		barraBusqueda.add(busqueda,BorderLayout.CENTER);
+		
+		PanelRounded panelOrdenar = new PanelRounded(10, true, true, true, true);
+		panelOrdenar.setBackground(Color.decode("#AFAFAF"));
+		panelOrdenar.setOpaque(false);
+		panelOrdenar.setBounds(1300, 100, 150, 50);
+		panelOrdenar.setBorder(null);
+		panelOrdenar.setLayout(new BorderLayout());
+		detallesCliente.add(panelOrdenar);
+		
+		//Creacion de un arreglo para introducir cada copcion dentro de un ComboBox
+		String[] Ordenamientos = {"TODOS", "Fecha Inicio", "Fecha Final", "Estado"};
+		ComboBoxRounded<String> list = new ComboBoxRounded<>(Ordenamientos);
+		//Personalizacion del comboBox
+		list.setFont(new Font("Poppins", Font.BOLD, 15));
+		panelOrdenar.add(list, BorderLayout.CENTER);
+		
+		//Panel para filtros avanzados
+		PanelRounded panelFiltros = new PanelRounded(10, true, true, true, true);
+		panelFiltros.setOpaque(false);
+		panelFiltros.setBounds(1500, 100, 120, 50);
+		panelFiltros.setBackground(Color.decode("#AFAFAF"));
+		panelFiltros.setBorder(null);
+		panelFiltros.setLayout(new BorderLayout());
+		detallesCliente.add(panelFiltros);
+		//Creacion boton filtros con icono
+		ButtonRounded filtros = new ButtonRounded("Filtros",10,4);
+        URL url = getClass().getResource("/iconos/adicionales/filtros.png");//Carga ubi imagen
+	    
+	    if (url != null) {
+	    	filtros.setIcon(new ImageIcon(url));
+	    }
+	    //Personalizacion
+	    filtros.setPreferredSize(new Dimension(60,30));
+		filtros.setFont(new Font("Poppins",Font.BOLD,15));
+		filtros.setHorizontalAlignment(JLabel.CENTER);  
+		filtros.setIconTextGap(10);                      
+		filtros.setHorizontalTextPosition(JLabel.LEFT);
+		panelFiltros.add(filtros, BorderLayout.CENTER);
+		
+		PanelRounded panelTabla = new PanelRounded(10, true, true, true, true);
+		panelTabla.setOpaque(false);
+		panelTabla.setBounds(100, 180, 1520, 700);
+		panelTabla.setBackground(Color.white);
+		panelTabla.setBorder(null);
+		panelTabla.setLayout(new BorderLayout());
+		detallesCliente.add(panelTabla);
+		
+		//Creacion de un arreglo de opciones  para los apartados de una tabla
+		Object [] table_head = {"Nombre","Feha Inicio","Fecha Fin","Estado"};
+		//Creacion de una matriz para los datos de una tabla 
+		Object [][] table_content = {
+				{"Diego Ramirez", "01/03/2024", "05/03/2024", "Finalizado"},
+				{"Sofia Torres", "04/05/2024", "18/05/2024", "Finalizado"},
+				{"Valeria Cruz", "12/04/2024", "15/04/2024", "Finalizado"},
+		};
+		
+		DefaultTableModel modeloCliente = new DefaultTableModel(table_content,table_head){
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        return false; // Ninguna celda será editable
+		    }
+		};
+		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
+		JTable clientes_table = new JTable(modeloCliente);
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloCliente);
+		clientes_table.setRowSorter(sorter);
+		
+		busqueda.getDocument().addDocumentListener(new DocumentListener() {
+		    @Override
+		    public void insertUpdate(DocumentEvent e) { buscar(); }
+		    @Override
+		    public void removeUpdate(DocumentEvent e) { buscar(); }
+		    @Override
+		    public void changedUpdate(DocumentEvent e) { buscar(); }
+
+		    private void buscar() {
+		        String textoBusqueda = busqueda.getText();
+
+		        // Si la barra está vacía o tiene el texto por defecto, mostramos toda la tabla
+		        if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar")) {
+		            sorter.setRowFilter(null);
+		        } else {
+		            // El "(?i)" sirve para que la búsqueda ignore mayúsculas y minúsculas
+		            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
+		        }
+		    }
+		});
+		
+		//Agregamos un Focus listener para que al ingresar texto se desaparezca el texto por defecto como un placeHolder
+		busqueda.addFocusListener(new FocusAdapter() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        // Cuando el usuario hace clic en la caja
+		        if (busqueda.getText().equals("Buscar")) {
+		            busqueda.setText(""); // Vaciamos la caja
+		        }
+		    }
+
+		    @Override
+		    public void focusLost(FocusEvent e) {
+		        // Cuando el usuario hace clic en otro lado
+		        if (busqueda.getText().isEmpty()) {
+		            busqueda.setText("Buscar"); // Restauramos el mensaje
+		        }
+		    }
+		});
+		
+		//creacion y customización del scroll pane
+		JScrollPane scrollPane = new JScrollPane(clientes_table);
+		scrollPane.getVerticalScrollBar().setUI(new ScrollBarCustom());
+		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		
+		clientes_table.setRowHeight(40);
+		clientes_table.setBackground(Color.decode("#D9D9D9"));
+		clientes_table.setShowVerticalLines(false);
+		clientes_table.setShowHorizontalLines(true);
+		panelTabla.add(scrollPane, BorderLayout.CENTER);
+		
+		//Personalizacion de la tabla
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();//Render para centrar el texto
+		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		for (int i = 0; i < 4; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
+			clientes_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+		}
+		
+		JTableHeader header = clientes_table.getTableHeader();
+		header.setBackground(Color.decode("#AFAFAF"));
+		header.setFont(new Font("Poppins", Font.BOLD, 18));
+		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();
+		headerRenderer.setOpaque(true);
+		headerRenderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		header.setOpaque(true);
+		
+		ButtonRounded volver = new ButtonRounded("Salir",10,5);
+		volver.setBounds(785, 900,150, 50);
+		volver.setOpaque(false);
+		volver.setForeground(Color.WHITE);
+		volver.setHorizontalAlignment(JLabel.CENTER);
+		volver.setFont(new Font("Poppins",Font.BOLD,15));
+		volver.addActionListener(e->{
+			ventana.dispose();
+		});
+		detallesCliente.add(volver);
+		
+		ventana.setVisible(true);
+	}
 }
