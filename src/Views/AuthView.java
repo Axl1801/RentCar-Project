@@ -266,7 +266,7 @@ public class AuthView {
 					flag1 = true;
 				}
 
-				if(correoCampo.getText().equals("") || correoCampo.getText().equals("admin@PazDrive.com1	11") ) {//verificacion vacia y mostrar etiqueta error
+				if(correoCampo.getText().equals("")) {//verificacion vacia y mostrar etiqueta error
 					correoCampo.setBorder(BorderFactory.createLineBorder(Color.red,2,true));
 					correoCampo.setBackground(Color.decode("#FFCFCF"));
 					Alerts sh = new Alerts(); //metodo para mostrar alerta error
@@ -277,7 +277,7 @@ public class AuthView {
 				}
 
 				if(flag1 && flag2) {
-					if(model.login(correoCampo.getText(), passText) || (correoCampo.getText().equals("1") && passText.equals("1"))){ //verificaicon con BD temporal
+					if(model.login(correoCampo.getText(), passText) ){ //verificaicon con BD temporal
 
 						ventana.dispose();//eliminar ventana
 						HomeController hm = new HomeController(); //llamar al homeController y la vista

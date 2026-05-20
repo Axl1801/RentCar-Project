@@ -12,7 +12,7 @@ public class ClientModel {
 
 	}
 
-	public boolean login(String user, String password) {
+	public boolean login(String usuario, String contrasena) {
 
 		String query = "SELECT * FROM users WHERE username = ? AND password = ?";
 
@@ -28,8 +28,8 @@ public class ClientModel {
 					""
 					);
 			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setString(1, user.trim());
-			ps.setString(2, password.trim());
+			ps.setString(1, usuario.trim());
+			ps.setString(2, contrasena.trim());
 
 			ResultSet rs = ps.executeQuery();
 
