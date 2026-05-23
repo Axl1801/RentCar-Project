@@ -30,11 +30,17 @@ public class ClientController {
 		cv.historialCliente();
 	}
 
-	public boolean addClient(String e, String p, String n)
+	public boolean addClient(String e, String n, String p)
 	{
-		boolean flag = model.make(e, p, n);
+		boolean flag = model.make(e, n, p);
 		
 		return flag;
+	}
+	
+	public boolean update(int i, String e, String n, String p) {
+		boolean flag = model.update(i, e, n, p); 
+		return flag;
+		
 	}
 
 }

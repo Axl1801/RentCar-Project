@@ -141,6 +141,52 @@ public class ClientModel {
 			return false;	 
 	    }
 	 
+	 public boolean update(int id_cliente, String email, String name, String phone) {
+		 String query = "UPDATE `Clientes` SET `name` = ?, `email` = ?, `phone` = ? WHERE `id_cliente` = ?;";
+		 Properties propiedades = new Properties();
+		 Connection conn = null;						
+		 
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+				
+				propiedades.load(entrada);				
+				String url = propiedades.getProperty("db.url");
+	            String user = propiedades.getProperty("db.user");
+	            String contra = propiedades.getProperty("db.password");
+	            
+	            try {
+	    			Class.forName("com.mysql.cj.jdbc.Driver");
+	    			conn = DriverManager.getConnection(url, user, contra);
+
+	    			PreparedStatement ps = conn.prepareStatement(query);
+	    			ps.setString(1, name);
+	                ps.setString(2, email);
+	                ps.setString(3, phone);
+	                ps.setInt(4, id_cliente);
+
+	    			int rowsAffected = ps.executeUpdate();
+	    			
+	    			if (rowsAffected > 0)
+	    			{	    				
+	    				ps.close();
+	    				conn.close();	    				
+	    				return true;
+	    			}
+	    			ps.close();
+	    			conn.close();
+	    		} catch (Exception e) {
+	    			e.printStackTrace();
+	    		}
+	    		finally {
+	    			try {
+	    				conn.close();
+	    			}catch(Exception e) {}
+	    		}
+	    		
+			} catch (IOException e) {
+	            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
+	        }  		 
+		return false;		 
+	 }
 	 
 	 	public int getId() {
 		    return this.id;
