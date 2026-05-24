@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.sql.Date;
+import java.util.concurrent.TimeUnit;
 
 public class RentModel {
 
@@ -202,6 +203,70 @@ public class RentModel {
 		return false;	 
     }
 
+    public BigDecimal calcularCostoTotal(int id_vehiculo, int id_origen, int id_destino, Date inicio_renta, Date fin_renta) {
+    	BigDecimal costoTotal = BigDecimal.ZERO;
+    	Connection conn = null;
+    	Properties propiedades = new Properties();
+
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+    		propiedades.load(entrada);
+    		String url = propiedades.getProperty("db.url");
+    		String user = propiedades.getProperty("db.user");
+    		String contra = propiedades.getProperty("db.password");
+
+    		Class.forName("com.mysql.cj.jdbc.Driver");
+    		conn = DriverManager.getConnection(url, user, contra);
+
+    		long diffEnMilisegundos = Math.abs(fin_renta.getTime() - inicio_renta.getTime());
+    		long dias = TimeUnit.DAYS.convert(diffEnMilisegundos, TimeUnit.MILLISECONDS);
+         
+    		if (dias == 0) dias = 1; 
+
+    		BigDecimal precioPorDia = BigDecimal.ZERO;
+    		String queryVehiculo = "SELECT precio_dia FROM Vehiculos WHERE id_vehiculo = ?";
+    		try (PreparedStatement psVehiculo = conn.prepareStatement(queryVehiculo)) {
+    			psVehiculo.setInt(1, id_vehiculo);
+    			try (ResultSet rsVehiculo = psVehiculo.executeQuery()) {
+    				if (rsVehiculo.next()) {
+    					precioPorDia = rsVehiculo.getBigDecimal("precio_dia");
+    				}
+    			}
+    		}
+
+    		BigDecimal costoBase = precioPorDia.multiply(BigDecimal.valueOf(dias));
+    		BigDecimal costoDistancia = BigDecimal.ZERO;
+
+    		if (id_origen != id_destino) {
+    			double distanciaKm = 0.0;
+    			String queryRuta = "SELECT SUM(weight) FROM motor_rutas WHERE latch = 'dijkstra' AND origid = ? AND destid = ?";
+             
+    			try (PreparedStatement psRuta = conn.prepareStatement(queryRuta)) {
+    				psRuta.setInt(1, id_origen);
+    				psRuta.setInt(2, id_destino);
+    				try (ResultSet rsRuta = psRuta.executeQuery()) {
+    					if (rsRuta.next()) {
+    						distanciaKm = rsRuta.getDouble(1);
+    					}
+    				}
+    			}
+    			this.distancia_recorrida = distanciaKm;
+    			costoDistancia = BigDecimal.valueOf(distanciaKm * 3.0);
+    			System.out.println("Distancia: " + distanciaKm + "Cargo: " + costoDistancia);
+    		}
+
+    		costoTotal = costoBase.add(costoDistancia);
+    		System.out.println("Costo Base: " + costoBase + " Cargo Distancia: " + costoDistancia + " Total: " + costoTotal);
+         
+    	} catch (Exception e) {
+    		System.out.println("Error al calcular el costo total: " + e.getMessage());
+    		e.printStackTrace();
+    	} finally {
+    		try { if (conn != null) conn.close(); } catch (Exception e) {}
+    	}
+
+    	return costoTotal;
+    }
+    
     public int getId_renta() { 
     	return id_renta; 
     	}
