@@ -67,7 +67,7 @@ public class AuthModel {
     		}
     		
 		} catch (IOException e) {
-            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
+            System.out.println("Error al leer el archivo de configuración: " + e);
         }  
 		
 		return false;

@@ -283,7 +283,7 @@ public class AuthView {
 						HomeController hm = new HomeController(); //llamar al homeController y la vista
 						hm.Home();
 					}else {//mostrar error en caso de que los datos no coincidan con el registro de BD
-						contraseñaCampo.setBorder(BorderFactory.createLineBorder(Color.green,2,true));
+						contraseñaCampo.setBorder(BorderFactory.createLineBorder(Color.red,2,true));
 						contraseñaCampo.setBackground(Color.decode("#FFCFCF"));
 						correoCampo.setBorder(BorderFactory.createLineBorder(Color.red,2,true));
 						correoCampo.setBackground(Color.decode("#FFCFCF"));
@@ -302,6 +302,8 @@ public class AuthView {
 
 		//Agregamos el contenedor raiz a la ventana y aplicamos el setvisible
 		ventana.add(contenedor, BorderLayout.CENTER);
+		ventana.repaint();
+		ventana.revalidate();
 		ventana.setVisible(true);
 
 		//Metodo para posicionar la imagen del logotipo correctamente al cambiarla de tamaño
