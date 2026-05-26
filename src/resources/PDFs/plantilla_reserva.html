@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    @page {
+        size: A4;
+        margin: 20mm 15mm;
+    }
+    body {
+        font-family: 'Arial', sans-serif;
+        color: #334155;
+        line-height: 1.5;
+        font-size: 10pt;
+    }
+    .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-bottom: 3px solid #02143d;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+    }
+    .header-table td {
+        vertical-align: middle;
+    }
+    .brand-title {
+        font-size: 22pt;
+        font-weight: bold;
+        color: #02143d;
+    }
+    .ticket-id {
+        font-size: 14pt;
+        color: #b91c1c;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+    <table class="header-table">
+        <tr>
+            <td style="width: 60px;">
+                <svg width="50" height="50" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="#02143d" stroke-width="6"/>
+                    <path d="M50 5 L50 95 M5 50 L50 50" stroke="#02143d" stroke-width="6"/>
+                    <path d="M12 45 Q 20 20 30 40 T 48 15 L 48 45 Z" fill="#02143d"/>
+                </svg>
+            </td>
+            <td style="padding-left: 10px;">
+                <div class="brand-title">PAZ DRIVE</div>
+                <div style="color: #64748b; font-size: 9pt;">Renta de Vehículos y Logística</div>
+            </td>
+            <td style="text-align: right;">
+                <div style="font-size: 16pt; font-weight: bold;">RESERVA</div>
+                <div class="ticket-id">{{id_renta}}</div>
+            </td>
+        </tr>
+    </table>	
+	<style>
+	        .info-table {
+	            width: 100%;
+	            border-collapse: collapse;
+	            margin-bottom: 25px;
+	        }
+	        .info-table td {
+	            width: 50%;
+	            vertical-align: top;
+	        }
+	        h2 {
+	            font-size: 11pt;
+	            color: #02143d;
+	            border-bottom: 1px solid #cbd5e1;
+	            padding-bottom: 4px;
+	            margin-top: 0;
+	        }
+	        .lbl { font-weight: bold; color: #475569; }
+	    </style>
+
+	    <table class="info-table">
+	        <tr>
+	            <td style="padding-right: 15px;">
+	                <h2>Información del Cliente</h2>
+	                <p><span class="lbl">ID Cliente:</span> C-{{id_cliente}}</p>
+	                <p><span class="lbl">Nombre:</span> {{name}}</p>
+					<p><span class="lbl">Correo:</span> {{email}}</p>
+	                <p><span class="lbl">Teléfono:</span> {{phone}}</p>
+	            </td>
+	            <td style="padding-left: 15px;">
+	                <h2>Detalles de la Operación</h2>
+	                <p><span class="lbl">Fecha Inicio:</span> {{fecha_inicio}}</p>
+	                <p><span class="lbl">Fecha Fin:</span> {{fecha_fin}}</p>
+	                <p><span class="lbl">Estado:</span> <span style="color: #16a34a; font-weight: bold;">{{estado}}</span></p>
+	            </td>
+	        </tr>
+	    </table>
+		<style>
+		        table.content-table {
+		            width: 100%;
+		            border-collapse: collapse;
+		            margin-bottom: 25px;
+		        }
+		        table.content-table th {
+		            background-color: #02143d;
+		            color: #ffffff;
+		            font-weight: bold;
+		            padding: 8px;
+		            font-size: 9.5pt;
+		            text-align: left;
+		        }
+		        table.content-table td {
+		            padding: 8px;
+		            border: 1px solid #e2e8f0;
+		            vertical-align: middle;
+		        }
+		        .img-carro {
+		            width: 60px;
+		            height: 40px;
+		            object-fit: cover;
+		            border-radius: 4px;
+		            background-color: #f1f5f9;
+		        }
+		    </style>
+
+		    <h2>Vehículo Asignado</h2>
+		    <table class="content-table">
+		        <thead>
+		            <tr>
+		                <th style="width: 70px; text-align: center;">Foto</th>
+		                <th>ID</th>
+		                <th>Marca</th>
+		                <th>Modelo</th>
+						<th>Año</th>
+		                <th style="text-align: right;">Precio x Día</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            <tr>
+		                <td style="text-align: center;">
+		                    <img src="data:image/jpeg;base64,{{foto_vehiculo}}" class="img-carro" />
+		                </td>
+		                <td style="font-weight: bold;">V-{{id_vehiculo}}</td>
+		                <td>{{marca}}</td>
+		                <td>{{modelo}}</td>
+						<td>{{anio}}</td>
+		                <td style="text-align: right;">${{precio_dia}}</td>
+		            </tr>
+		        </tbody>
+		    </table>
+			<style>
+			        .total-box {
+			            background-color: #f1f5f9;
+			            border: 1px solid #cbd5e1;
+			            padding: 12px;
+			            border-radius: 4px;
+			            width: 250px;
+			            margin-left: auto; /* Alínea la cajita a la derecha */
+			        }
+			        .total-row {
+			            margin-bottom: 6px;
+			        }
+			        .total-row:last-child {
+			            margin-bottom: 0;
+			            border-top: 1px solid #cbd5e1;
+			            padding-top: 6px;
+			            font-size: 11pt;
+			            font-weight: bold;
+			            color: #02143d;
+			        }
+			    </style>
+
+			    <h2>Desglose de Cargos</h2>
+			    <table class="content-table">
+			        <thead>
+			            <tr>
+			                <th>Descripción del Concepto</th>
+			                <th style="text-align: right;">Monto</th>
+			            </tr>
+			        </thead>
+			        <tbody>
+			            <tr>
+			                <td>Costo Base de Renta (Días solicitados × Tarifa diaria)</td>
+			                <td style="text-align: right;">${{costo_base}}</td>
+			            </tr>
+			            <tr>
+			                <td>Cargo Logístico Drop-off (Distancia calculada por OQGRAPH: {{distancia}} km × $3.00)</td>
+			                <td style="text-align: right;">${{costo_distancia}}</td>
+			            </tr>
+			        </tbody>
+			    </table>
+
+			    <div class="total-box">
+			        <div class="total-row">
+			            <span style="float: left; font-weight: bold;">Renta Base:</span>
+			            <span style="float: right;">${{costo_base}}</span>
+			            <div style="clear: both;"></div>
+			        </div>
+			        <div class="total-row">
+			            <span style="float: left; font-weight: bold;">Cargo Extra:</span>
+			            <span style="float: right;">${{costo_distancia}}</span>
+			            <div style="clear: both;"></div>
+			        </div>
+			        <div class="total-row">
+			            <span style="float: left;">Total Neto:</span>
+			            <span style="float: right;">${{total_final}}</span>
+			            <div style="clear: both;"></div>
+			        </div>
+			    </div>
+
+			    <p style="text-align: center; margin-top: 40px; font-size: 8.5pt; color: #94a3b8;">
+			        Gracias por viajar con PAZ DRIVE. Este comprobante refleja los parámetros del contrato digital dinámico.
+			    </p>
+
+			</body>
+			</html>

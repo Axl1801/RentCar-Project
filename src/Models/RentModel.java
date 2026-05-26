@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.sql.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Base64;
 
 public class RentModel {
 
@@ -265,6 +268,81 @@ public class RentModel {
     	}
 
     	return costoTotal;
+    }
+    
+    public Map<String, String> getDatosParaPDF(int idRenta) {
+        
+        Map<String, String> datos = new HashMap<>();
+        
+        String query = "SELECT r.*, c.nombre, c.correo, c.telefono, " +
+                       "v.marca, v.modelo, v.anio, v.precio_dia, v.foto " +
+                       "FROM Rentas r " +
+                       "INNER JOIN Clientes c ON r.id_cliente = c.id_cliente " +
+                       "INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo " +
+                       "WHERE r.id_renta = ?";
+
+        Connection conn = null;
+        Properties propiedades = new Properties();
+
+        try (InputStream entrada = new FileInputStream("Claves.txt")) {
+            propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(url, user, contra);
+
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, idRenta);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                datos.put("id_renta", String.format("%03d", rs.getInt("id_renta"))); 
+                datos.put("fecha_inicio", rs.getDate("inicio_renta").toString());
+                datos.put("fecha_fin", rs.getDate("fin_renta").toString());
+                datos.put("estado", rs.getString("estado"));
+                
+                datos.put("id_cliente", String.format("%03d", rs.getInt("id_cliente")));
+                datos.put("name", rs.getString("nombre"));
+                datos.put("email", rs.getString("correo"));
+                datos.put("phone", rs.getString("telefono"));
+                
+                datos.put("id_vehiculo", String.format("%03d", rs.getInt("id_vehiculo")));
+                datos.put("marca", rs.getString("marca"));
+                datos.put("modelo", rs.getString("modelo"));
+                datos.put("anio", rs.getString("anio"));
+                datos.put("precio_dia", rs.getBigDecimal("precio_dia").toString());
+                
+                byte[] fotoBytes = rs.getBytes("foto");
+                if (fotoBytes != null) {
+                    String fotoBase64 = Base64.getEncoder().encodeToString(fotoBytes);
+                    datos.put("foto_vehiculo", fotoBase64);
+                } else {
+                    datos.put("foto_vehiculo", "");
+                }
+
+                double distancia = rs.getDouble("distancia_recorrida");
+                double costoExtra = distancia * 3.0;
+                BigDecimal total = rs.getBigDecimal("costo_total");
+                BigDecimal costoBase = total.subtract(BigDecimal.valueOf(costoExtra));
+
+                datos.put("distancia", String.valueOf(distancia));
+                datos.put("costo_distancia", String.format("%.2f", costoExtra));
+                datos.put("costo_base", costoBase.toString());
+                datos.put("total_final", total.toString());
+            }
+
+            rs.close();
+            ps.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al buscar datos del ticket: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return datos;
     }
     
     public int getId_renta() { 
