@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    @page { size: A4 landscape; margin: 15mm; background-color: #fafafa; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Arial', sans-serif; color: #334155; font-size: 9pt; }
+    .banner {
+        background-color: #02143d;
+        color: #ffffff;
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        border-radius: 4px;
+        display: table;
+        width: 100%;
+    }
+    .banner-cell { display: table-cell; vertical-align: middle; }
+    .banner-title { font-size: 18pt; font-weight: bold; margin: 0; }
+    table.data-table { width: 100%; border-collapse: collapse; background-color: #ffffff; }
+    table.data-table th { background-color: #02143d; color: #ffffff; text-align: left; padding: 10px; border: 1px solid #02143d; }
+    table.data-table td { padding: 8px; border: 1px solid #e2e8f0; vertical-align: middle; }
+    table.data-table tr:nth-child(even) { background-color: #f8fafc; }
+    
+    .img-carro {
+        width: 70px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 4px;
+        background-color: #e2e8f0;
+        display: block;
+    }
+    
+    .badge { padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 8pt; }
+    .badge-disponible { background-color: #dcfce7; color: #15803d; }
+    .badge-rentado { background-color: #fef08a; color: #854d0e; }
+    .badge-taller { background-color: #fee2e2; color: #b91c1c; }
+</style>
+</head>
+<body>
+    <div class="banner">
+        <div class="banner-cell" style="width: 60px;">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" stroke="#ffffff" stroke-width="6"/>
+                <path d="M50 5 L50 95 M5 50 L50 50" stroke="#ffffff" stroke-width="6"/>
+                <path d="M12 45 Q 20 20 30 40 T 48 15 L 48 45 Z" fill="#ffffff"/>
+            </svg>
+        </div>
+        <div class="banner-cell">
+            <div class="banner-title">Catálogo de Vehículos - PAZ DRIVE</div>
+            <div style="font-size: 9pt; color: #cbd5e1; margin-top: 5px;">Reporte de Flotilla y Disponibilidad</div>
+        </div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 80px; text-align: center;">Foto</th>
+                <th>ID</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th style="text-align: right;">Precio x Día</th>
+                <th style="text-align: center;">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{filas_vehiculos}}
+        </tbody>
+    </table>
+</body>
+</html>

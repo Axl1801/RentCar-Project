@@ -1,10 +1,12 @@
 package Controllers;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import Utilities.PDFGenerador;
 import Models.RentModel;
+import Models.VehicleModel;
 import Models.ClientModel;
 
 public class PDFController {
@@ -15,6 +17,7 @@ public class PDFController {
 	
 	private RentModel rm;
 	private ClientModel cm;
+	private VehicleModel vm;
 
 	public void generarPDFReserva(int idRentaSeleccionada) {
 	    
@@ -34,7 +37,6 @@ public class PDFController {
 }
 	
 	public void generarPDFReporteClientes() {
-	    System.out.println("Iniciando generación de PDF de Clientes...");
 
 	    ArrayList<ClientModel> listaClientes = cm.get();
 
@@ -51,12 +53,63 @@ public class PDFController {
 	    Map<String, String> datosClientes = new HashMap<>();
 	    datosClientes.put("filas_clientes", filasHtml.toString());
 
-	    // 4. Mandamos a imprimir con PDFGenerator
 	    String rutaPlantilla = "src/resources/plantilla_clientes.html";
 	    String rutaSalidaPDF = "Reportes/Reporte_Clientes_General.pdf";
 
 	    PDFGenerador generador = new PDFGenerador();
 	    boolean exito = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosClientes);
 	    }
+	}
+	
+	public void generarPDFReporteVehiculos() {
+
+	    ArrayList<VehicleModel> listaCarros = vm.get();
+
+	    StringBuilder filasHtml = new StringBuilder();
+
+	    for (VehicleModel vm : listaCarros) {
+	        filasHtml.append("<tr>");
+
+	        byte[] fotoBytes = vm.getfoto();
+	        String fotoBase64 = "";
+	        
+	        if (fotoBytes != null && fotoBytes.length > 0) {
+	            fotoBase64 = Base64.getEncoder().encodeToString(fotoBytes);
+	            filasHtml.append("<td style=\"text-align: center;\"><img src=\"data:image/jpeg;base64,")
+	                     .append(fotoBase64)
+	                     .append("\" class=\"img-carro\"/></td>");
+	        } else {
+	            filasHtml.append("<td style=\"text-align: center; color: #94a3b8; font-size: 8pt;\">Sin Foto</td>");
+	        }
+
+	        filasHtml.append("<td style=\"font-weight:bold;\">V-").append(vm.getId()).append("</td>");
+	        filasHtml.append("<td>").append(vm.getmarca()).append("</td>");
+	        filasHtml.append("<td>").append(vm.getmodelo()).append("</td>");
+	        filasHtml.append("<td>").append(vm.getanio()).append("</td>");
+	        filasHtml.append("<td style=\"text-align: right;\">$").append(vm.getprecio_dia()).append("</td>");
+	        
+	        String estado = vm.getestado() != null ? vm.getestado() : "Disponible";
+	        
+	        filasHtml.append("<td style=\"text-align: center;\">");
+	        if (estado.equalsIgnoreCase("Disponible")) {
+	            filasHtml.append("<span class=\"badge badge-disponible\">Disponible</span>");
+	        } else if (estado.equalsIgnoreCase("Rentado")) {
+	            filasHtml.append("<span class=\"badge badge-rentado\">Rentado</span>");
+	        } else {
+	            filasHtml.append("<span class=\"badge badge-taller\">Mantenimiento</span>");
+	        }
+	        filasHtml.append("</td>");
+	        
+	        filasHtml.append("</tr>");
+	    }
+
+	    Map<String, String> datosVehiculos = new HashMap<>();
+	    datosVehiculos.put("filas_vehiculos", filasHtml.toString());
+
+	    String rutaPlantilla = "src/resources/PDFs/plantilla_vehiculos.html";
+	    String rutaSalidaPDF = "Reportes/Reporte_Flotilla_Vehiculos.pdf";
+
+	    PDFGenerador generador = new PDFGenerador();
+	    boolean exito = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosVehiculos);
 	}
 }
