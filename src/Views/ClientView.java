@@ -287,16 +287,16 @@ public class ClientView {
 				return column == 5; 
 			}
 		};
-		
+		// Pide la lista al controlador
 		ArrayList<ClientModel> listaClientes = control.obtenerClientes();
-		
+		// La imprime por fila 
 		for (ClientModel cliente : listaClientes) {
 		    Object[] fila = new Object[6];
 		    fila[0] = cliente.getIdLetra();
 		    fila[1] = cliente.getName();
 		    fila[2] = cliente.getEmail();
 		    fila[3] = cliente.getPhone();
-		    fila[4] = "0";
+		    fila[4] = String.valueOf(cliente.getTotalRentas());
 		    fila[5] = "";		    
 		    modeloClientes.addRow(fila);
 		}

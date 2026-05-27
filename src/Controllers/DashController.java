@@ -34,5 +34,45 @@ public class DashController {
 		return dv.Dashboard();
 		
 	}
+	
+	public int numeroVehiculos_total(){
+		
+		int num_car_total = dm.numeroVehiculos_total();
+		
+		return num_car_total;
+		
+	}
+	
+	public int numeroVehiculos_renta(){
+		
+		int num_car_renta = dm.numeroVehiculos_renta();
+		
+		return num_car_renta;
+		
+	}
+	
+	public int numeroVehiculos_dispo(){
+		
+		int num_car_disponibles = dm.numeroVehiculos_dispo();
+		
+		return num_car_disponibles;
+		
+	}
+	
+	public int numeroVehiculos_manteni(){
+		
+		int num_car_mantenimiento = dm.numeroVehiculos_manteni();
+		
+		return num_car_mantenimiento;
+		
+	}
+	
+	public int numeroVehiculos_fuera(){
+		
+		int num_car_fuera = dm.numeroVehiculos_fuera();
+		
+		return num_car_fuera;
+		
+	}
 
 }
