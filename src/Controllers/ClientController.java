@@ -9,12 +9,11 @@ import Views.ClientView;
 
 public class ClientController {
 	private ClientView cv;	
-	private ClientView view;
 	private ClientModel model;
 	
 	public ClientController(){
 		cv = new ClientView();
-		view = new ClientView();
+		cv.setControlador(this);
 		model = new ClientModel();
 	}
 	
@@ -41,6 +40,10 @@ public class ClientController {
 		boolean flag = model.update(i, e, n, p); 
 		return flag;
 		
+	}
+	
+	public ArrayList<ClientModel> obtenerClientes(){
+		return model.get();
 	}
 
 }

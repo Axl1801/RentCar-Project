@@ -13,6 +13,7 @@ import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -33,7 +34,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
-import Controllers.HomeController;
+import Controllers.ClientController;
+import Models.ClientModel;
 import Utilities.Alerts;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
@@ -46,8 +48,14 @@ import Utilities.TextFieldRounded;
 
 public class ClientView {
 
+	ClientController control;
+	
 	public ClientView() {
 
+	}
+	
+	public void setControlador(ClientController c) {
+	    this.control = c;
 	}
 
 	public JPanel showClient() {
@@ -254,7 +262,7 @@ public class ClientView {
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID","Nombre","Correo Electronico","Teléfono","Rentas","Acciones"};
 		//Creacion de una matriz para los datos de una tabla 
-		Object [][] table_content = {
+		/*/Object [][] table_content = {
 				{"C-001", "Diego Ramirez", "diego.ramirez23@gmail.com", "612-145-7823", "7", ""},
 				{"C-002", "Sofia Torres", "sofia.torres21@gmail.com", "624-987-3345", "4", ""},
 				{"C-003", "Luis Mendoza", "luis.mendoza31@gmail.com", "613-556-1298", "2", ""},
@@ -270,15 +278,29 @@ public class ClientView {
 				{"C-013", "Jonathan Soto", "osito.cariñosito16@gmail.com", "615-778-9021", "17", ""},
 				{"C-014", "Israel Duran", "oso.pardo3@gmail.com", "615-778-9021", "18", ""},
 				{"C-015", "Arturo Decasso", "oso.pardo4@gmail.com", "615-778-9021", "15", ""}
-		};
+		};/*/
 
 		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
-		DefaultTableModel modeloClientes = new DefaultTableModel(table_content,table_head) {
+		DefaultTableModel modeloClientes = new DefaultTableModel(null,table_head) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return column == 5; 
 			}
 		};
+		
+		ArrayList<ClientModel> listaClientes = control.obtenerClientes();
+		
+		for (ClientModel cliente : listaClientes) {
+		    Object[] fila = new Object[6];
+		    fila[0] = cliente.getIdLetra();
+		    fila[1] = cliente.getName();
+		    fila[2] = cliente.getEmail();
+		    fila[3] = cliente.getPhone();
+		    fila[4] = "0";
+		    fila[5] = "";		    
+		    modeloClientes.addRow(fila);
+		}
+		
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
 		JTable clientes_table = new JTable(modeloClientes);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloClientes);
