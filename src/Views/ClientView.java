@@ -42,6 +42,7 @@ import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
 import Utilities.ComboBoxRounded;
 import Utilities.LabelRounded;
+import Utilities.LoadData;
 import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
@@ -49,6 +50,9 @@ import Utilities.TextFieldRounded;
 public class ClientView {
 
 	ClientController control;
+	private JTable clientes_table;
+	private DefaultTableModel modeloClientes;
+	
 	
 	public ClientView() {
 
@@ -262,7 +266,7 @@ public class ClientView {
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID","Nombre","Correo Electronico","Teléfono","Rentas","Acciones"};
 		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
-		DefaultTableModel modeloClientes = new DefaultTableModel(null,table_head) {
+		modeloClientes = new DefaultTableModel(null,table_head) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return column == 5; 
@@ -283,7 +287,7 @@ public class ClientView {
 		}
 		
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
-		JTable clientes_table = new JTable(modeloClientes);
+		clientes_table = new JTable(modeloClientes);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloClientes);
 		clientes_table.setRowSorter(sorter);
 
@@ -352,7 +356,7 @@ public class ClientView {
 		ImageIcon btnDescargar = new ImageIcon(iconDescargar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		//Agregamos botones customizados con popup a la 5ta columna de la tabla y personalizamos la columna	
 		clientes_table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
-		clientes_table.getColumnModel().getColumn(5).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Clientes",clientes_table));
+		clientes_table.getColumnModel().getColumn(5).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Clientes",clientes_table, control,null,null));
 		clientes_table.setRowHeight(40);
 		clientes_table.getColumnModel().getColumn(5).setPreferredWidth(60);
 		clientes_table.setBackground(Color.decode("#D9D9D9"));
@@ -589,6 +593,7 @@ public class ClientView {
 		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarCliente.addActionListener(e->{
 			control.addClient(campoCorreo.getText(), campoNombre.getText(), campoTelefono.getText());
+			LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
 			ventana.dispose();
 		});
 		registrarCliente.setSize(200,60);
@@ -792,6 +797,10 @@ public class ClientView {
 	        String nuevoTelefono = campoTelefono.getText();
 	        
 	        control.update(idCliente, nuevoCorreo, nuevoNombre, nuevoTelefono);
+	        
+	        System.out.println("modeloClientes es: " + modeloClientes); // agregar esto
+	        System.out.println("clientes_table es: " + clientes_table); // agregar esto
+	        LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
 			ventana.dispose();
 		});
 		registrarCambios.setSize(200,60);

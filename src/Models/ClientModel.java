@@ -12,10 +12,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
+
+import Utilities.FilaTabla;
+
 import java.sql.Statement;
 
 
-public class ClientModel {
+public class ClientModel implements FilaTabla{
 	
 	private int id;
     private String name;
@@ -372,4 +375,9 @@ public class ClientModel {
 	public void setTotalRentas(int totalRentas) {
 		this.totalRentas = totalRentas;
 	}
+	
+    @Override
+    public Object[] toFila() {
+        return new Object[]{getIdLetra(), getName(), getEmail(), getPhone(), getTotalRentas(), ""};
+    }
 }

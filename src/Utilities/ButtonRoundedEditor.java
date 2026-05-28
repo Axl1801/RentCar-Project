@@ -32,9 +32,15 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 	private RentController rc = new RentController();
 
 	// Ahora pedimos 4 iconos: El principal (los 3 puntitos) y los 3 del submenú
-	public ButtonRoundedEditor(JCheckBox checkBox, Icon iconPrincipal, Icon iconVer, Icon iconEditar, Icon iconEliminar, Icon iconDescargar, String accion,JTable table) {
+	public ButtonRoundedEditor(JCheckBox checkBox, 
+			Icon iconPrincipal, Icon iconVer, Icon iconEditar, Icon iconEliminar, Icon iconDescargar, 
+			String accion,JTable table,ClientController cc, VehicleController vc, RentController rc) {
+		
 		super(checkBox);
-
+		this.cc = cc;
+		this.vc = vc;
+		this.rc = rc;
+		
 		button = new ButtonRounded("", 15, 3);
 		button.setIcon(iconPrincipal);
 

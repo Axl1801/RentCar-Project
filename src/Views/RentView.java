@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
+import Controllers.RentController;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
@@ -41,6 +42,7 @@ import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
 
 public class RentView {
+	RentController control;
 	public RentView(){
 		
 	}
@@ -403,7 +405,7 @@ public class RentView {
 		ImageIcon btnDescargar = new ImageIcon(iconDescargar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		//Agregamos botones customizados con popup a la 5ta columna de la tabla y personalizamos la columna	
 		clientes_table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
-		clientes_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Rentas",clientes_table));
+		clientes_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Rentas",clientes_table, null,null,control));
 		clientes_table.setRowHeight(40);
 		clientes_table.getColumnModel().getColumn(7).setPreferredWidth(60);
 		clientes_table.setBackground(Color.decode("#D9D9D9"));
