@@ -26,6 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -33,6 +35,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
+
+import java.util.List;
 
 import Controllers.ClientController;
 import Models.ClientModel;
@@ -1022,7 +1026,7 @@ public class ClientView {
 		detallesCliente.add(panelOrdenar);
 
 		//Creacion de un arreglo para introducir cada copcion dentro de un ComboBox
-		String[] Ordenamientos = {"TODOS", "Fecha Inicio", "Fecha Final", "Estado"};
+		String[] Ordenamientos = {"TODOS", "Fecha Inicio", "Fecha Final","ID Renta", "Vehiculo"};
 		ComboBoxRounded<String> list = new ComboBoxRounded<>(Ordenamientos);
 		//Personalizacion del comboBox
 		list.setFont(new Font("Poppins", Font.BOLD, 15));
@@ -1063,6 +1067,28 @@ public class ClientView {
 		JTable clientes_table = new JTable(modeloCliente);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloCliente);
 		clientes_table.setRowSorter(sorter);
+		
+		list.addActionListener(e -> {
+		    String seleccion = (String) list.getSelectedItem();
+		    
+		    switch (seleccion) {
+		        case "TODOS":
+		            sorter.setSortKeys(null);
+		            break;
+		        case "ID Renta":
+		        	sorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.DESCENDING)));
+		        	break;
+		        case "Vehículo A-Z":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(1, SortOrder.ASCENDING)));
+		            break;
+		        case "Fecha Inicio":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(2, SortOrder.DESCENDING)));
+		            break;
+		        case "Fecha Final":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(3, SortOrder.DESCENDING)));
+		            break;
+		    }
+		});
 
 		busqueda.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
