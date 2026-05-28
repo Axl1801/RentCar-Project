@@ -14,5 +14,7 @@
 	<classpathentry kind="lib" path="src/resources/Complementos/openhtmltopdf-core-1.0.10.jar"/>
 	<classpathentry kind="lib" path="src/resources/Complementos/openhtmltopdf-pdfbox-1.0.10.jar"/>
 	<classpathentry kind="lib" path="src/resources/Complementos/pdfbox-2.0.30.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/xmpbox-2.0.30.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/graphics2d-0.32.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

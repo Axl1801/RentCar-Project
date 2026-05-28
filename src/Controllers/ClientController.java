@@ -22,12 +22,12 @@ public class ClientController {
 	    cv.editClient(idCliente, nombre, correo, telefono);
 	}
 	
+	public void showHistorial(int idCliente) {
+		cv.historialCliente(idCliente);
+	}
+	
 	public JPanel showClientView() {
 		 return cv.showClient();
-	}
-
-	public void showHistorial() {
-		cv.historialCliente();
 	}
 
 	//Agrega un nuevo Cliente a la base de datos *se tiene que mandar correo, nombre y telefono* EL ID SE ASIGNA SOLO
@@ -90,4 +90,20 @@ public class ClientController {
 		return num_car_mantenimiento;
 	}
 	
+	//Elimina al Cliente tras verificar si tiene renta
+	public boolean Eliminar_cliente(int id_cliente) {		
+		if (cm.checar_renta(id_cliente)) {
+			return cm.eliminarCliente(id_cliente);		
+		} else {
+			return false;
+		}
+	}
+	
+	//Genera el listado de Rentas del Cliente
+	public ArrayList<ClientModel> obtenerRentasClientes(int id_cliente){
+		return cm.getinfo(id_cliente);
+	}
+	
 }
+
+

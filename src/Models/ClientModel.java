@@ -1,10 +1,12 @@
 package Models;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,11 +22,16 @@ import java.sql.Statement;
 
 public class ClientModel implements FilaTabla{
 	
+	private String Modelo_vehiculo;
 	private int id;
     private String name;
     private String email;
     private String phone;
     private int totalRentas;
+	private int id_renta;
+	private int id_vehiculo;
+	private Date inicio_renta;
+	private Date fin_renta;
 
 	public ClientModel(){
 
@@ -261,6 +268,162 @@ public class ClientModel implements FilaTabla{
         return telefono_Cliente;
     }
 	
+	public ClientModel buscarClientePorId(int id_cliente) {
+	    
+		ClientModel cliente_solo = null;
+		String query = "SELECT c.id_cliente, c.name, c.email, c.phone, COUNT(r.id_renta) AS total_rentas " +
+				"FROM Clientes c " +
+				"LEFT JOIN Rentas r ON c.id_cliente = r.id_cliente " +
+				"WHERE c.id_cliente = ? " +
+				"GROUP BY c.id_cliente;";
+                   
+		Connection conn = null;
+		Properties propiedades = new Properties();
+
+		try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			propiedades.load(entrada);
+			String url = propiedades.getProperty("db.url");
+			String user = propiedades.getProperty("db.user");
+			String contra = propiedades.getProperty("db.password");
+      
+			try {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				conn = DriverManager.getConnection(url, user, contra);
+            
+				PreparedStatement ps = conn.prepareStatement(query);
+				ps.setInt(1, id_cliente);
+				ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                cliente_solo = new ClientModel();
+           
+                cliente_solo.setId(rs.getInt("id_cliente"));
+                cliente_solo.setName(rs.getString("name"));
+                cliente_solo.setEmail(rs.getString("email"));
+                cliente_solo.setPhone(rs.getString("phone"));  
+                cliente_solo.setTotalRentas(rs.getInt("total_rentas"));
+            }
+
+  	         rs.close();
+  	         ps.close();
+  	         conn.close();
+
+			} catch (Exception e) {
+				System.out.println("Error al buscar el Cliente: " + e.getMessage());
+				e.printStackTrace();
+			} finally {
+				try {
+					if (conn != null && !conn.isClosed()) {
+						conn.close();
+					}
+				} catch(Exception e) {}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Error al leer configuración: " + e.getMessage());
+		}  
+		return cliente_solo; 
+	}
+	
+	public boolean checar_renta(int id_cliente) {
+	    boolean estaLibre = true; 
+	    
+	    String query = "SELECT COUNT(*) AS total FROM Rentas WHERE id_cliente = ?";
+	    
+	    Connection conn = null;
+	    Properties propiedades = new Properties();
+
+	    try (InputStream entrada = new FileInputStream("Claves.txt")) {
+	        propiedades.load(entrada);
+	        String url = propiedades.getProperty("db.url");
+	        String user = propiedades.getProperty("db.user");
+	        String contra = propiedades.getProperty("db.password");
+	      
+	        try {
+	            Class.forName("com.mysql.cj.jdbc.Driver");
+	            conn = DriverManager.getConnection(url, user, contra);
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, id_cliente);
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+	                int totalRentas = rs.getInt("total");
+	                
+	                if (totalRentas > 0) {
+	                    estaLibre = false;
+	                }
+	            }
+
+	            rs.close();
+	            ps.close();
+	            conn.close();
+
+	        } catch (Exception e) {
+	           System.out.println("Error al verificar las rentas: " + e.getMessage());
+	           e.printStackTrace();
+	        } finally {
+	            try {
+	                if (conn != null && !conn.isClosed()) {
+	                    conn.close();
+	                }
+	            } catch(Exception e) {}
+	        }
+
+	    } catch (Exception e) {
+	        System.out.println("Error al leer configuración: " + e.getMessage());
+	    }  
+	    
+	    return estaLibre; 
+	}
+	
+	public boolean eliminarCliente(int id_cliente) {
+	    boolean exito = false;
+	    String query = "DELETE FROM Clientes WHERE id_cliente = ?";
+	    
+	    Connection conn = null;
+	    Properties propiedades = new Properties();
+
+	    try (InputStream entrada = new FileInputStream("Claves.txt")) {
+	        propiedades.load(entrada);
+	        String url = propiedades.getProperty("db.url");
+	        String user = propiedades.getProperty("db.user");
+	        String contra = propiedades.getProperty("db.password");
+	      
+	        try {
+	            Class.forName("com.mysql.cj.jdbc.Driver");
+	            conn = DriverManager.getConnection(url, user, contra);
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, id_cliente);
+	            
+	            int filasAfectadas = ps.executeUpdate();
+	            
+	            if (filasAfectadas > 0) {
+	                exito = true;
+	            }
+
+	            ps.close();
+	            conn.close();
+
+	        } catch (Exception e) {
+	           System.out.println("Error al intentar borrar el cliente: " + e.getMessage());
+	           e.printStackTrace();
+	        } finally {
+	            try {
+	                if (conn != null && !conn.isClosed()) {
+	                    conn.close();
+	                }
+	            } catch(Exception e) {}
+	        }
+
+	    } catch (Exception e) {
+	        System.out.println("Error al leer configuración: " + e.getMessage());
+	    }  
+	    
+	    return exito; 
+	}
+	
 	private int conteo(String query) {
 		
 		int resultado = 0;
@@ -331,7 +494,102 @@ public class ClientModel implements FilaTabla{
         System.out.println("numeroVehiculos_manteni: " + manteni);
         return manteni;
     }
+    
+    public ClientModel (int id_renta, String Modelo_vehiculo, Date inicio_renta, Date fin_renta){
+    	
+    	this. id_renta = id_renta;
+    	this. Modelo_vehiculo = Modelo_vehiculo;
+    	this. inicio_renta = inicio_renta;
+    	this. fin_renta = fin_renta;
+    }
+    
+    public ArrayList<ClientModel> getinfo(int id_cliente) {
+    	
+    	ArrayList<ClientModel> rentas = new ArrayList<>();
+        
+    	String query = "SELECT r.id_renta, m.nombre AS nombre, r.inicio_renta, r.fin_renta " +
+                "FROM Rentas r " +
+                "INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo " +
+                "INNER JOIN Modelos m ON v.id_modelo = m.id_modelo " +
+                "WHERE r.id_cliente = ?";
+        
+	   	Connection conn = null; 	 
+	   	System.out.println(query);
+		
+	   	Properties propiedades = new Properties();
+
+        try (InputStream entrada = new FileInputStream("Claves.txt")) {
+            propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try {
+    			Class.forName("com.mysql.cj.jdbc.Driver");
+    			conn = DriverManager.getConnection(url, user, contra);
+
+    			PreparedStatement ps = conn.prepareStatement(query);
+    			ps.setInt(1, id_cliente);
+    			ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                	ClientModel tmp = new ClientModel();
+
+                	tmp.setId_renta(rs.getInt("id_renta"));
+                	tmp.setModelo_vehiculo(rs.getString("nombre"));                
+                    tmp.setInicio_renta(rs.getDate("inicio_renta"));
+                    tmp.setFin_renta(rs.getDate("fin_renta"));
+                    System.out.println("dfadsfsadfs");
+                    rentas.add(tmp);
+                }
+                
+                rs.close();
+    			ps.close();
+    			conn.close();
+    			
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error al leer configuración: " + e.getMessage());
+        }
+        return rentas;
+    }
+
 	 
+    public int getId_renta() {
+        return this.id_renta;
+    }
+
+    public void setId_renta(int id_renta) { 
+        this.id_renta = id_renta;
+    }
+	
+    public String getModelo_vehiculo() {
+		return this.Modelo_vehiculo;
+	}
+
+	public void setModelo_vehiculo(String Modelo_vehiculo) {
+		this.Modelo_vehiculo = Modelo_vehiculo;
+	}
+	
+    public Date getInicio_renta() {
+		return this.inicio_renta;
+	}
+
+	public void setInicio_renta(Date inicio_renta) {
+		this.inicio_renta = inicio_renta;
+	}
+	
+    public Date getFin_renta() {
+		return this.inicio_renta;
+	}
+
+	public void setFin_renta(Date fin_renta) {
+		this.fin_renta = fin_renta;
+	}
+    
 	public int getId() {
 		return this.id;
 	}
@@ -342,6 +600,10 @@ public class ClientModel implements FilaTabla{
 		
 	public String getIdLetra() {
 		return String.format("C-%03d", this.id);
+	}
+	
+	public String getIdLetraRenta() {
+		return String.format("R-%03d", this.id_renta);
 	}
 
 	public String getName() {

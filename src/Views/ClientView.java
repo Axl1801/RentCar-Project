@@ -941,7 +941,7 @@ public class ClientView {
 		ventana.setVisible(true);
 	}
 
-	public void historialCliente() {
+	public void historialCliente(int idCliente) {
 		JDialog ventana = new JDialog();
 		ventana.setModal(true);
 		ventana.setUndecorated(true);
@@ -1039,18 +1039,26 @@ public class ClientView {
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID renta","Vehiculo","Feha Inicio","Fecha Fin"};
 		//Creacion de una matriz para los datos de una tabla 
-		Object [][] table_content = {
-				{"Corolla", "01/03/2024", "05/03/2024", "Finalizado"},
-				{"CR-V", "04/05/2024", "18/05/2024", "Finalizado"},
-				{"Sentra", "12/04/2024", "15/04/2024", "Finalizado"},
-		};
 
-		DefaultTableModel modeloCliente = new DefaultTableModel(table_content,table_head){
+		DefaultTableModel modeloCliente = new DefaultTableModel(null,table_head){
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false; // Ninguna celda será editable
 			}
-		};
+		};		
+		// Pide la lista al controlador
+		ArrayList<ClientModel> listaClientes = control.obtenerRentasClientes(idCliente);
+		// La imprime por fila 
+		for (ClientModel cliente : listaClientes) {
+			Object[] fila = new Object[4];
+			fila[0] = cliente.getIdLetraRenta();
+			fila[1] = cliente.getModelo_vehiculo();
+			fila[2] = cliente.getInicio_renta();
+			fila[3] = cliente.getFin_renta();
+	    
+			modeloCliente.addRow(fila);
+		}
+
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
 		JTable clientes_table = new JTable(modeloCliente);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloCliente);

@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 
 import Controllers.ClientController;
 import Controllers.HomeController;
+import Controllers.PDFController;
 import Controllers.RentController;
 import Controllers.VehicleController;
 
@@ -30,6 +31,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 	private ClientController cc = new ClientController();
 	private VehicleController vc = new VehicleController();
 	private RentController rc = new RentController();
+	private PDFController pc = new PDFController();
 
 	// Ahora pedimos 4 iconos: El principal (los 3 puntitos) y los 3 del submenú
 	public ButtonRoundedEditor(JCheckBox checkBox, 
@@ -67,8 +69,10 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 			popupMenu.setVisible(false); // Oculta el menú
 			fireEditingStopped(); //Evita la edicion de la zelda
 			SwingUtilities.invokeLater(()->{
+				int modelRow = table.convertRowIndexToModel(currentRow);
+				int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replace("C-", ""));
 				if(accion.equals("Clientes")) {
-					cc.showHistorial();
+					cc.showHistorial(idRow);
 				}
 				else if(accion.equals("Vehiculos")) {
 					vc.showHistorial();
@@ -109,6 +113,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 
 				int modelRow = table.convertRowIndexToModel(currentRow);
 				int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replace("C-", ""));
+				cc.Eliminar_cliente(idRow);
 				((DefaultTableModel) table.getModel()).removeRow(modelRow);
 			}
 
@@ -118,7 +123,9 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 		btnDescargar.addActionListener(e -> {
 			popupMenu.setVisible(false);
 			fireEditingStopped();
-
+			int modelRow = table.convertRowIndexToModel(currentRow);
+			int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
+			pc.imprimirExpedienteCliente(idRow);
 			JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: ");
 			JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 		});

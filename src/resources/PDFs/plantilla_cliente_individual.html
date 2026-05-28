@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<style>
+    @page { size: letter; margin: 20mm; background-color: #ffffff; }
+    body { font-family: 'Arial', sans-serif; color: #334155; }
+    .header { background-color: #02143d; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px; }
+    .title { font-size: 20pt; font-weight: bold; margin: 0; }
+    .subtitle { font-size: 10pt; color: #cbd5e1; }
+    .info-box { border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; background-color: #f8fafc; }
+    .row { margin-bottom: 15px; }
+    .label { font-weight: bold; color: #64748b; font-size: 10pt; display: block; }
+    .value { font-size: 14pt; color: #0f172a; margin-top: 5px; display: block; }
+    .divider { border-bottom: 2px solid #e2e8f0; margin: 20px 0; }
+</style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">Expediente de Cliente</div>
+        <div class="subtitle">PAZ DRIVE - Sistema de Rentas</div>
+    </div>
+
+    <div class="info-box">
+        <div class="row"><span class="label">ID de Cliente:</span><span class="value">{{id_cliente}}</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="label">Nombre Completo:</span><span class="value">{{nombre}}</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="label">Correo Electrónico:</span><span class="value">{{correo}}</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="label">Teléfono de Contacto:</span><span class="value">{{telefono}}</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="label">Total de Rentas Históricas:</span><span class="value">{{total_rentas}}</span></div>
+    </div>
+</body>
+</html>

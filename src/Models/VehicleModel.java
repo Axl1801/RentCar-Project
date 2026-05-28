@@ -220,6 +220,60 @@ public class VehicleModel {
 		 return false;
 	 }
 	 
+	 public VehicleModel buscarVehiculoPorId(int id_vehiculo) {
+		    
+		 VehicleModel vehiculo_solo = null;
+		 String query = "SELECT * FROM Vehiculos WHERE id_vehiculo = ?";
+		 Connection conn = null;
+		 Properties propiedades = new Properties();
+
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+ 	      
+			 try {
+				 Class.forName("com.mysql.cj.jdbc.Driver");
+				 conn = DriverManager.getConnection(url, user, contra);
+
+				 PreparedStatement ps = conn.prepareStatement(query);
+				 ps.setInt(1, id_vehiculo);
+				 ResultSet rs = ps.executeQuery();
+
+				 if (rs.next()) {
+					 vehiculo_solo = new VehicleModel();
+                
+					 vehiculo_solo.setId(rs.getInt("id_vehiculo"));
+					 vehiculo_solo.setmarca(rs.getString("marca"));
+					 vehiculo_solo.setmodelo(rs.getString("modelo"));
+					 vehiculo_solo.setanio(rs.getInt("anio")); 
+					 vehiculo_solo.setprecio_dia(rs.getBigDecimal("precio_dia"));
+					 vehiculo_solo.setestado(rs.getString("estado"));                
+					 vehiculo_solo.setfoto(rs.getBytes("foto")); 
+				 }
+
+				 rs.close();
+				 ps.close();
+				 conn.close();
+
+			 } catch (Exception e) {
+    	       System.out.println("Error al buscar el vehículo: " + e.getMessage());
+    	       e.printStackTrace();
+			 } finally {
+				 try {
+					 if (conn != null && !conn.isClosed()) {
+						 conn.close();
+					 }
+				 } catch(Exception e) {}
+			 }
+
+		 } catch (Exception e) {
+			 System.out.println("Error al leer configuración: " + e.getMessage());
+		 }  
+		 return vehiculo_solo; 
+	 }
+	 
 	 public int getId(){
 		 return this.id; 
 	 }

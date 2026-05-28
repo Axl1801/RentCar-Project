@@ -12,7 +12,10 @@ import Models.ClientModel;
 public class PDFController {
 
 	public PDFController() {
-		// TODO Auto-generated constructor stub
+
+		rm = new RentModel();
+		cm = new ClientModel();
+		vm = new VehicleModel();
 	}
 	
 	private RentModel rm;
@@ -34,7 +37,7 @@ public class PDFController {
 	    PDFGenerador generador = new PDFGenerador();
 	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosRenta);
 	
-}
+	}
 	
 	public void generarPDFReporteClientes() {
 
@@ -112,4 +115,52 @@ public class PDFController {
 	    PDFGenerador generador = new PDFGenerador();
 	    boolean exito = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosVehiculos);
 	}
+		
+	public void imprimirFichaVehiculo(int idVehiculoReal) {
+		VehicleModel vehiculo = vm.buscarVehiculoPorId(idVehiculoReal);
+	    
+	    Map<String, String> datosPDF = new HashMap<>();
+	    datosPDF.put("id_vehiculo", "V-" + vm.getId());
+	    datosPDF.put("marca", vm.getmarca());
+	    datosPDF.put("modelo", vm.getmodelo());
+	    datosPDF.put("anio", String.valueOf(vehiculo.getanio()));
+	    datosPDF.put("precio", vehiculo.getprecio_dia().toString());
+	    datosPDF.put("estado", vehiculo.getestado() != null ? vehiculo.getestado() : "Disponible");
+
+	    byte[] fotoBytes = vehiculo.getfoto();
+	    if (fotoBytes != null && fotoBytes.length > 0) {
+	        String base64 = Base64.getEncoder().encodeToString(fotoBytes);
+	        datosPDF.put("foto_base64", base64);
+	    } else {
+	        datosPDF.put("foto_base64", "");
+	    }
+
+	    String rutaPlantilla = "src/resources/PDFs/plantilla_vehiculo_individual.html";
+	    String rutaSalida = "Reportes/Vehiculos/Ficha_V" + vehiculo.getId() + ".pdf";
+
+	    PDFGenerador generador = new PDFGenerador();
+	    generador.generarPdf(rutaPlantilla, rutaSalida, datosPDF);
+
+	}
+	
+	public void imprimirExpedienteCliente(int idClienteReal) {
+	    ClientModel cliente = cm.buscarClientePorId(idClienteReal); 
+	    
+	    Map<String, String> datosPDF = new HashMap<>();
+	    datosPDF.put("id_cliente", cliente.getIdLetra());
+	    datosPDF.put("nombre", cliente.getName());
+	    datosPDF.put("correo", cliente.getEmail());
+	    datosPDF.put("telefono", cliente.getPhone());
+	    datosPDF.put("total_rentas", String.valueOf(cliente.getTotalRentas()));
+
+	    String rutaPlantilla = "src/resources/PDFs/plantilla_cliente_individual.html";
+	    String rutaSalida = "Reportes/Clientes/Expediente_" + cliente.getIdLetra() + ".pdf";
+
+	    PDFGenerador generador = new PDFGenerador();
+	    if (generador.generarPdf(rutaPlantilla, rutaSalida, datosPDF)) {
+	        System.out.println("Expediente del cliente generado: " + rutaSalida);
+	    }
+	}
+	
+	
 }
