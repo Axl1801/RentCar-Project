@@ -82,7 +82,7 @@ public class ClientView {
 		total_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalVehiculos.add(total_titulo, BorderLayout.NORTH);
 
-		JLabel total = new JLabel("50");//Etitqueta de total vehiculos num
+		JLabel total = new JLabel(Integer.toString(control.numeroVehiculos_total()));//Etitqueta de total vehiculos num
 		total.setBackground(Color.white);
 		total.setForeground(Color.BLACK);
 		total.setHorizontalAlignment(JLabel.CENTER);
@@ -113,7 +113,7 @@ public class ClientView {
 		disp_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalDisponibles.add(disp_titulo, BorderLayout.NORTH);
 
-		JLabel disp = new JLabel("20");//Etitqueta de total disponibles num
+		JLabel disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de total disponibles num
 		disp.setBackground(Color.white);
 		disp.setForeground(Color.BLACK);
 		disp.setHorizontalAlignment(JLabel.CENTER);
@@ -143,7 +143,7 @@ public class ClientView {
 		rentado_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalRentados.add(rentado_titulo, BorderLayout.NORTH);
 
-		JLabel rent = new JLabel("25");//Etitqueta de totalrentados  num
+		JLabel rent = new JLabel(Integer.toString(control.numeroVehiculos_renta()));//Etitqueta de totalrentados  num
 		rent.setBackground(Color.white);
 		rent.setForeground(Color.BLACK);
 		rent.setHorizontalAlignment(JLabel.CENTER);
@@ -173,7 +173,7 @@ public class ClientView {
 		mantenimiento_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalMantenimiento.add(mantenimiento_titulo, BorderLayout.NORTH);
 
-		JLabel mant = new JLabel("5");//Etitqueta de mantenimiento num
+		JLabel mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));//Etitqueta de mantenimiento num
 		mant.setBackground(Color.white);
 		mant.setForeground(Color.BLACK);
 		mant.setHorizontalAlignment(JLabel.CENTER);
@@ -261,25 +261,6 @@ public class ClientView {
 
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID","Nombre","Correo Electronico","Teléfono","Rentas","Acciones"};
-		//Creacion de una matriz para los datos de una tabla 
-		/*/Object [][] table_content = {
-				{"C-001", "Diego Ramirez", "diego.ramirez23@gmail.com", "612-145-7823", "7", ""},
-				{"C-002", "Sofia Torres", "sofia.torres21@gmail.com", "624-987-3345", "4", ""},
-				{"C-003", "Luis Mendoza", "luis.mendoza31@gmail.com", "613-556-1298", "2", ""},
-				{"C-004", "Valeria Cruz", "valeria.cruz25@gmail.com", "622-341-7765", "6", ""},
-				{"C-005", "Axel Garcia", "axel.garcia18@gmail.com", "624-381-9678", "16", ""},
-				{"C-006", "Esau Hernandez", "esau.garcia13@gmail.com", "615-778-9021", "9", ""},
-				{"C-007", "Osmin Ojeda", "osita.cariñosita15@gmail.com", "615-778-9021", "5", ""},
-				{"C-008", "Ronaldo Centeno", "ronaldo.click41@gmail.com", "615-778-9021", "8", ""},
-				{"C-009", "Fabian Green", "fuck.boy45cm@gmail.com", "615-778-9021", "2", "Editar"},
-				{"C-010", "Cereneo Manzanares", "cereno.manzanarez01@gmail.com", "615-778-9021", "7", ""},
-				{"C-011", "Fernanda Jacome", "fernanda.jacome14@gmail.com", "615-778-9021", "9", ""},
-				{"C-012", "Isbeth Cortez", "isbeth.cortez02@gmail.com", "615-778-9021", "14", ""},
-				{"C-013", "Jonathan Soto", "osito.cariñosito16@gmail.com", "615-778-9021", "17", ""},
-				{"C-014", "Israel Duran", "oso.pardo3@gmail.com", "615-778-9021", "18", ""},
-				{"C-015", "Arturo Decasso", "oso.pardo4@gmail.com", "615-778-9021", "15", ""}
-		};/*/
-
 		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
 		DefaultTableModel modeloClientes = new DefaultTableModel(null,table_head) {
 			@Override
@@ -404,6 +385,23 @@ public class ClientView {
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(20, 20, 20, 20);
 		clientPanel.add(tablaClientes, gbc);
+		
+		//Creacion de Label de error en caso de que la verificacion sea incorrecta
+		LabelRounded Alert = new LabelRounded("",10,Color.decode("#BD4747"));
+		Alert.setVisible(false);
+		Alert.setOpaque(false);
+		Alert.setFont(new Font("Poppins",Font.BOLD,15));
+		Alert.setForeground(Color.decode("#FFFFFF"));
+		
+		//Posicionamiento de la alerta
+		gbc.gridx = 1;
+		gbc.gridy = 3;
+		gbc.gridwidth = 2; 
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.insets = new Insets(20, 20, 20, 20);
+		clientPanel.add(Alert, gbc);
 
 		return clientPanel;
 	}
@@ -590,6 +588,7 @@ public class ClientView {
 		registrarCliente.setHorizontalAlignment(JLabel.CENTER);
 		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarCliente.addActionListener(e->{
+			control.addClient(campoCorreo.getText(), campoNombre.getText(), campoTelefono.getText());
 			ventana.dispose();
 		});
 		registrarCliente.setSize(200,60);
@@ -601,7 +600,7 @@ public class ClientView {
 		ventana.setVisible(true);
 	}
 
-	public void editClient() {
+	public void editClient(int idCliente, String nombreActual, String correoActual, String telefonoActual) {
 		// Crear Ventana
 		JDialog ventana = new JDialog();
 		ventana.setModal(true);
@@ -764,30 +763,40 @@ public class ClientView {
 				));
 		editarCliente.add(foto);
 
-		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
-		cancelarCliente.setSize(150,60);
-		cancelarCliente.setLocation(150,500);
-		cancelarCliente.setOpaque(false);
-		cancelarCliente.setForeground(Color.white);
-		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
-		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
-		cancelarCliente.addActionListener(e->{
+		ButtonRounded cancelarCambios = new ButtonRounded("Cancelar",10,5);
+		cancelarCambios.setSize(150,60);
+		cancelarCambios.setLocation(150,500);
+		cancelarCambios.setOpaque(false);
+		cancelarCambios.setForeground(Color.white);
+		cancelarCambios.setHorizontalAlignment(JLabel.CENTER);
+		cancelarCambios.setFont(new Font("Poppins",Font.BOLD,20));
+		cancelarCambios.addActionListener(e->{
 			ventana.dispose();
 
 		});
-		editarCliente.add(cancelarCliente);
+		editarCliente.add(cancelarCambios);
+		
+	    //Prellenar campos con datos actuales
+	    campoNombre.setText(nombreActual);
+	    campoCorreo.setText(correoActual);
+	    campoTelefono.setText(telefonoActual);
 
-		ButtonRounded registrarCliente = new ButtonRounded("Guardar Cambios",10,1);
-		registrarCliente.setOpaque(false);
-		registrarCliente.setForeground(Color.white);
-		registrarCliente.setHorizontalAlignment(JLabel.CENTER);
-		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
-		registrarCliente.addActionListener(e->{
+		ButtonRounded registrarCambios = new ButtonRounded("Guardar Cambios",10,1);
+		registrarCambios.setOpaque(false);
+		registrarCambios.setForeground(Color.white);
+		registrarCambios.setHorizontalAlignment(JLabel.CENTER);
+		registrarCambios.setFont(new Font("Poppins",Font.BOLD,20));
+		registrarCambios.addActionListener(e->{
+	        String nuevoNombre = campoNombre.getText();
+	        String nuevoCorreo = campoCorreo.getText();
+	        String nuevoTelefono = campoTelefono.getText();
+	        
+	        control.update(idCliente, nuevoCorreo, nuevoNombre, nuevoTelefono);
 			ventana.dispose();
 		});
-		registrarCliente.setSize(200,60);
-		registrarCliente.setLocation(350,500);
-		editarCliente.add(registrarCliente);
+		registrarCambios.setSize(200,60);
+		registrarCambios.setLocation(350,500);
+		editarCliente.add(registrarCambios);
 
 		ventana.revalidate();
 		ventana.repaint();
@@ -998,7 +1007,7 @@ public class ClientView {
 		PanelRounded panelOrdenar = new PanelRounded(10, true, true, true, true);
 		panelOrdenar.setBackground(Color.decode("#AFAFAF"));
 		panelOrdenar.setOpaque(false);
-		panelOrdenar.setBounds(1300, 100, 150, 50);
+		panelOrdenar.setBounds(1420, 100, 200, 50);
 		panelOrdenar.setBorder(null);
 		panelOrdenar.setLayout(new BorderLayout());
 		detallesCliente.add(panelOrdenar);
@@ -1010,29 +1019,6 @@ public class ClientView {
 		list.setFont(new Font("Poppins", Font.BOLD, 15));
 		panelOrdenar.add(list, BorderLayout.CENTER);
 
-		//Panel para filtros avanzados
-		PanelRounded panelFiltros = new PanelRounded(10, true, true, true, true);
-		panelFiltros.setOpaque(false);
-		panelFiltros.setBounds(1500, 100, 120, 50);
-		panelFiltros.setBackground(Color.decode("#AFAFAF"));
-		panelFiltros.setBorder(null);
-		panelFiltros.setLayout(new BorderLayout());
-		detallesCliente.add(panelFiltros);
-		//Creacion boton filtros con icono
-		ButtonRounded filtros = new ButtonRounded("Filtros",10,4);
-		URL url = getClass().getResource("/iconos/adicionales/filtros.png");//Carga ubi imagen
-
-		if (url != null) {
-			filtros.setIcon(new ImageIcon(url));
-		}
-		//Personalizacion
-		filtros.setPreferredSize(new Dimension(60,30));
-		filtros.setFont(new Font("Poppins",Font.BOLD,15));
-		filtros.setHorizontalAlignment(JLabel.CENTER);  
-		filtros.setIconTextGap(10);                      
-		filtros.setHorizontalTextPosition(JLabel.LEFT);
-		panelFiltros.add(filtros, BorderLayout.CENTER);
-
 		PanelRounded panelTabla = new PanelRounded(10, true, true, true, true);
 		panelTabla.setOpaque(false);
 		panelTabla.setBounds(100, 180, 1520, 700);
@@ -1042,7 +1028,7 @@ public class ClientView {
 		detallesCliente.add(panelTabla);
 
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
-		Object [] table_head = {"Vehiculo","Feha Inicio","Fecha Fin","Estado"};
+		Object [] table_head = {"ID renta","Vehiculo","Feha Inicio","Fecha Fin"};
 		//Creacion de una matriz para los datos de una tabla 
 		Object [][] table_content = {
 				{"Corolla", "01/03/2024", "05/03/2024", "Finalizado"},
@@ -1142,4 +1128,5 @@ public class ClientView {
 
 		ventana.setVisible(true);
 	}
+
 }

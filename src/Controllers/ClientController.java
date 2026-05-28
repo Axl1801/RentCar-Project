@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import Models.ClientModel;
+import Utilities.ButtonRoundedEditor;
 import Views.ClientView;
 
 public class ClientController {
@@ -17,30 +18,14 @@ public class ClientController {
 		cm = new ClientModel();
 	}
 	
-	//
-	//
-	//		MORONI AQUI POR SI OCUPAS PA CAMBIAR LA ID DE LAS TABLAS A LAS IDS DE LA BASE DE DATOS
-	//
-	//
-	public int obtenerIdnumero(String idletra) {
-		String puroNumero = idletra.replace("C-", ""); 
-		int idEntero = Integer.parseInt(puroNumero);	    
-	    return idEntero;
+	public void showEdit(int idCliente, String nombre, String correo, String telefono) {
+	    cv.editClient(idCliente, nombre, correo, telefono);
 	}
-	//
-	//
-	//		DESPUES QUE VEAS ESTO Y SI OCUPAS LA FUNCION O NO BORRAS LOS COMENTARIOS, SI NO OCUPAS LA FUNCION TAMBIEN
-	//
-	//
 	
 	public JPanel showClientView() {
 		 return cv.showClient();
 	}
-	
-	public void showEdit() {
-		cv.editClient();
-	}
-	
+
 	public void showHistorial() {
 		cv.historialCliente();
 	}

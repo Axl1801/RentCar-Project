@@ -25,7 +25,6 @@ import Controllers.VehicleController;
 public class ButtonRoundedEditor extends DefaultCellEditor {
 	private ButtonRounded button;
 	private JPopupMenu popupMenu;
-	private String accion;
 	private int currentRow;
 	private PanelRounded panelMenu;
 	private ClientController cc = new ClientController();
@@ -35,7 +34,6 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 	// Ahora pedimos 4 iconos: El principal (los 3 puntitos) y los 3 del submenú
 	public ButtonRoundedEditor(JCheckBox checkBox, Icon iconPrincipal, Icon iconVer, Icon iconEditar, Icon iconEliminar, Icon iconDescargar, String accion,JTable table) {
 		super(checkBox);
-
 
 		button = new ButtonRounded("", 15, 3);
 		button.setIcon(iconPrincipal);
@@ -78,11 +76,16 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 
 		btnEditar.addActionListener(e -> {
 			popupMenu.setVisible(false);
-
 			fireEditingStopped();
+			int modelRow = table.convertRowIndexToModel(currentRow);
+			int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replace("C-", ""));
 			SwingUtilities.invokeLater(()->{
 				if(accion.equals("Clientes")) {
-					cc.showEdit();
+					String nombre = table.getModel().getValueAt(modelRow, 1).toString();
+				    String correo = table.getModel().getValueAt(modelRow, 2).toString();
+				    String telefono = table.getModel().getValueAt(modelRow, 3).toString();
+				    
+					cc.showEdit(idRow,nombre,correo,telefono);
 				}
 				else if(accion.equals("Vehiculos")) {
 					vc.EditVehicleView();
@@ -98,11 +101,9 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 			popupMenu.setVisible(false);
 			if (currentRow != -1) {
 
-				int modelRow =
-						table.convertRowIndexToModel(currentRow);
-
-				((DefaultTableModel)
-						table.getModel()).removeRow(modelRow);
+				int modelRow = table.convertRowIndexToModel(currentRow);
+				int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replace("C-", ""));
+				((DefaultTableModel) table.getModel()).removeRow(modelRow);
 			}
 
 			fireEditingStopped();
@@ -111,7 +112,9 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 		btnDescargar.addActionListener(e -> {
 			popupMenu.setVisible(false);
 			fireEditingStopped();
-			JOptionPane.showMessageDialog(null, "Descargando PDF: " + currentRow);
+
+			JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: ");
+			JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 		});
 
 		// Agregamos los botones al panel redondeado, y el panel al popup

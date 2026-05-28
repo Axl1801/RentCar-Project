@@ -9,10 +9,10 @@
 	<classpathentry kind="src" path="src/resources"/>
 	<classpathentry kind="lib" path="src/resources/Complementos/mysql-connector-j-9.3.0.jar"/>
 	<classpathentry kind="lib" path="src/resources/Complementos/jfreechart-1.5.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/GGP/Documents/Escuela/Proyecto carritos/RentCar-Project/src/resources/Complementos/openhtmltopdf-core-1.0.10.jar"/>
-	<classpathentry kind="lib" path="C:/Users/GGP/Documents/Escuela/Proyecto carritos/RentCar-Project/src/resources/Complementos/openhtmltopdf-pdfbox-1.0.10.jar"/>
-	<classpathentry kind="lib" path="C:/Users/GGP/Documents/Escuela/Proyecto carritos/RentCar-Project/src/resources/Complementos/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/GGP/Documents/Escuela/Proyecto carritos/RentCar-Project/src/resources/Complementos/fontbox-2.0.30.jar"/>
-	<classpathentry kind="lib" path="C:/Users/GGP/Documents/Escuela/Proyecto carritos/RentCar-Project/src/resources/Complementos/pdfbox-2.0.30.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/fontbox-2.0.30.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/openhtmltopdf-core-1.0.10.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/openhtmltopdf-pdfbox-1.0.10.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/pdfbox-2.0.30.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
