@@ -229,7 +229,7 @@ public class DashView {
 
 		// Bordes redondeados simulados
 		renderer.setMaximumBarWidth(0.1);
-
+		
 		renderer.setSeriesPaint(0, Color.decode("#A0BCE8")); // Semana 1
 		renderer.setSeriesPaint(1, Color.decode("#6BE6D3")); // Semana 2
 		renderer.setSeriesPaint(2, Color.decode("#000000")); // Semana 3

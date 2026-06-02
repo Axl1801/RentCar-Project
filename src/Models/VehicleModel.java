@@ -274,6 +274,77 @@ public class VehicleModel {
 		 return vehiculo_solo; 
 	 }
 	 
+		private int conteo(String query) {
+			
+			int resultado = 0;
+			Connection conn = null; 	 
+			System.out.println(query);
+				
+			Properties propiedades = new Properties();
+			
+			try (InputStream entrada = new FileInputStream("Claves.txt")) {
+				
+				propiedades.load(entrada);
+				
+				String url = propiedades.getProperty("db.url");
+	            String user = propiedades.getProperty("db.user");
+	            String contra = propiedades.getProperty("db.password");
+	            
+	            try {
+	            	Class.forName("com.mysql.cj.jdbc.Driver");
+	    			conn = DriverManager.getConnection(url, user, contra);
+	    			
+	    			PreparedStatement ps = conn.prepareStatement(query);
+	    			ResultSet rs = ps.executeQuery();
+
+	    			if (rs.next()) {
+	    		        resultado = rs.getInt(1);
+	    		        System.out.println("Número total: " + resultado);
+	    		    }
+	    			rs.close();
+	    			ps.close();
+	    			conn.close();
+	            }
+
+	            catch (Exception e) {
+	            	e.printStackTrace();
+	            }
+	            finally {
+	            	try {
+					conn.close();
+				}catch(Exception e) {	
+				}
+	            }
+			} catch (IOException e) {
+				System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
+			}  		 
+			return resultado;	 
+			}
+		
+		public int numeroVehiculos_total() {
+	        int total = conteo("SELECT COUNT(*) FROM Vehiculos");
+	        System.out.println("numeroVehiculos_total: " + total);
+	        return total;
+	    }
+
+	    public int numeroVehiculos_renta() {
+	        int renta = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Rentado'");
+	        System.out.println("numeroVehiculos_renta: " +renta);
+	        return renta;
+	    }
+
+	    public int numeroVehiculos_dispo() {
+	        int dispo = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Disponible'");
+	        System.out.println("numeroVehiculos_dispo: " + dispo);
+	        return dispo;
+	    }
+
+	    public int numeroVehiculos_manteni() {
+	        int manteni = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Mantenimiento'");
+	        System.out.println("numeroVehiculos_manteni: " + manteni);
+	        return manteni;
+	    }
+	 
 	 public int getId(){
 		 return this.id; 
 	 }
