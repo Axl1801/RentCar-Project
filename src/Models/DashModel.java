@@ -21,10 +21,58 @@ public class DashModel {
 	double total_mes;
 	double total_semana;
 	double total_mes_pasado;
+	double total_mes_pasado_pasado;
 	
 	private int conteo(String query) {
 				
 		int resultado = 0;
+	   	Connection conn = null; 	 
+		System.out.println(query);
+			
+		Properties propiedades = new Properties();
+		
+		try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			
+			propiedades.load(entrada);
+			
+			String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+            
+            try {
+    			Class.forName("com.mysql.cj.jdbc.Driver");
+    			conn = DriverManager.getConnection(url, user, contra);
+    			
+    			PreparedStatement ps = conn.prepareStatement(query);
+    			ResultSet rs = ps.executeQuery();
+
+    			if (rs.next()) {
+    		        resultado = rs.getInt(1);
+    		        System.out.println("Número total: " + resultado);
+    		    }
+    			conn.close();
+    			ps.close();
+    			rs.close();
+			}
+
+		 catch (Exception e) {
+			e.printStackTrace();
+		 }
+            finally {
+            	try {
+				conn.close();
+			}catch(Exception e) {	
+			}
+            }
+		} catch (IOException e) {
+			System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
+		}  		 
+		return resultado;	 
+		}
+	
+	private double conteo_dinero(String query) {
+		
+		double resultado = 0;
 	   	Connection conn = null; 	 
 		System.out.println(query);
 			
@@ -152,7 +200,7 @@ public class DashModel {
                        "  AND YEAR(inicio_renta) = YEAR(NOW()) " +
                        "  AND MONTH(inicio_renta) = MONTH(NOW())";
                        
-        total_mes = conteo(query);
+        total_mes = conteo_dinero(query);
         System.out.println("Ganancia del mes actual: $" + total_mes);
         return total_mes;
     }
@@ -163,7 +211,7 @@ public class DashModel {
                        "  AND YEAR(inicio_renta) = YEAR(NOW()) " +
                        "  AND WEEK(inicio_renta, 1) = WEEK(NOW(), 1)";
                        
-        total_semana = conteo(query);
+        total_semana = conteo_dinero(query);
         System.out.println("Ganancia de la semana actual: $" + total_semana);
         return total_semana;
     }
@@ -174,9 +222,20 @@ public class DashModel {
                        "  AND YEAR(inicio_renta) = YEAR(NOW() - INTERVAL 1 MONTH) " +
                        "  AND MONTH(inicio_renta) = MONTH(NOW() - INTERVAL 1 MONTH)";
                        
-        total_mes_pasado = conteo(query);
+        total_mes_pasado = conteo_dinero(query);
         System.out.println("Ganancia del mes anterior: $" + total_mes_pasado);
         return total_mes_pasado;
     }
 	
+    public double ganancia_mes_anterior_anterior() {
+        String query = "SELECT SUM(costo_total) FROM Rentas " +
+                       "WHERE estado = 'Finalizado' " +
+                       "  AND YEAR(inicio_renta) = YEAR(NOW() - INTERVAL 2 MONTH) " +
+                       "  AND MONTH(inicio_renta) = MONTH(NOW() - INTERVAL 2 MONTH)";
+                       
+        total_mes_pasado_pasado = conteo_dinero(query);
+        System.out.println("Ganancia del mes anterior: $" + total_mes_pasado_pasado);
+        return total_mes_pasado_pasado;
+    }
+    
 }

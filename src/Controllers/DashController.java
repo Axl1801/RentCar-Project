@@ -22,6 +22,7 @@ public class DashController {
 	private double totalMes;
 	private double totalSemanaEnCurso;
 	private double totalMes_anterior;
+	private double totalMes_anterior_anterior;
 	
 	public DashController(){
 		dv = new DashView();
@@ -90,6 +91,12 @@ public class DashController {
 	public double get_ganancia_mes_anterior() {
 		totalMes_anterior = dm.ganancia_mes_anterior();
 		return totalMes_anterior;
+	}
+	
+	//DEVUELVE LAS GANANCIAS DE EL MES ANTERIOR AL ANTERIOR
+	public double ganancia_mes_anterior_anterior() {
+		totalMes_anterior = dm.ganancia_mes_anterior();
+		return totalMes_anterior_anterior;
 	}
 	
 	//DEVUELVE EL TOTAL DE VEHICULOS
