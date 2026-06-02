@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,6 +24,11 @@ public class VehicleModel {
     private int anio;
     private BigDecimal precio_dia;
     private String estado;
+	private int id_renta;
+	private String name;
+    private Date inicio_renta;
+	private Date fin_renta;
+	private String estado_renta;
 
 	public VehicleModel(){
 	}
@@ -274,76 +280,139 @@ public class VehicleModel {
 		 return vehiculo_solo; 
 	 }
 	 
-		private int conteo(String query) {
-			
-			int resultado = 0;
-			Connection conn = null; 	 
-			System.out.println(query);
-				
-			Properties propiedades = new Properties();
-			
-			try (InputStream entrada = new FileInputStream("Claves.txt")) {
-				
-				propiedades.load(entrada);
-				
-				String url = propiedades.getProperty("db.url");
-	            String user = propiedades.getProperty("db.user");
-	            String contra = propiedades.getProperty("db.password");
-	            
-	            try {
-	            	Class.forName("com.mysql.cj.jdbc.Driver");
-	    			conn = DriverManager.getConnection(url, user, contra);
-	    			
-	    			PreparedStatement ps = conn.prepareStatement(query);
-	    			ResultSet rs = ps.executeQuery();
-
-	    			if (rs.next()) {
-	    		        resultado = rs.getInt(1);
-	    		        System.out.println("Número total: " + resultado);
-	    		    }
-	    			rs.close();
-	    			ps.close();
-	    			conn.close();
-	            }
-
-	            catch (Exception e) {
-	            	e.printStackTrace();
-	            }
-	            finally {
-	            	try {
-					conn.close();
-				}catch(Exception e) {	
-				}
-	            }
-			} catch (IOException e) {
-				System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
-			}  		 
-			return resultado;	 
-			}
+	 private int conteo(String query) {
 		
-		public int numeroVehiculos_total() {
-	        int total = conteo("SELECT COUNT(*) FROM Vehiculos");
-	        System.out.println("numeroVehiculos_total: " + total);
-	        return total;
-	    }
+		 int resultado = 0;
+		 Connection conn = null; 	 
+		 System.out.println(query);
+			
+		 Properties propiedades = new Properties();
+		
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			
+			 propiedades.load(entrada);
+			
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+            
+			 try {
+				 Class.forName("com.mysql.cj.jdbc.Driver");
+				 conn = DriverManager.getConnection(url, user, contra);
+    			
+				 PreparedStatement ps = conn.prepareStatement(query);
+				 ResultSet rs = ps.executeQuery();
 
-	    public int numeroVehiculos_renta() {
-	        int renta = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Rentado'");
-	        System.out.println("numeroVehiculos_renta: " +renta);
-	        return renta;
-	    }
+				 if (rs.next()) {
+					 resultado = rs.getInt(1);
+					 System.out.println("Número total: " + resultado);
+				 }
+				 rs.close();
+				 ps.close();
+				 conn.close();
+			 }
 
-	    public int numeroVehiculos_dispo() {
-	        int dispo = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Disponible'");
-	        System.out.println("numeroVehiculos_dispo: " + dispo);
-	        return dispo;
-	    }
+			 catch (Exception e) {
+				 e.printStackTrace();
+			 }
+			 finally {
+				 try {
+					 conn.close();
+				 }catch(Exception e) {	
+				 }
+			 }
+		 } catch (IOException e) {
+			 System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
+		 }  		 
+		 return resultado;	 
+	 }
+	
+	 public int numeroVehiculos_total() {
+		 int total = conteo("SELECT COUNT(*) FROM Vehiculos");
+		 System.out.println("numeroVehiculos_total: " + total);
+		 return total;
+	 }
 
-	    public int numeroVehiculos_manteni() {
-	        int manteni = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Mantenimiento'");
-	        System.out.println("numeroVehiculos_manteni: " + manteni);
-	        return manteni;
-	    }
+	 public int numeroVehiculos_renta() {
+		 int renta = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Rentado'");
+		 System.out.println("numeroVehiculos_renta: " +renta);
+		 return renta;
+	 }
+
+	 public int numeroVehiculos_dispo() {
+		 int dispo = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Disponible'");
+		 System.out.println("numeroVehiculos_dispo: " + dispo);
+		 return dispo;
+	 }
+
+	 public int numeroVehiculos_manteni() {
+		 int manteni = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Mantenimiento'");
+		 System.out.println("numeroVehiculos_manteni: " + manteni);
+		 return manteni;
+ 	  }
+	 
+	 public VehicleModel (int id_renta, String Nombre_Cliente, Date inicio_renta, Date fin_renta, String estado_renta){
+		 
+		 this. id_renta = id_renta;
+		 this. name = Nombre_Cliente;
+		 this. inicio_renta = inicio_renta;
+		 this. fin_renta = fin_renta;
+		 this. estado_renta = estado_renta;
+	 }
+	    
+	 public ArrayList<VehicleModel> getinfo(int id_vehiculo) {
+	    	
+		 ArrayList<VehicleModel> rentas = new ArrayList<>();
+	        
+		 String query = "SELECT r.id_renta, c.name AS name, r.inicio_renta, r.fin_renta, r.estado " +
+				 		"FROM Rentas r " +
+				 		"INNER JOIN Clientes c ON r.id_cliente = c.id_cliente " +
+				 		"WHERE r.id_vehiculo = ?";
+	        
+		 Connection conn = null; 	 
+		 System.out.println(query);
+		   	
+		 Properties propiedades = new Properties();
+		   	
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try {
+				 Class.forName("com.mysql.cj.jdbc.Driver");
+				 conn = DriverManager.getConnection(url, user, contra);
+
+				 PreparedStatement ps = conn.prepareStatement(query);
+				 ps.setInt(1, id);
+				 ResultSet rs = ps.executeQuery();
+	    			
+				 while (rs.next()) {
+					 VehicleModel tmp = new VehicleModel();
+
+					 tmp.setId_renta(rs.getInt("id_renta"));
+					 tmp.setName(rs.getString("name"));                
+					 tmp.setInicio_renta(rs.getDate("inicio_renta"));
+					 tmp.setFin_renta(rs.getDate("fin_renta"));
+					 tmp.setestado(rs.getString("estado"));
+					 System.out.println("dfadsfsadfs");
+					 rentas.add(tmp);
+				 }
+	                
+				 rs.close();
+				 ps.close();
+				 conn.close();
+	    			
+			 } catch (Exception e) {
+				 e.printStackTrace();
+			 }
+
+		 } catch (IOException e) {
+			 System.out.println("Error al leer configuración: " + e.getMessage());
+		 }
+		 return rentas;
+	 }	 
 	 
 	 public int getId(){
 		 return this.id; 
@@ -428,5 +497,37 @@ public class VehicleModel {
    	public void setestado(String estado){
    		this.estado = estado; 
    	}
+   	
+    public int getId_renta() {
+        return this.id_renta;
+    }
+
+    public void setId_renta(int id_renta) { 
+        this.id_renta = id_renta;
+    }
+    
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+    public Date getInicio_renta() {
+		return this.inicio_renta;
+	}
+
+	public void setInicio_renta(Date inicio_renta) {
+		this.inicio_renta = inicio_renta;
+	}
+	
+    public Date getFin_renta() {
+		return this.inicio_renta;
+	}
+
+	public void setFin_renta(Date fin_renta) {
+		this.fin_renta = fin_renta;
+	}
 	
 }

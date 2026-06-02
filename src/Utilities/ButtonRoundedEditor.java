@@ -70,7 +70,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 			fireEditingStopped(); //Evita la edicion de la zelda
 			SwingUtilities.invokeLater(()->{
 				int modelRow = table.convertRowIndexToModel(currentRow);
-				int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replace("C-", ""));
+				int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
 				if(accion.equals("Clientes")) {
 					cc.showHistorial(idRow);
 				}
@@ -88,7 +88,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 			popupMenu.setVisible(false);
 			fireEditingStopped();
 			int modelRow = table.convertRowIndexToModel(currentRow);
-			int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replace("C-", ""));
+			int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
 			SwingUtilities.invokeLater(()->{
 				if(accion.equals("Clientes")) {
 					String nombre = table.getModel().getValueAt(modelRow, 1).toString();
@@ -112,7 +112,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 			if (currentRow != -1) {
 
 				int modelRow = table.convertRowIndexToModel(currentRow);
-				int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replace("C-", ""));
+				int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
 				cc.Eliminar_cliente(idRow);
 				((DefaultTableModel) table.getModel()).removeRow(modelRow);
 			}

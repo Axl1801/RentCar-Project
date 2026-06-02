@@ -76,11 +76,13 @@ public class DashController {
 	
 	//DEVUELVE LAS GANANCIAS DE EL MES TOTAL
 	public double get_totalMes() {
+		totalMes = dm.ganancia_mes_actual(); 
 		return totalMes;
 	}
 	
 	//DEVUELVE LAS GANANCIAS DE LA SEMANA EN CURSO 
 	public double get_totalSemanaEnCurso() {
+		totalSemanaEnCurso = dm.ganancia_semana_actual();
 		return totalSemanaEnCurso;
 	}
 	
