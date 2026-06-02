@@ -539,7 +539,7 @@ public class ClientModel implements FilaTabla{
                 	tmp.setModelo_vehiculo(rs.getString("nombre"));                
                     tmp.setInicio_renta(rs.getDate("inicio_renta"));
                     tmp.setFin_renta(rs.getDate("fin_renta"));
-                    System.out.println("dfadsfsadfs");
+                    System.out.println("Add CTE");
                     rentas.add(tmp);
                 }
                 
