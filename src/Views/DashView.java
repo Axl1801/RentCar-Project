@@ -37,13 +37,21 @@ import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
+import Controllers.ClientController;
+import Controllers.DashController;
 import Utilities.Activities;
 import Utilities.BarRenderRounded;
 import Utilities.PanelRounded;
 
 public class DashView {
+	DashController control;
+
 	public DashView() {
 
+	}
+	
+	public void setControlador(DashController c) {
+	    this.control = c;
 	}
 
 	public JPanel Dashboard() {

@@ -4,7 +4,9 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import Models.ClientModel;
 import Models.DashModel;
+import Views.ClientView;
 import Views.DashView;
 
 public class DashController {
@@ -12,22 +14,18 @@ public class DashController {
 	private DashView dv;
 	private DashModel dm;
 	
+	private double semana1;
+	private  double semana2;
+	private double semana3;
+	private double semana4;
+	private double semana5;
+	private double totalMes;
+	private double totalSemanaEnCurso;
 	
-	public void actualizarReporteSemanas() {
-        Map<Integer, Double> datosSemanas = dm.ganancias_semanales_mes_actual();
-
-        double semana1 = datosSemanas.get(1);
-        double semana2 = datosSemanas.get(2);
-        double semana3 = datosSemanas.get(3);
-        double semana4 = datosSemanas.get(4);
-        double semana5 = datosSemanas.get(5);
-        
-        double totalMes = dm.ganancia_mes_actual();
-        double totalSemanaEnCurso = dm.ganancia_semana_actual();
-
-    }
 	public DashController(){
 		dv = new DashView();
+		dv.setControlador(this);
+		dm = new DashModel();
 	}
 	
 	public JPanel showDashboard() {
@@ -35,6 +33,57 @@ public class DashController {
 		
 	}
 	
+	//TIENE LOS DOUIBLES DE LAS 5 SEMANAS ASI COMO EL DEL TOTAL DE LAS GANANCIAS MENSUALES
+	public void actualizarReporteSemanas() {
+        Map<Integer, Double> datosSemanas = dm.ganancias_semanales_mes_actual();
+
+        semana1 = datosSemanas.getOrDefault(1, 0.0);
+        semana2 = datosSemanas.getOrDefault(2, 0.0);
+        semana3 = datosSemanas.getOrDefault(3, 0.0);
+        semana4 = datosSemanas.getOrDefault(4, 0.0);
+        semana5 = datosSemanas.getOrDefault(5, 0.0);
+        
+        totalMes = dm.ganancia_mes_actual();
+        totalSemanaEnCurso = dm.ganancia_semana_actual();
+
+    }
+	
+	//DEVUELVE LAS GANANCIAS DE LA SEMANA 1
+	public double get_semana_1() {
+		return semana1;
+	}
+
+	//DEVUELVE LAS GANANCIAS DE LA SEMANA 2
+	public double get_semana_2() {
+		return semana2;
+	}
+	
+	//DEVUELVE LAS GANANCIAS DE LA SEMANA 3
+	public double get_semana_3() {
+		return semana3;
+	}
+	
+	//DEVUELVE LAS GANANCIAS DE LA SEMANA 4
+	public double get_semana_4() {
+		return semana4;
+	}
+	
+	//DEVUELVE LAS GANANCIAS DE LA SEMANA 5
+	public double get_semana_5() {
+		return semana5;
+	}
+	
+	//DEVUELVE LAS GANANCIAS DE EL MES TOTAL
+	public double get_totalMes() {
+		return totalMes;
+	}
+	
+	//DEVUELVE LAS GANANCIAS DE LA SEMANA EN CURSO 
+	public double get_totalSemanaEnCurso() {
+		return totalSemanaEnCurso;
+	}
+	
+	//DEVUELVE EL TOTAL DE VEHICULOS
 	public int numeroVehiculos_total(){
 		
 		int num_car_total = dm.numeroVehiculos_total();
@@ -43,6 +92,7 @@ public class DashController {
 		
 	}
 	
+	//DEVUELVE EL TOTAL DE VEHICULOS EN RENTA
 	public int numeroVehiculos_renta(){
 		
 		int num_car_renta = dm.numeroVehiculos_renta();
@@ -51,6 +101,7 @@ public class DashController {
 		
 	}
 	
+	//DEVUELVE EL TOTAL DE VEHICULOS DISPONIBLES
 	public int numeroVehiculos_dispo(){
 		
 		int num_car_disponibles = dm.numeroVehiculos_dispo();
@@ -59,6 +110,7 @@ public class DashController {
 		
 	}
 	
+	//DEVUELVE EL TOTAL DE VEHICULOS EN MANTENIMIENTO 
 	public int numeroVehiculos_manteni(){
 		
 		int num_car_mantenimiento = dm.numeroVehiculos_manteni();
@@ -67,6 +119,7 @@ public class DashController {
 		
 	}
 	
+	//DEVUELVE EL TOTAL DE VEHICULOS NO DISPONIBLES 
 	public int numeroVehiculos_fuera(){
 		
 		int num_car_fuera = dm.numeroVehiculos_fuera();
