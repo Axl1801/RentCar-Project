@@ -28,6 +28,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.RingPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.title.LegendTitle;
@@ -40,6 +41,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import Controllers.ClientController;
 import Controllers.DashController;
 import Utilities.Activities;
+import Utilities.ActivityManager;
 import Utilities.BarRenderRounded;
 import Utilities.PanelRounded;
 
@@ -77,7 +79,7 @@ public class DashView {
 		total_titulo.setFont(new Font("Poppins",Font.PLAIN,25));
 		totalVehiculos.add(total_titulo, BorderLayout.NORTH);
 
-		JLabel total = new JLabel("50");
+		JLabel total = new JLabel(Integer.toString(control.numeroVehiculos_total()));
 		total.setBackground(Color.white);
 		total.setForeground(Color.BLACK);
 		total.setHorizontalAlignment(JLabel.CENTER);
@@ -107,7 +109,7 @@ public class DashView {
 		disp_titulo.setFont(new Font("Poppins",Font.PLAIN,25));
 		totalDisponibles.add(disp_titulo, BorderLayout.NORTH);
 
-		JLabel disp = new JLabel("20");
+		JLabel disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));
 		disp.setBackground(Color.white);
 		disp.setForeground(Color.BLACK);
 		disp.setHorizontalAlignment(JLabel.CENTER);
@@ -137,7 +139,7 @@ public class DashView {
 		rentado_titulo.setFont(new Font("Poppins",Font.PLAIN,25));
 		totalRentados.add(rentado_titulo, BorderLayout.NORTH);
 
-		JLabel rent = new JLabel("25");
+		JLabel rent = new JLabel(Integer.toString(control.numeroVehiculos_renta()));
 		rent.setBackground(Color.white);
 		rent.setForeground(Color.BLACK);
 		rent.setHorizontalAlignment(JLabel.CENTER);
@@ -166,7 +168,7 @@ public class DashView {
 		mantenimiento_titulo.setFont(new Font("Poppins",Font.PLAIN,25));
 		totalMantenimiento.add(mantenimiento_titulo, BorderLayout.NORTH);
 
-		JLabel mant = new JLabel("5");
+		JLabel mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));
 		mant.setBackground(Color.white);
 		mant.setForeground(Color.BLACK);
 		mant.setHorizontalAlignment(JLabel.CENTER);
@@ -186,12 +188,15 @@ public class DashView {
 		panelStatsMens.setVisible(true);
 		panelStatsMens.setLayout(new BorderLayout());
 		panelStatsMens.setBackground(Color.decode("#FFFFFF"));
-
+		
+		control.actualizarReporteSemanas();//Actualiza los datos para que se muestren correctamente
+		
 		DefaultCategoryDataset  DSstats = new DefaultCategoryDataset ();
-		DSstats.addValue(17000, "Semana 1", "Semana 1");
-		DSstats.addValue(28000, "Semana 2", "Semana 2");
-		DSstats.addValue(21000, "Semana 3", "Semana 3");
-		DSstats.addValue(31000, "Semana 4", "Semana 4");
+		DSstats.addValue(control.get_semana_1(), "Semana 1", "Semana 1"); //Asignacion de las ganancias de la semana 1 en la tabla
+		DSstats.addValue(control.get_semana_2(), "Semana 2", "Semana 2"); //Asignacion de las ganancias de la semana 2 en la tabla
+		DSstats.addValue(control.get_semana_3(), "Semana 3", "Semana 3"); //Asignacion de las ganancias de la semana 3 en la tabla
+		DSstats.addValue(control.get_semana_4(), "Semana 4", "Semana 4"); //Asignacion de las ganancias de la semana 4 en la tabla
+		DSstats.addValue(control.get_semana_5(), "Semana 5", "Semana 5"); //Asignacion de las ganancias de la semana 5 en la tabla
 
 		JFreeChart statsMensuales = ChartFactory.createBarChart(
 				" Rendimiento Mensual",//Titulo de la barra
@@ -234,6 +239,7 @@ public class DashView {
 		renderer.setSeriesPaint(1, Color.decode("#6BE6D3")); // Semana 2
 		renderer.setSeriesPaint(2, Color.decode("#000000")); // Semana 3
 		renderer.setSeriesPaint(3, Color.decode("#7DBBFF")); // Semana 4
+		renderer.setSeriesPaint(4, Color.decode("#A8E68B")); // Semana 5
 
 		plot.setRenderer(renderer);
 
@@ -278,27 +284,34 @@ public class DashView {
 
 		DefaultPieDataset DSsucu = new DefaultPieDataset();
 
-		// Ejemplo con tus datos
-		DSsucu.setValue("Malecon", 52.1);
-		DSsucu.setValue("Camino Real", 22.8);
-		DSsucu.setValue("Chametla", 13.9);
-		DSsucu.setValue("8 de Octubre", 11.2);
+		DSsucu.setValue("Disponibles", (100 * control.numeroVehiculos_dispo())/control.numeroVehiculos_total());
+		DSsucu.setValue("Rentados", (100 * control.numeroVehiculos_renta())/control.numeroVehiculos_total());
+		DSsucu.setValue("Mantenimiento", (100 * control.numeroVehiculos_manteni())/control.numeroVehiculos_total());
+		DSsucu.setValue("Desactivados", (100 * control.numeroVehiculos_Desactivados())/control.numeroVehiculos_total());
+		
+		RingPlot plotPie = new RingPlot(DSsucu);
 
-		JFreeChart chart = ChartFactory.createPieChart(
-				"Estado de Vehículos", // título
-				DSsucu,
-				true,
-				true,
-				false
-				);
+		JFreeChart chart = new JFreeChart(
+			    "Estado de Vehículos",
+			    JFreeChart.DEFAULT_TITLE_FONT,
+			    plotPie,
+			    true
+			);
 
 		ChartPanel graficaPastel = new ChartPanel(chart);
 		graficaPastel.setOpaque(false);
 		graficaPastel.setBackground(new Color(0,0,0,0));
 
-		PiePlot plotPie = (PiePlot) chart.getPlot();
+		//Personalizacion de la tabla
+		plotPie.setSectionDepth(0.25);
+		plotPie.setSeparatorsVisible(false);
+		plotPie.setShadowPaint(null);
+		plotPie.setOutlineVisible(false);
+		plotPie.setSectionOutlinesVisible(false);
+		plotPie.setLabelGenerator(null);
+		plotPie.setLabelLinksVisible(false);
 
-		// Fondo transparente (para que respete tu PanelRounded)
+		// Fondo transparente (para que respete el PanelRounded)
 		chart.setBackgroundPaint(new Color(0,0,0,0));
 		chart.getLegend().setPosition(RectangleEdge.RIGHT);
 		chart.getLegend().setItemFont(new Font("Poppins", Font.PLAIN, 12));
@@ -323,10 +336,10 @@ public class DashView {
 		plotPie.setLabelShadowPaint(null);
 
 		// Colores personalizados
-		plotPie.setSectionPaint("Malecon", Color.decode("#000000"));
-		plotPie.setSectionPaint("Camino Real", Color.decode("#7DBBFF"));
-		plotPie.setSectionPaint("Chametla", Color.decode("#6BE6D3"));
-		plotPie.setSectionPaint("8 de Octubre", Color.decode("#A0BCE8"));
+		plotPie.setSectionPaint("Disponibles", Color.decode("#000000"));
+		plotPie.setSectionPaint("Rentados", Color.decode("#7DBBFF"));
+		plotPie.setSectionPaint("Mantenimiento", Color.decode("#6BE6D3"));
+		plotPie.setSectionPaint("Desactivados", Color.decode("#A0BCE8"));
 
 		plotPie.setLabelFont(new Font("Poppins", Font.BOLD, 12));
 		plotPie.setSimpleLabels(true);
@@ -369,6 +382,9 @@ public class DashView {
 		panelPer.setVisible(true);
 		panelPer.setLayout(new BorderLayout());
 		panelContPer.add(panelPer,BorderLayout.CENTER);
+		
+		int porcentajeRend = (int) control.get_totalMes();
+		int porcentajeRendAnt;
 
 		JLabel percentage = new JLabel("94%");
 		percentage.setFont(new Font("Poppins",Font.BOLD,50));
@@ -377,6 +393,8 @@ public class DashView {
 		percentage.setVisible(true);
 		percentage.setOpaque(false);
 		panelPer.add(percentage,BorderLayout.CENTER);
+		
+		
 
 		JLabel cambioRend = new JLabel("+2.4% vs mes anterior");
 		cambioRend.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 80));
@@ -416,8 +434,11 @@ public class DashView {
 				g2.fillRoundRect(0, 0, progressWidth, height, 20, 20);
 			}
 		});
+		
+		
+		
 		barra.setPreferredSize(new Dimension(300, 10)); // tamaño exacto de la barra para que se vea estetica
-		barra.setValue(94); // porcentaje (0–100)
+		barra.setValue((int) control.get_totalMes()); // porcentaje (0–100)
 		barra.setStringPainted(false);
 		barra.setBackground(Color.decode("#000D56")); // fondo
 		barra.setBorderPainted(false);
@@ -439,6 +460,14 @@ public class DashView {
 		PanelActReciente.setVisible(true);
 		PanelActReciente.setOpaque(false);
 		PanelActReciente.setLayout(new BorderLayout());
+		
+		JLabel actividadesCreadas = new JLabel("Actividad Reciente");
+		actividadesCreadas.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
+		actividadesCreadas.setForeground(Color.decode("#000000"));
+		actividadesCreadas.setFont(new Font("Poppins",Font.BOLD,15));
+		actividadesCreadas.setVisible(true);
+		actividadesCreadas.setOpaque(false);
+		PanelActReciente.add(actividadesCreadas,BorderLayout.NORTH);
 
 		JPanel panelActividades = new JPanel() {
 			protected void paintComponent(Graphics g) {
@@ -460,11 +489,15 @@ public class DashView {
 		panelActividades.setLayout(new BoxLayout(panelActividades, BoxLayout.Y_AXIS));
 		panelActividades.setOpaque(false);
 
-		panelActividades.add(new Activities( "Nueva renta creada","Cliente: Ana Lopez","Hace 5 min",Color.decode("#4C75B7")),0);
-		panelActividades.add(new Activities( "Vehiculo en Mantenimiento","V-003 Sentra","Hace 5 min",Color.decode("#C79E59")),0);
-		panelActividades.add(new Activities( "Vehiculo Entregado","V-001 Corolla","Hace 1 Hora",Color.decode("#308C52")),0);
-		panelActividades.add(new Activities( "Nueva renta creada","Cliente: Esau Garcia","Hace 3 Horas",Color.decode("#4C75B7")),0);
-		panelActividades.add(new Activities( "Vehiculo en Mantenimiento","V-007 Versa ","Hace 7 Horas",Color.decode("#C79E59")),0);
+		
+		ActivityManager.setPanel(panelActividades);
+		
+		ActivityManager.addActivity("Nueva renta creada","Cliente: Esau Garcia","Hace 3 Horas",Color.decode("#4C75B7"));
+		ActivityManager.addActivity("Nueva renta creada","Cliente: Ana Lopez","Hace 5 min",Color.decode("#4C75B7"));
+		ActivityManager.addActivity("Vehiculo en Mantenimiento","V-003 Sentra","Hace 5 min",Color.decode("#C79E59"));
+		ActivityManager.addActivity("Vehiculo Entregado","V-001 Corolla","Hace 1 Hora",Color.decode("#308C52"));
+		ActivityManager.addActivity("Nueva renta creada","Cliente: Esau Garcia","Hace 3 Horas",Color.decode("#4C75B7"));
+
 
 		PanelActReciente.add(panelActividades,BorderLayout.CENTER);
 

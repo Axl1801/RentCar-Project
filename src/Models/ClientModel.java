@@ -539,7 +539,10 @@ public class ClientModel implements FilaTabla{
                 	tmp.setModelo_vehiculo(rs.getString("nombre"));                
                     tmp.setInicio_renta(rs.getDate("inicio_renta"));
                     tmp.setFin_renta(rs.getDate("fin_renta"));
+<<<<<<< Updated upstream
                     System.out.println("Add CTE");
+=======
+>>>>>>> Stashed changes
                     rentas.add(tmp);
                 }
                 

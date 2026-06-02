@@ -136,7 +136,7 @@ public class DashController {
 	}
 	
 	//DEVUELVE EL TOTAL DE VEHICULOS NO DISPONIBLES 
-	public int numeroVehiculos_fuera(){
+	public int numeroVehiculos_Desactivados(){
 		
 		int num_car_fuera = dm.numeroVehiculos_fuera();
 		
