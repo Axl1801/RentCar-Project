@@ -971,7 +971,7 @@ public class VehicleView {
 		modelo.setLocation(50,230);
 		añadirVehiculo.add(modelo);
 		
-		ComboBoxRounded<String> listModelos = new ComboBoxRounded<>();
+		ComboBoxRounded<String> listModelos = new ComboBoxRounded();
 		listModelos.setFont(new Font("Poppins", Font.BOLD, 15));
 		listModelos.setForeground(Color.black);
 		listModelos.setOpaque(false);
@@ -989,7 +989,7 @@ public class VehicleView {
 		categoria.setLocation(50,330);
 		añadirVehiculo.add(categoria);
 		
-		ComboBoxRounded<String> listCategorias = new ComboBoxRounded<>();
+		ComboBoxRounded<String> listCategorias = new ComboBoxRounded();
 		listCategorias.setFont(new Font("Poppins", Font.BOLD, 15));
 		listCategorias.setForeground(Color.black);
 		listCategorias.setOpaque(false);
@@ -1007,7 +1007,7 @@ public class VehicleView {
 		añadirVehiculo.add(tituloEstado);
 		
 		//Contorno redondeado 280 40 400 160
-		ComboBoxRounded<String> listEstado = new ComboBoxRounded<>();
+		ComboBoxRounded<String> listEstado = new ComboBoxRounded();
 		listEstado.setFont(new Font("Poppins", Font.BOLD, 15));
 		listEstado.setForeground(Color.decode("#000000"));
 		listEstado.setOpaque(false);
@@ -1024,7 +1024,7 @@ public class VehicleView {
 		tituloAño.setLocation(370,230);
 		añadirVehiculo.add(tituloAño);
 		
-		ComboBoxRounded<String> listAños = new ComboBoxRounded<>();
+		ComboBoxRounded<String> listAños = new ComboBoxRounded();
 		listAños.setFont(new Font("Poppins", Font.BOLD, 15));
 		listAños.setForeground(Color.black);
 		listAños.setOpaque(false);
@@ -1041,7 +1041,7 @@ public class VehicleView {
 		precio.setLocation(370,330);
 		añadirVehiculo.add(precio);
 		
-		ComboBoxRounded<BigDecimal> listPrecios = new ComboBoxRounded<>();
+		ComboBoxRounded<BigDecimal> listPrecios = new ComboBoxRounded();
 		listPrecios.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPrecios.setForeground(Color.black);
 		listPrecios.setOpaque(false);
