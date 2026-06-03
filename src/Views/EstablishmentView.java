@@ -39,6 +39,7 @@ import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
 import Utilities.ButtonSimpleEditor;
 import Utilities.ComboBoxRounded;
+import Utilities.GrafoPanel;
 import Utilities.LabelRounded;
 import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
@@ -58,27 +59,14 @@ public class EstablishmentView {
 
 		GridBagConstraints gbc = new GridBagConstraints();
 
-		// Panel total de vehiculos
 		JPanel mapPanel = new JPanel();
 		mapPanel.setOpaque(true);
 		mapPanel.setVisible(true);
 		mapPanel.setLayout(new BorderLayout());
 		mapPanel.setBackground(Color.decode("#FFFFFF"));
 
-		ImageIcon imagenMap = new ImageIcon(
-				getClass().getResource("/Imagenes-sprites/mapa.png")
-				);
-
-		//Label contenedor de la imagen con metodo para escalarla
-		JLabel mapContenedor = new JLabel() {
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				g.drawImage(imagenMap.getImage(), 10, 10, getWidth(), getHeight(), this);
-			}
-		};
-
-		mapPanel.add(mapContenedor, BorderLayout.CENTER);
+        GrafoPanel miMapaInteractivo = new GrafoPanel();
+        mapPanel.add(miMapaInteractivo, BorderLayout.CENTER);
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -86,16 +74,14 @@ public class EstablishmentView {
 		gbc.weighty = 3;
 		gbc.gridwidth = 4;
 		gbc.gridheight = 3;
-		gbc.insets = new Insets(0, 50, 0, 50); // 
+		gbc.insets = new Insets(0, 50, 0, 50); // 
 		gbc.fill = GridBagConstraints.BOTH;
 		EstablishmentPanel.add(mapPanel,gbc);
 
-		//Icono y escalador del boton añadir
 		ImageIcon ubicacionIcon = new ImageIcon(getClass().getResource("/Iconos/adicionales/ubicacion.png"));
 		Image ubicacionEscalar = ubicacionIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		ImageIcon ubicacionEscalada = new ImageIcon(ubicacionEscalar);
 
-		//Boton Añadir
 		ButtonRounded seleccionarUbi = new ButtonRounded("Seleccionar Ubicacion",10,1);
 		seleccionarUbi.setOpaque(false);
 		seleccionarUbi.setBackground(Color.decode("#FFFFFF"));
@@ -112,16 +98,14 @@ public class EstablishmentView {
 		gbc.weighty = 1;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
-		gbc.insets = new Insets(0, 0, 0, 0); // 
+		gbc.insets = new Insets(0, 0, 0, 0); // 
 		gbc.fill = GridBagConstraints.NONE;
 		EstablishmentPanel.add(seleccionarUbi,gbc);
 
-		//Icono y escalador del boton añadir
 		ImageIcon añadirIcon = new ImageIcon(getClass().getResource("/Iconos/adicionales/agregar_white.png"));
 		Image añadirEscalar = añadirIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		ImageIcon añadirEscalada = new ImageIcon(añadirEscalar);
 
-		//Boton Añadir
 		ButtonRounded añadirUbi = new ButtonRounded("Añadir Locación",10,1);
 		añadirUbi.setOpaque(false);
 		añadirUbi.setBackground(Color.decode("#FFFFFF"));
@@ -139,7 +123,7 @@ public class EstablishmentView {
 		gbc.weighty = 1;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
-		gbc.insets = new Insets(0, 0, 0, 0); // 
+		gbc.insets = new Insets(0, 0, 0, 0); // 
 		gbc.fill = GridBagConstraints.NONE;
 		EstablishmentPanel.add(añadirUbi,gbc);
 

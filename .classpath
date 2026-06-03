@@ -16,5 +16,13 @@
 	<classpathentry kind="lib" path="src/resources/Complementos/pdfbox-2.0.30.jar"/>
 	<classpathentry kind="lib" path="src/resources/Complementos/xmpbox-2.0.30.jar"/>
 	<classpathentry kind="lib" path="src/resources/Complementos/graphics2d-0.32.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/javafx.base.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/javafx.controls.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/javafx.fxml.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/javafx.graphics.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/javafx.media.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/javafx.swing.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/javafx.web.jar"/>
+	<classpathentry kind="lib" path="src/resources/Complementos/javafx-swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
