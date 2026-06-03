@@ -385,7 +385,7 @@ public class VehicleModel {
 				 conn = DriverManager.getConnection(url, user, contra);
 
 				 PreparedStatement ps = conn.prepareStatement(query);
-				 ps.setInt(1, id);
+				 ps.setInt(1, id_vehiculo);
 				 ResultSet rs = ps.executeQuery();
 	    			
 				 while (rs.next()) {
