@@ -6,6 +6,8 @@ import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
@@ -75,7 +77,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 					cc.showHistorial(idRow);
 				}
 				else if(accion.equals("Vehiculos")) {
-					vc.showHistorial();
+					vc.showHistorial(idRow);
 				}
 				else if(accion.equals("Rentas")) {
 					rc.showHistorial();
@@ -98,7 +100,14 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 					cc.showEdit(idRow,nombre,correo,telefono);
 				}
 				else if(accion.equals("Vehiculos")) {
-					vc.EditVehicleView();
+					int idVehiculo = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
+					String modelo = table.getModel().getValueAt(modelRow, 2).toString();
+					String marca = table.getModel().getValueAt(modelRow, 3).toString();	
+					String categoria = table.getModel().getValueAt(modelRow, 2).toString();
+					String estado = table.getModel().getValueAt(modelRow, 6).toString();
+					String año = table.getModel().getValueAt(modelRow, 4).toString();
+					BigDecimal precio = (BigDecimal)table.getModel().getValueAt(modelRow, 5);
+					vc.EditVehicleView(idVehiculo, marca, modelo, categoria, estado, año, precio);
 				}
 				else if(accion.equals("Rentas")) {
 					rc.editRent();
@@ -110,10 +119,19 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 		btnEliminar.addActionListener(e -> {
 			popupMenu.setVisible(false);
 			if (currentRow != -1) {
-
 				int modelRow = table.convertRowIndexToModel(currentRow);
 				int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
-				cc.Eliminar_cliente(idRow);
+				
+				if(accion.equals("Clientes")) {
+					cc.Eliminar_cliente(idRow);
+				}
+				else if(accion.equals("Vehiculos")) {
+					vc.EliminarVehiculo(idRow);
+				}
+				else if(accion.equals("Rentas")) {
+					//PENDIENTE BORRAR REGISTRO
+				}
+				
 				((DefaultTableModel) table.getModel()).removeRow(modelRow);
 			}
 
@@ -125,7 +143,17 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 			fireEditingStopped();
 			int modelRow = table.convertRowIndexToModel(currentRow);
 			int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
-			pc.imprimirExpedienteCliente(idRow);
+
+			if(accion.equals("Clientes")) {
+				pc.imprimirExpedienteCliente(idRow);
+			}
+			else if(accion.equals("Vehiculos")) {
+				pc.imprimirFichaVehiculo(idRow);
+			}
+			else if(accion.equals("Rentas")) {
+				pc.generarPDFReserva(idRow);
+			}
+			
 			JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: ");
 			JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 		});

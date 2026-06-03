@@ -11,8 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Properties;
+import Utilities.FilaTabla;
 
-public class VehicleModel {
+public class VehicleModel implements FilaTabla{
 	
 	private int id;
 	private byte[] foto;
@@ -133,8 +134,8 @@ public class VehicleModel {
 		 return false;	 
 	 }
 
-	 public boolean update(int id_vehiculo, byte[] foto, int id_modelo, int id_categoria, int anio, BigDecimal precio_dia, String estado) {
-		 String query = "UPDATE `Vehiculos` SET `foto` = ?, `id_modelo` = ?, `id_categoria` = ?, `anio` = ?, `precio_dia` = ?, `estado` = ? WHERE `id_vehiculo` = ?;";
+	 public boolean update(int id_vehiculo, BigDecimal precio_dia, String estado) {
+		 String query = "UPDATE `Vehiculos` SET `precio_dia` = ?, `estado` = ? WHERE `id_vehiculo` = ?;";
 		 Properties propiedades = new Properties();
 		 Connection conn = null;						
 		 
@@ -149,13 +150,9 @@ public class VehicleModel {
 	    			conn = DriverManager.getConnection(url, user, contra);
 
 	    			PreparedStatement ps = conn.prepareStatement(query);
-	    			ps.setBytes(1, foto);
-	    			ps.setInt(2, id_modelo);
-	    			ps.setInt(3, id_categoria);
-	    			ps.setInt(4, anio);
-	    			ps.setBigDecimal(5, precio_dia);
-	    			ps.setString(6, estado);
-	    			ps.setInt(7, id_vehiculo);
+	    			ps.setBigDecimal(1, precio_dia);
+	    			ps.setString(2, estado);
+	    			ps.setInt(3, id_vehiculo);
 
 	    			int rowsAffected = ps.executeUpdate();
 	    			if (rowsAffected > 0) { ps.close(); conn.close(); return true; }
@@ -353,11 +350,11 @@ public class VehicleModel {
 	 
 	 public VehicleModel (int id_renta, String Nombre_Cliente, Date inicio_renta, Date fin_renta, String estado_renta){
 		 
-		 this. id_renta = id_renta;
-		 this. name = Nombre_Cliente;
-		 this. inicio_renta = inicio_renta;
-		 this. fin_renta = fin_renta;
-		 this. estado_renta = estado_renta;
+		 this.id_renta = id_renta;
+		 this.name = Nombre_Cliente;
+		 this.inicio_renta = inicio_renta;
+		 this.fin_renta = fin_renta;
+		 this.estado_renta = estado_renta;
 	 }
 	    
 	 public ArrayList<VehicleModel> getinfo(int id_vehiculo) {
@@ -379,8 +376,9 @@ public class VehicleModel {
 			 String url = propiedades.getProperty("db.url");
 			 String user = propiedades.getProperty("db.user");
 			 String contra = propiedades.getProperty("db.password");
-
+			 System.out.println("ANSDJFOKBNADSBFNIJAHKSB");
 			 try {
+				 System.out.println("561968416548948948");
 				 Class.forName("com.mysql.cj.jdbc.Driver");
 				 conn = DriverManager.getConnection(url, user, contra);
 
@@ -389,6 +387,7 @@ public class VehicleModel {
 				 ResultSet rs = ps.executeQuery();
 	    			
 				 while (rs.next()) {
+					 System.out.println("HUEVOS ARIAN");
 					 VehicleModel tmp = new VehicleModel();
 
 					 tmp.setId_renta(rs.getInt("id_renta"));
@@ -425,6 +424,10 @@ public class VehicleModel {
 	 public String getIdLetra(){
 		 return String.format("V-%03d", this.id);
 	 }
+	 
+    public String getIdLetraRenta() {
+        return String.format("R-%03d", this.id_renta);
+     }
 		
 	 public byte[] getfoto(){
 		 return this.foto;
@@ -530,4 +533,8 @@ public class VehicleModel {
 		this.fin_renta = fin_renta;
 	}
 	
+	@Override
+    public Object[] toFila() {
+        return new Object[]{getIdLetra(), getfoto(), getmodelo(), getmarca(),getanio(),getprecio_dia(),getestado(), ""};
+    }
 }

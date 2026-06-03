@@ -15,6 +15,9 @@ public class VehicleController {
 	
 	public VehicleController() {
 		vv = new VehicleView();
+		vv.setControlador(this);
+		vm = new VehicleModel();
+		
 	}
 	
 	public JPanel showVehicle() {
@@ -25,12 +28,12 @@ public class VehicleController {
 		vv.addVehicle();
 	}
 	
-	public void EditVehicleView() {
-		vv.editVehicle();
+	public void EditVehicleView(int idVehiculo,String marca, String modelo, String categoria, String estado, String año, BigDecimal precio) {
+		vv.editVehicle(idVehiculo, marca, modelo, categoria, estado, año, precio);
 	}
 	
-	public void showHistorial() {
-		vv.historialVehiculos();
+	public void showHistorial(int idVehicle) {
+		vv.historialVehiculos(idVehicle);
 	}
 	
 	//Genera el listado de Vehiculos con su informacion
@@ -45,8 +48,8 @@ public class VehicleController {
 	}
 	
 	//ACTUALIZA LA INFORMACION DE UN VEHICULO 
-	public boolean update(int i, byte[] f, int im, int ic, int a, BigDecimal pd, String e) {
-		boolean flag = vm.update(i, f, im, ic, a, pd, e); 
+	public boolean update(int i,BigDecimal pd, String e) {
+		boolean flag = vm.update(i,pd, e); 
 		return flag;		
 	}
 	

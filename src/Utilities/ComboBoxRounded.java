@@ -2,154 +2,216 @@ package Utilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 
 import java.awt.*;
 
 public class ComboBoxRounded<E> extends JComboBox<E> {
 
-	private Color backgroundColor = Color.WHITE;
-	private Color borderColor = new Color(200, 200, 200);
-	private int radius = 10;
+	private boolean bloqueado = false;
+    private Color backgroundColor = Color.WHITE;
+    private Color borderColor = new Color(200, 200, 200);
+    private int radius = 10;
 
-	public ComboBoxRounded(E[] items) {
-		super(items);
+    // Constructor vacío
+    public ComboBoxRounded() {
+        super();
+        initialize();
+    }
 
-		setOpaque(false);
-		setFocusable(false);
-		setBorder(new EmptyBorder(5, 10, 5, 10));
-		setBackground(backgroundColor);
-		setFont(new Font("Poppins", Font.PLAIN, 14));
+    // Constructor con elementos
+    public ComboBoxRounded(E[] items) {
+        super(items);
+        initialize();
+    }
 
-		//Flecha personalizada
-		setUI(new BasicComboBoxUI() {
+    private void initialize() {
 
-			@Override
-			protected JButton createArrowButton() {
+        setOpaque(false);
+        setFocusable(false);
+        setBorder(new EmptyBorder(5, 10, 5, 10));
+        setBackground(backgroundColor);
+        setForeground(Color.BLACK);
+        setFont(new Font("Poppins", Font.PLAIN, 14));
 
-				JButton button = new JButton() {
+        // Flecha personalizada
+        setUI(new BasicComboBoxUI() {
 
-					@Override
-					protected void paintComponent(Graphics g) {
+            @Override
+            protected JButton createArrowButton() {
 
-						Graphics2D g2 = (Graphics2D) g.create();
+                JButton button = new JButton() {
 
-						g2.setRenderingHint(
-								RenderingHints.KEY_ANTIALIASING,
-								RenderingHints.VALUE_ANTIALIAS_ON);
+                    @Override
+                    protected void paintComponent(Graphics g) {
 
-						g2.setColor(new Color(80, 80, 80));
+                        Graphics2D g2 = (Graphics2D) g.create();
 
-						int w = getWidth();
-						int h = getHeight();
+                        g2.setRenderingHint(
+                                RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
 
-						int size = 8;
+                        g2.setColor(new Color(80, 80, 80));
 
-						int x = (w - size) / 2;
-						int y = (h - size) / 2;
+                        int w = getWidth();
+                        int h = getHeight();
 
-						Polygon arrow = new Polygon();
+                        int size = 8;
 
-						arrow.addPoint(x, y);
-						arrow.addPoint(x + size, y);
-						arrow.addPoint(x + size / 2, y + size);
+                        int x = (w - size) / 2;
+                        int y = (h - size) / 2;
 
-						g2.fill(arrow);
+                        Polygon arrow = new Polygon();
 
-						g2.dispose();
-					}
-				};
+                        arrow.addPoint(x, y);
+                        arrow.addPoint(x + size, y);
+                        arrow.addPoint(x + size / 2, y + size);
 
-				button.setBorder(null);
-				button.setContentAreaFilled(false);
-				button.setFocusPainted(false);
-				button.setOpaque(false);
+                        g2.fill(arrow);
 
-				return button;
-			}
-		});
+                        g2.dispose();
+                    }
+                };
 
-		// Renderer para mantener esquinas limpias
-		setRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(
-					JList<?> list,
-					Object value,
-					int index,
-					boolean isSelected,
-					boolean cellHasFocus) {
+                button.setBorder(null);
+                button.setContentAreaFilled(false);
+                button.setFocusPainted(false);
+                button.setOpaque(false);
 
-				JLabel label = (JLabel) super.getListCellRendererComponent(
-						list, value, index, isSelected, cellHasFocus);
+                return button;
+            }
+        });
+        
+        //deshabilitar el popup
+        addPopupMenuListener(new PopupMenuListener() {
 
-				label.setBorder(new EmptyBorder(5,10,5,10));
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 
-				label.setHorizontalAlignment(SwingConstants.CENTER);
+                if (bloqueado) {
+                    SwingUtilities.invokeLater(() -> hidePopup());
+                }
+            }
 
-				if (isSelected) {
-					label.setBackground(new Color(230,230,230));
-				} else {
-					label.setBackground(Color.WHITE);
-				}
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
 
-				return label;
-			}
-		});
-	}
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {}
+        });
 
-	@Override
-	protected void paintComponent(Graphics g) {
+        // Renderer personalizado
+        setRenderer(new DefaultListCellRenderer() {
 
-		Graphics2D g2 = (Graphics2D) g.create();
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<?> list,
+                    Object value,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus) {
 
-		g2.setRenderingHint(
-				RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+                JLabel label = (JLabel) super.getListCellRendererComponent(
+                        list,
+                        value,
+                        index,
+                        isSelected,
+                        cellHasFocus);
 
-		// Fondo
-		g2.setColor(backgroundColor);
-		g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+                label.setBorder(new EmptyBorder(5, 10, 5, 10));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
 
-		super.paintComponent(g);
+                // Mantener colores aunque esté deshabilitado
+                label.setForeground(Color.BLACK);
 
-		g2.dispose();
-	}
+                if (isSelected) {
+                    label.setBackground(new Color(230, 230, 230));
+                } else {
+                    label.setBackground(Color.WHITE);
+                }
 
-	@Override
-	protected void paintBorder(Graphics g) {
+                return label;
+            }
+        });
+    }
 
-		Graphics2D g2 = (Graphics2D) g.create();
+    @Override
+    public void setEnabled(boolean enabled) {
 
-		g2.setRenderingHint(
-				RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+        super.setEnabled(enabled);
 
-		g2.setColor(borderColor);
-		g2.drawRoundRect(
-				0,
-				0,
-				getWidth()-1,
-				getHeight()-1,
-				radius,
-				radius);
+        // Mantener colores personalizados
+        setForeground(Color.BLACK);
+        setBackground(backgroundColor);
 
-		g2.dispose();
-	}
+        repaint();
+    }
 
-	// Métodos opcionales para personalizar
+    @Override
+    protected void paintComponent(Graphics g) {
 
-	public void setBorderColor(Color color) {
-		this.borderColor = color;
-		repaint();
-	}
+        Graphics2D g2 = (Graphics2D) g.create();
 
-	public void setBackgroundColor(Color color) {
-		this.backgroundColor = color;
-		repaint();
-	}
+        g2.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
 
-	public void setRadius(int radius) {
-		this.radius = radius;
-		repaint();
-	}
+        // Fondo redondeado
+        g2.setColor(backgroundColor);
+        g2.fillRoundRect(
+                0,
+                0,
+                getWidth(),
+                getHeight(),
+                radius,
+                radius);
+
+        g2.dispose();
+
+        super.paintComponent(g);
+    }
+
+    @Override
+    protected void paintBorder(Graphics g) {
+
+        Graphics2D g2 = (Graphics2D) g.create();
+
+        g2.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2.setColor(borderColor);
+
+        g2.drawRoundRect(
+                0,
+                0,
+                getWidth() - 1,
+                getHeight() - 1,
+                radius,
+                radius);
+
+        g2.dispose();
+    }
+
+    public void setBorderColor(Color color) {
+        this.borderColor = color;
+        repaint();
+    }
+
+    public void setBackgroundColor(Color color) {
+        this.backgroundColor = color;
+        setBackground(color);
+        repaint();
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+        repaint();
+    }
+    
+    public void setBloqueado(boolean bloqueado) {
+        this.bloqueado = bloqueado;
+    }
 }

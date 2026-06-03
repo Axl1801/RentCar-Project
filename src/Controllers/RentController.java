@@ -14,6 +14,8 @@ public class RentController {
 	
 	public RentController() {
 		rv = new RentView();
+		rv.setControlador(this);
+		rm = new RentModel();
 	}
 	
 	public JPanel showRent() {

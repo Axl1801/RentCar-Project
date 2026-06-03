@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -32,6 +33,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
 import Controllers.RentController;
+import Controllers.VehicleController;
+import Models.VehicleModel;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
@@ -43,8 +46,14 @@ import Utilities.TextFieldRounded;
 
 public class RentView {
 	RentController control;
+	private JTable Vehicle_table;
+	private DefaultTableModel modeloVehiculos;
 	public RentView(){
 		
+	}
+	
+	public void setControlador(RentController c) {
+	    this.control = c;
 	}
 	
 	public JPanel Rent() {
@@ -309,35 +318,20 @@ public class RentView {
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID","Cliente","Vehiculo","Foto","Inicio","Fin", "Estado","Acciones"};
-		//Creacion de una matriz para los datos de una tabla 
-		Object [][] table_content = {
-				{"R-001", "foto", "Corolla", "foto", "30/03/2026", "$03/04/2026","Disponible", ""},
-				{"R-002", "foto", "CR-V", "foto", "10/04/2026", "15/04/2026","Rentado", ""},
-				{"R-003", "foto", "Sentra", "foto", "01/04/2026", "05/04/2026","Mantenimiento", ""},
-				{"R-004", "foto", "Tacoma", "foto", "20/03/2026", "25/03/2026","Disponible", ""},
-				{"R-005", "foto", "Mazda 3", "foto", "18/03/2026", "21/03/2026","Rentado", ""},
-				{"R-006", "foto", "CR-V", "foto", "2023", "14/02/2026","19/02/2026", ""},
-				{"R-007", "foto", "Sentra", "foto", "2023", "31/11/2026","05/12/2026", ""},
-				{"R-008", "foto", "Corolla", "foto", "2024", "17/01/2026","25/01/2026", ""},
-				{"R-009", "foto", "CR-V", "foto", "2023", "15/06/2026","18/06/2026", ""},
-				{"R-010", "foto", "Tacoma", "foto", "2021", "14/12/2026","20/12/2026", ""},
-				{"R-011", "foto", "Sentra", "foto", "2023", "13/09/2026","13/10/2026", ""},
-				{"R-012", "foto", "Mazda 3", "foto", "2025", "27/03/2026","30/03/2026", ""},
-				{"R-013", "foto", "Corolla", "foto", "2024", "18/01/2026","18/02/2026", ""},
-				{"R-014", "foto", "Mazda 3", "foto", "2025", "25/04/2026","29/04/2026", ""},
-				{"R-015", "foto", "Corolla", "foto", "2024", "10/10/2026","13/10/2026", ""}
-		};
-		
+
 		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
-		DefaultTableModel modeloClientes = new DefaultTableModel(table_content,table_head) {
+		modeloVehiculos = new DefaultTableModel(null,table_head) {
 			@Override
 		    public boolean isCellEditable(int row, int column) {
 		        return column == 7; 
 		    }
 		};
+		
+		// Pide la lista al controlador
+		//ArrayList<RentModel> listaRentas = control.|;
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
-		JTable clientes_table = new JTable(modeloClientes);
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloClientes);
+		JTable clientes_table = new JTable(modeloVehiculos);
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloVehiculos);
 		clientes_table.setRowSorter(sorter);
 		
 		/*Agregamos el metodo para que el campo de texto busqueda filtre en tiempo real la tabla 

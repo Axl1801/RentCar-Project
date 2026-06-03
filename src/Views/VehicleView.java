@@ -11,7 +11,11 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -25,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -33,21 +39,30 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
+import Controllers.ClientController;
 import Controllers.VehicleController;
+import Models.ClientModel;
+import Models.VehicleModel;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
 import Utilities.ComboBoxRounded;
 import Utilities.LabelRounded;
+import Utilities.LoadData;
 import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
 
 public class VehicleView {
 	VehicleController control;
+	private JTable Vehicle_table;
+	private DefaultTableModel modeloVehiculos;
 	
 	public VehicleView() {
-		
+	}
+	
+	public void setControlador(VehicleController c) {
+	    this.control = c;
 	}
 	
 	public JPanel vistaVehiculos() {
@@ -222,7 +237,7 @@ public class VehicleView {
 		panelOrdenar.setLayout(new BorderLayout());
 		
 		//Creacion de un arreglo para introducir cada copcion dentro de un ComboBox
-		String[] Ordenamientos = {"TODOS", "Modelo Reciente", "Precio", "Orden Alfabetico"};
+		String[] Ordenamientos = {"TODOS", "Modelo", "Marca", "Año", "Precio", "Estado"};
 		ComboBoxRounded<String> list = new ComboBoxRounded<>(Ordenamientos);
 		
 		//Personalizacion del comboBox
@@ -258,9 +273,6 @@ public class VehicleView {
 		filtros.setHorizontalAlignment(JLabel.CENTER);  
 		filtros.setIconTextGap(10);                      
 		filtros.setHorizontalTextPosition(JLabel.LEFT);
-		filtros.addActionListener(e->{
-			filtrosAvanzados();
-		});
 		panelFiltros.add(filtros);	
 		
 		gbc.gridx = 3;
@@ -302,46 +314,70 @@ public class VehicleView {
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(10, 20, 10, 20);
 		VehiculosPanel.add(añadirVehiculo, gbc);
-		//Panel con la tabla de clientes
-		PanelRounded tablaClientes = new PanelRounded(10, true, true, true, true);
-		tablaClientes.setOpaque(false);
-		tablaClientes.setVisible(true);
-		tablaClientes.setBackground(Color.decode("#D9D9D9"));
-		//Creacion del panel para la tabla de clientes
-		tablaClientes.setLayout(new BorderLayout());
+
+		//Creacion del panel para la tabla de vehiculos
+		PanelRounded tablaVehiculos = new PanelRounded(10, true, true, true, true);
+		tablaVehiculos.setOpaque(false);
+		tablaVehiculos.setVisible(true);
+		tablaVehiculos.setBackground(Color.decode("#D9D9D9"));
+		tablaVehiculos.setLayout(new BorderLayout());
+		//Panel con la tabla de Vehiculos
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID","Foto","Modelo","Marca","Año","Precio (Dia)", "Estado","Acciones"};
-		//Creacion de una matriz para los datos de una tabla 
-		Object [][] table_content = {
-				{"V-001", "foto", "Corolla", "Toyota", "2024", "$850","Disponible", ""},
-				{"V-002", "foto", "CR-V", "Honda", "2023", "$1200","Rentado", ""},
-				{"V-003", "foto", "Sentra", "Nissan", "2023", "$750","Mantenimiento", ""},
-				{"V-004", "foto", "Tacoma", "Toyota", "2021", "$1500","Disponible", ""},
-				{"V-005", "foto", "Mazda 3", "Mazda", "2025", "$950","Rentado", ""},
-				{"V-006", "foto", "CR-V", "Honda", "2023", "$1200","Disponible", ""},
-				{"V-007", "foto", "Sentra", "Nissan", "2023", "$750","Rentado", ""},
-				{"V-008", "foto", "Corolla", "Toyota", "2024", "$850","Rentado", ""},
-				{"V-009", "foto", "CR-V", "Honda", "2023", "$1200","Disponible", ""},
-				{"V-010", "foto", "Tacoma", "Toyota", "2021", "$1500","Mantenimiento", ""},
-				{"V-011", "foto", "Sentra", "Nissan", "2023", "$750","Disponible", ""},
-				{"V-012", "foto", "Mazda 3", "Mazda", "2025", "$950","Disponible", ""},
-				{"V-013", "foto", "Corolla", "Toyota", "2024", "$850","Mantenimiento", ""},
-				{"V-014", "foto", "Mazda 3", "Mazda", "2025", "$950","Rentado", ""},
-				{"V-015", "foto", "Corolla", "Toyota", "2024", "$850","Rentado", ""}
-		};
 		
 		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
-		DefaultTableModel modeloClientes = new DefaultTableModel(table_content,table_head) {
+		modeloVehiculos = new DefaultTableModel(null,table_head) {
 			@Override
-		    public boolean isCellEditable(int row, int column) {
-		        return column == 7; 
-		    }
+			public boolean isCellEditable(int row, int column) {
+				return column == 7; 
+			}
 		};
+		
+		// Pide la lista al controlador
+		ArrayList<VehicleModel> listaClientes = control.obtenerVehiculos();
+		// La imprime por fila 
+		for (VehicleModel Vehiculo : listaClientes) {
+		    Object[] fila = new Object[8];
+		    fila[0] = Vehiculo.getIdLetra();
+		    fila[1] = Vehiculo.getfoto();
+		    fila[2] = Vehiculo.getmodelo();
+		    fila[3] = Vehiculo.getmarca();
+		    fila[4] = Vehiculo.getanio();
+		    fila[5] = Vehiculo.getprecio_dia();
+		    fila[6] = Vehiculo.getestado();
+		    fila[7] = "";	    
+		    modeloVehiculos.addRow(fila);
+		}
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
-		JTable clientes_table = new JTable(modeloClientes);
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloClientes);
-		clientes_table.setRowSorter(sorter);
+		Vehicle_table = new JTable(modeloVehiculos);
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloVehiculos);
+		Vehicle_table.setRowSorter(sorter);
+		
+		list.addActionListener(e -> {
+		    String seleccion = (String) list.getSelectedItem();
+		    
+		    switch (seleccion) {
+		        case "TODOS":
+		            sorter.setSortKeys(null);
+		            break;
+		        case "Modelo":
+		        	sorter.setSortKeys(List.of(new RowSorter.SortKey(2, SortOrder.DESCENDING)));
+		        	break;
+		        case "Marca":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(3, SortOrder.ASCENDING)));
+		            break;
+		        case "Año":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(4, SortOrder.DESCENDING)));
+		            break;
+		        case "Precio":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(5, SortOrder.DESCENDING)));
+		            break;
+		        case "Estado":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(6, SortOrder.DESCENDING)));
+		            break;
+		    }
+		});
 		
 		/*Agregamos el metodo para que el campo de texto busqueda filtre en tiempo real la tabla 
 		mediante un DocumentListener*/
@@ -366,6 +402,12 @@ public class VehicleView {
 		    }
 		});
 		
+		//Agregamos el ActionListener como parametro a la vista de filtros para usarla
+		filtros.addActionListener(e->{
+			filtrosAvanzados(sorter);
+		});
+		
+		
 		//Agregamos un Focus listener para que al ingresar texto se desaparezca el texto por defecto como un placeHolder
 		busqueda.addFocusListener(new FocusAdapter() {
 		    @Override
@@ -387,7 +429,7 @@ public class VehicleView {
 		
 		
 		//creacion y customización del scroll pane
-		JScrollPane scrollPane = new JScrollPane(clientes_table);
+		JScrollPane scrollPane = new JScrollPane(Vehicle_table);
 		scrollPane.getVerticalScrollBar().setUI(new ScrollBarCustom());
 		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -407,23 +449,23 @@ public class VehicleView {
 		ImageIcon btnEliminar = new ImageIcon(iconEliminar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		ImageIcon btnDescargar = new ImageIcon(iconDescargar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		//Agregamos botones customizados con popup a la 5ta columna de la tabla y personalizamos la columna	
-		clientes_table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
-		clientes_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Vehiculos",clientes_table, null,control,null));
-		clientes_table.setRowHeight(40);
-		clientes_table.getColumnModel().getColumn(7).setPreferredWidth(60);
-		clientes_table.setBackground(Color.decode("#D9D9D9"));
-		clientes_table.setShowVerticalLines(false);
-		clientes_table.setShowHorizontalLines(true);
-		tablaClientes.add(scrollPane, BorderLayout.CENTER);
+		Vehicle_table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
+		Vehicle_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Vehiculos",Vehicle_table, null,control,null));
+		Vehicle_table.setRowHeight(40);
+		Vehicle_table.getColumnModel().getColumn(7).setPreferredWidth(60);
+		Vehicle_table.setBackground(Color.decode("#D9D9D9"));
+		Vehicle_table.setShowVerticalLines(false);
+		Vehicle_table.setShowHorizontalLines(true);
+		tablaVehiculos.add(scrollPane, BorderLayout.CENTER);
 		
 		//Personalizacion de la tabla
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();//Render para centrar el texto
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		for (int i = 0; i < 7; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
-			clientes_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+			Vehicle_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
-		JTableHeader header = clientes_table.getTableHeader();
+		JTableHeader header = Vehicle_table.getTableHeader();
 		header.setBackground(Color.decode("#AFAFAF"));
 		header.setFont(new Font("Poppins", Font.BOLD, 18));
 		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();
@@ -440,7 +482,7 @@ public class VehicleView {
 		gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(20, 20, 20, 20);
-		VehiculosPanel.add(tablaClientes, gbc);
+		VehiculosPanel.add(tablaVehiculos, gbc);
 
 		return VehiculosPanel;
 	}
@@ -641,7 +683,7 @@ public class VehicleView {
 		ventana.setVisible(true);
 	}
 
-	public void filtrosAvanzados() {
+	public void filtrosAvanzados(TableRowSorter<DefaultTableModel> sorter) {
 		 // Crear Ventana JDialog
         JDialog ventana = new JDialog();
         ventana.setModal(true);
@@ -680,7 +722,7 @@ public class VehicleView {
 		marca.setLocation(50,130);
 		filtrosAvanzados.add(marca);
 		
-		String[] marcas = {"Elegir", "Chevrolet Ford", "Honda", "Hyundai","Jeep","Kia","Land Rover", "Mazda", "Mercedes-Benz", "BMW",
+		String[] marcas = {"Todos", "Chevrolet","Ford", "Honda", "Hyundai","Jeep","Kia","Land Rover", "Mazda", "Mercedes-Benz", "BMW",
 				"Nissan", "Subaru", "Suzuki","Toyota","Volkswagen"};
 		ComboBoxRounded<String> listMarcas = new ComboBoxRounded<>(marcas);
 		listMarcas.setFont(new Font("Poppins", Font.BOLD, 15));
@@ -691,23 +733,24 @@ public class VehicleView {
 		filtrosAvanzados.add(listMarcas);
 		
 		//Label telefono y su respectivo campo de texto
-		JLabel categoria = new JLabel("Categoria");
-		categoria.setOpaque(false);
-		categoria.setForeground(Color.black);
-		categoria.setHorizontalAlignment(JLabel.LEFT);
-		categoria.setFont(new Font("Poppins",Font.PLAIN,15));
-		categoria.setSize(70,25);
-		categoria.setLocation(50,230);
-		filtrosAvanzados.add(categoria);
+		JLabel modelo = new JLabel("Modelo");
+		modelo.setOpaque(false);
+		modelo.setForeground(Color.black);
+		modelo.setHorizontalAlignment(JLabel.LEFT);
+		modelo.setFont(new Font("Poppins",Font.PLAIN,15));
+		modelo.setSize(70,25);
+		modelo.setLocation(50,230);
+		filtrosAvanzados.add(modelo);
 		
-		String[] categorias = {"Sedan", "SUV", "4X4", "Sport","HatchBack","Pick Up","Monovolumen", "Minivan", "Crossover", "Convertible"};
-		ComboBoxRounded<String> listCategorias = new ComboBoxRounded<>(categorias);
-		listCategorias.setFont(new Font("Poppins", Font.BOLD, 15));
-		listCategorias.setForeground(Color.black);
-		listCategorias.setOpaque(false);
-		listCategorias.setSize(280,40);
-		listCategorias.setLocation(50,260);
-		filtrosAvanzados.add(listCategorias);
+		String[] modelos = {"Todos", "Chevrolet","Ford", "Honda", "Hyundai","Jeep","Kia","Land Rover", "Mazda", "Mercedes-Benz", "BMW",
+				"Nissan", "Subaru", "Suzuki","Toyota","Volkswagen"};
+		ComboBoxRounded<String> listModelos = new ComboBoxRounded<>(modelos);
+		listModelos.setFont(new Font("Poppins", Font.BOLD, 15));
+		listModelos.setForeground(Color.black);
+		listModelos.setOpaque(false);
+		listModelos.setSize(280,40);
+		listModelos.setLocation(50,260);
+		filtrosAvanzados.add(listModelos);
 		
 		//Label telefono y su respectivo campo de texto
 		JLabel estado = new JLabel("Estado");
@@ -719,7 +762,7 @@ public class VehicleView {
 		estado.setLocation(50,330);
 		filtrosAvanzados.add(estado);
 		
-		String[] Estados = {"Activo ", "Finalizado", "Rentado", "En mantenimiento","Disponible"};
+		String[] Estados = {"Todos","Activo ", "Finalizado", "Rentado", "En mantenimiento","Disponible"};
 		ComboBoxRounded<String> listEstados= new ComboBoxRounded<>(Estados);
 		listEstados.setFont(new Font("Poppins", Font.BOLD, 15));
 		listEstados.setForeground(Color.black);
@@ -737,7 +780,7 @@ public class VehicleView {
 		tituloAño.setLocation(370,130);
 		filtrosAvanzados.add(tituloAño);
 		
-		String[] años = {"2025", "2024", "2023", "2022","2021","2020","2019", "2018", "2017", "2016", "2015"};
+		String[] años = {"Todos","2025", "2024", "2023", "2022","2021","2020","2019", "2018", "2017", "2016", "2015"};
 		ComboBoxRounded<String> listAños = new ComboBoxRounded<>(años);
 		listAños.setFont(new Font("Poppins", Font.BOLD, 15));
 		listAños.setForeground(Color.black);
@@ -755,23 +798,23 @@ public class VehicleView {
 		precio.setLocation(370,230);
 		filtrosAvanzados.add(precio);
 		
-		String[] preciosMin = {"Min. $", "750", "850", "950","1200","1500","1800", "2000"};
-		ComboBoxRounded<String> listPreciosMax = new ComboBoxRounded<>(preciosMin);
-		listPreciosMax.setFont(new Font("Poppins", Font.BOLD, 15));
-		listPreciosMax.setForeground(Color.black);
-		listPreciosMax.setOpaque(false);
-		listPreciosMax.setSize(120,40);
-		listPreciosMax.setLocation(370,260);
-		filtrosAvanzados.add(listPreciosMax);
-		
-		String[] preciosMax = {"Max. $", "750", "850", "950","1200","1500","1800", "2000"};
-		ComboBoxRounded<String> listPreciosMin = new ComboBoxRounded<>(preciosMax);
+		String[] preciosMin= {"00.00", "75.00", "85.0", "95.0","120.00","150.00","180.00", "200.00"	};
+		ComboBoxRounded<String> listPreciosMin = new ComboBoxRounded<>(preciosMin);
 		listPreciosMin.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPreciosMin.setForeground(Color.black);
 		listPreciosMin.setOpaque(false);
 		listPreciosMin.setSize(120,40);
-		listPreciosMin.setLocation(510,260);
+		listPreciosMin.setLocation(370,260);
 		filtrosAvanzados.add(listPreciosMin);
+		
+		String[] preciosMax = {"00.00", "75.00", "85.0", "95.0","120.00","150.00","180.00", "200.00"};
+		ComboBoxRounded<String> listPreciosMax = new ComboBoxRounded<>(preciosMax);
+		listPreciosMax.setFont(new Font("Poppins", Font.BOLD, 15));
+		listPreciosMax.setForeground(Color.black);
+		listPreciosMax.setOpaque(false);
+		listPreciosMax.setSize(120,40);
+		listPreciosMax.setLocation(510,260);
+		filtrosAvanzados.add(listPreciosMax);
 		
 		//Botones
 		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
@@ -794,6 +837,67 @@ public class VehicleView {
 		aplicarFiltros.setFont(new Font("Poppins",Font.BOLD,20));
 		aplicarFiltros.setHorizontalTextPosition(JLabel.RIGHT);
 		aplicarFiltros.addActionListener(e->{
+			
+			List<RowFilter<Object, Object>> filtros = new ArrayList<>();
+			String Fmodelos = listModelos.getSelectedItem().toString();
+			String Fmarca = listMarcas.getSelectedItem().toString();
+			String Festados = listEstados.getSelectedItem().toString();
+			String Faños = listAños.getSelectedItem().toString();
+			BigDecimal min = new BigDecimal(listPreciosMin.getSelectedItem().toString());
+			BigDecimal max = new BigDecimal(listPreciosMax.getSelectedItem().toString());
+			final BigDecimal precioMin = new BigDecimal(listPreciosMin.getSelectedItem().toString());
+			final BigDecimal precioMax =  new BigDecimal(listPreciosMax.getSelectedItem().toString());
+			
+			/*if (!Fmodelos.equals("Todos")) {
+			    filtros.add(
+			        RowFilter.regexFilter(
+			            "^" + Pattern.quote(Fmodelos) + "$",
+			            2
+			        )
+			    );
+			}*/
+			if (!Fmarca.equals("Todos")) {
+			    filtros.add(
+			        RowFilter.regexFilter(
+			            "^" + Pattern.quote(Fmarca) + "$",
+			            3
+			        )
+			    );
+			}
+			if (!Faños.equals("Todos")) {
+			    filtros.add(
+			        RowFilter.regexFilter(
+			            "^" + Pattern.quote(Faños) + "$",
+			            4
+			        )
+			    );
+			}
+			if (!Festados.equals("Todos")) {
+				filtros.add(
+						RowFilter.regexFilter(
+								"^" + Pattern.quote(Festados) + "$",
+								6
+								)
+						);
+			}
+			
+			filtros.add(new RowFilter<Object, Object>() {
+				
+			    @Override
+			    public boolean include(
+			            Entry<? extends Object,
+			            ? extends Object> entry) {
+
+			    	BigDecimal precio = (BigDecimal) entry.getValue(5);
+
+			        boolean cumpleMin =  min.compareTo(BigDecimal.ZERO) == 0 || precio.compareTo(precioMin) >= 0;
+
+			        boolean cumpleMax =  max.compareTo(BigDecimal.ZERO) == 0 || precio.compareTo(precioMax) <= 0;
+			        
+			        return cumpleMin && cumpleMax;
+			    }
+			});
+			sorter.setRowFilter(RowFilter.andFilter(filtros));
         	ventana.dispose();
 		});
 		aplicarFiltros.setSize(200,60);
@@ -811,7 +915,7 @@ public class VehicleView {
 		ventana.setVisible(true);
 	}
 
-	public void editVehicle() {
+	public void editVehicle(int idVehiculo,String marcaActual,String modeloActual,String categoriaActual,String estadoActual,String añoActual,BigDecimal precioActual) {
 		 // Crear Ventana JDialog
         JDialog ventana = new JDialog();
         ventana.setModal(true);
@@ -839,7 +943,6 @@ public class VehicleView {
 		tituloAñadir.setSize(700,100);
 		tituloAñadir.setLocation(0, 0);
 		añadirVehiculo.add(tituloAñadir);
-
 		//Label nombre y su respectivo campo de texto
 		JLabel marca = new JLabel("Marca");
 		marca.setOpaque(false);
@@ -850,9 +953,7 @@ public class VehicleView {
 		marca.setLocation(50,130);
 		añadirVehiculo.add(marca);
 		
-		String[] marcas = {"Elegir", "Chevrolet Ford", "Honda", "Hyundai","Jeep","Kia","Land Rover", "Mazda", "Mercedes-Benz", "BMW",
-				"Nissan", "Subaru", "Suzuki","Toyota","Volkswagen"};
-		ComboBoxRounded<String> listMarcas = new ComboBoxRounded<>(marcas);
+		ComboBoxRounded<String> listMarcas = new ComboBoxRounded<>();
 		listMarcas.setFont(new Font("Poppins", Font.BOLD, 15));
 		listMarcas.setForeground(Color.black);
 		listMarcas.setOpaque(false);
@@ -870,18 +971,13 @@ public class VehicleView {
 		modelo.setLocation(50,230);
 		añadirVehiculo.add(modelo);
 		
-		String[] modelos = {"Elegir", "Chevrolet Express Passebger", "Bronco Sport", "Ford Transit","Honda Accord","Honda Civic",
-				"Honda CR-V", "Honda Fit", "Honda Oddyssey", "Honda Pilot",
-				"Hyundai Accent", "Hyundai Elantra", "Jeep Renegade","Jeep Wrangler","Kia K4",
-				"Kia Rio","Land Rover Defender 110","Mazda 3","Mazda CX-5","Mercedes-Benz Vito Tourer","Mini Cooper 5 Door",
-				"Nissan Centra","Nissan Versa","Subaru Forester","Suzuki Jimny","Toyota Camry","Toyota Corolla","Toyota RAV4","Volkswagen Jetta"};
-		ComboBoxRounded<String> listModeloss = new ComboBoxRounded<>(modelos);
-		listModeloss.setFont(new Font("Poppins", Font.BOLD, 15));
-		listModeloss.setForeground(Color.black);
-		listModeloss.setOpaque(false);
-		listModeloss.setSize(280,40);
-		listModeloss.setLocation(50,260);
-		añadirVehiculo.add(listModeloss);
+		ComboBoxRounded<String> listModelos = new ComboBoxRounded<>();
+		listModelos.setFont(new Font("Poppins", Font.BOLD, 15));
+		listModelos.setForeground(Color.black);
+		listModelos.setOpaque(false);
+		listModelos.setSize(280,40);
+		listModelos.setLocation(50,260);
+		añadirVehiculo.add(listModelos);
 		
 		//Label telefono y su respectivo campo de texto
 		JLabel categoria = new JLabel("Categoria");
@@ -893,8 +989,7 @@ public class VehicleView {
 		categoria.setLocation(50,330);
 		añadirVehiculo.add(categoria);
 		
-		String[] categorias = {"Sedan", "SUV", "4X4", "Sport","HatchBack","Pick Up","Monovolumen", "Minivan", "Crossover", "Convertible"};
-		ComboBoxRounded<String> listCategorias = new ComboBoxRounded<>(categorias);
+		ComboBoxRounded<String> listCategorias = new ComboBoxRounded<>();
 		listCategorias.setFont(new Font("Poppins", Font.BOLD, 15));
 		listCategorias.setForeground(Color.black);
 		listCategorias.setOpaque(false);
@@ -902,43 +997,23 @@ public class VehicleView {
 		listCategorias.setLocation(50,360);
 		añadirVehiculo.add(listCategorias);
 		
-		JLabel titulofoto = new JLabel("foto");
-		titulofoto.setOpaque(false);
-		titulofoto.setForeground(Color.black);
-		titulofoto.setHorizontalAlignment(JLabel.LEFT);
-		titulofoto.setFont(new Font("Poppins",Font.PLAIN,15));
-		titulofoto.setSize(70,25);
-		titulofoto.setLocation(370,130);
-		añadirVehiculo.add(titulofoto);
+		JLabel tituloEstado = new JLabel("Estado");
+		tituloEstado.setOpaque(false);
+		tituloEstado.setForeground(Color.black);
+		tituloEstado.setHorizontalAlignment(JLabel.LEFT);
+		tituloEstado.setFont(new Font("Poppins",Font.PLAIN,15));
+		tituloEstado.setSize(70,25);
+		tituloEstado.setLocation(370,130);
+		añadirVehiculo.add(tituloEstado);
 		
 		//Contorno redondeado 280 40 400 160
-		TextFieldRounded campoFoto = new TextFieldRounded(20,20,true);
-		campoFoto.setFont(new Font("Poppins", Font.BOLD, 15));
-		campoFoto.setForeground(Color.decode("#8B8B8B"));
-		campoFoto.setOpaque(false);
-		campoFoto.setText("URL foto del Automovil");
-		campoFoto.setSize(280,40);
-		campoFoto.setLocation(370,160);
-		campoFoto.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (campoFoto.getText().equals("URL foto del Automovil")) {
-		        	campoFoto.setText(""); // Vaciar la caja
-		        	campoFoto.setForeground(Color.decode("#000000"));
-		        }
-		    }
-
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (campoFoto.getText().isEmpty()) {
-		        	campoFoto.setForeground(Color.decode("#8B8B8B"));
-		        	campoFoto.setText("URL foto del Automovil"); // Restaurar el mensaje
-		        }
-		    }
-		});
-		añadirVehiculo.add(campoFoto);
+		ComboBoxRounded<String> listEstado = new ComboBoxRounded<>();
+		listEstado.setFont(new Font("Poppins", Font.BOLD, 15));
+		listEstado.setForeground(Color.decode("#000000"));
+		listEstado.setOpaque(false);
+		listEstado.setSize(280,40);
+		listEstado.setLocation(370,160);
+		añadirVehiculo.add(listEstado);
 		
 		JLabel tituloAño = new JLabel("Año");
 		tituloAño.setOpaque(false);
@@ -949,8 +1024,7 @@ public class VehicleView {
 		tituloAño.setLocation(370,230);
 		añadirVehiculo.add(tituloAño);
 		
-		String[] años = {"2025", "2024", "2023", "2022","2021","2020","2019", "2018", "2017", "2016", "2015"};
-		ComboBoxRounded<String> listAños = new ComboBoxRounded<>(años);
+		ComboBoxRounded<String> listAños = new ComboBoxRounded<>();
 		listAños.setFont(new Font("Poppins", Font.BOLD, 15));
 		listAños.setForeground(Color.black);
 		listAños.setOpaque(false);
@@ -963,12 +1037,11 @@ public class VehicleView {
 		precio.setForeground(Color.black);
 		precio.setHorizontalAlignment(JLabel.LEFT);
 		precio.setFont(new Font("Poppins",Font.PLAIN,15));
-		precio.setSize(70,25);
+		precio.setSize(100,25);
 		precio.setLocation(370,330);
 		añadirVehiculo.add(precio);
 		
-		String[] precios = {"$", "750", "850", "950","1200","1500","1800", "2000"};
-		ComboBoxRounded<String> listPrecios = new ComboBoxRounded<>(precios);
+		ComboBoxRounded<BigDecimal> listPrecios = new ComboBoxRounded<>();
 		listPrecios.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPrecios.setForeground(Color.black);
 		listPrecios.setOpaque(false);
@@ -990,12 +1063,29 @@ public class VehicleView {
 		});
 		añadirVehiculo.add(cancelarCliente);
 		
+		//Prellenar campos con datos actuales y eviar que se puedan modificar
+		listMarcas.addItem(marcaActual);
+		listMarcas.setBloqueado(true);
+		listModelos.addItem(modeloActual);
+		listModelos.setBloqueado(true);
+		listCategorias.addItem(categoriaActual);
+		listCategorias.setBloqueado(true);
+		listAños.addItem(añoActual);
+		listAños.setBloqueado(true);
+		listEstado.addItem(estadoActual);
+		listPrecios.addItem(precioActual);
+		
 		ButtonRounded registrarVehiculo = new ButtonRounded("Aplicar Cambios",10,1);
 		registrarVehiculo.setOpaque(false);
 		registrarVehiculo.setForeground(Color.white);
 		registrarVehiculo.setHorizontalAlignment(JLabel.CENTER);
 		registrarVehiculo.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarVehiculo.addActionListener(e->{
+			String nuevoEstado = listEstado.getSelectedItem().toString();
+			BigDecimal nuevoPrecio = (BigDecimal)listPrecios.getSelectedItem();
+			
+			control.update(idVehiculo,nuevoPrecio, nuevoEstado);
+			LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
         	ventana.dispose();
 		});
 		registrarVehiculo.setSize(200,60);
@@ -1007,7 +1097,7 @@ public class VehicleView {
 		ventana.setVisible(true);
 	}
 
-	public void historialVehiculos() {
+	public void historialVehiculos(int idVehiculo) {
         JDialog ventana = new JDialog();
         ventana.setModal(true);
         ventana.setUndecorated(true);
@@ -1088,7 +1178,7 @@ public class VehicleView {
 		detallesCliente.add(panelOrdenar);
 		
 		//Creacion de un arreglo para introducir cada copcion dentro de un ComboBox
-		String[] Ordenamientos = {"TODOS", "Fecha Inicio", "Fecha Final", "Estado"};
+		String[] Ordenamientos = {"TODOS", "ID Renta", "Nombre", "Fecha Inicio", "Fecha fin", "Estado"};
 		ComboBoxRounded<String> list = new ComboBoxRounded<>(Ordenamientos);
 		//Personalizacion del comboBox
 		list.setFont(new Font("Poppins", Font.BOLD, 15));
@@ -1126,24 +1216,56 @@ public class VehicleView {
 		detallesCliente.add(panelTabla);
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
-		Object [] table_head = {"Nombre","Feha Inicio","Fecha Fin","Estado"};
-		//Creacion de una matriz para los datos de una tabla 
-		Object [][] table_content = {
-				{"Diego Ramirez", "01/03/2024", "05/03/2024", "Finalizado"},
-				{"Sofia Torres", "04/05/2024", "18/05/2024", "Finalizado"},
-				{"Valeria Cruz", "12/04/2024", "15/04/2024", "Finalizado"},
-		};
-		
-		DefaultTableModel modeloCliente = new DefaultTableModel(table_content,table_head){
+		Object [] table_head = {"ID Renta","Nombre","Feha Inicio","Fecha Fin","Estado"};
+
+		DefaultTableModel modeloVehiculo = new DefaultTableModel(null,table_head){
 		    @Override
 		    public boolean isCellEditable(int row, int column) {
 		        return false; // Ninguna celda será editable
 		    }
 		};
+		ArrayList<VehicleModel> listaVehiculos = control.obtenerRentasVehiculo(idVehiculo);
+		for (VehicleModel Verhiculo : listaVehiculos) {
+			Object[] fila = new Object[5];
+			fila[0] = Verhiculo.getIdLetraRenta();
+			fila[1] = Verhiculo.getName();
+			fila[2] = Verhiculo.getInicio_renta();
+			fila[3] = Verhiculo.getFin_renta();
+			fila[4] = Verhiculo.getestado();
+			
+	    
+			modeloVehiculo.addRow(fila);
+		}
+		
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
-		JTable clientes_table = new JTable(modeloCliente);
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloCliente);
+		JTable clientes_table = new JTable(modeloVehiculo);
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloVehiculo);
 		clientes_table.setRowSorter(sorter);
+		
+		list.addActionListener(e -> {
+		    String seleccion = (String) list.getSelectedItem();
+		    
+		    switch (seleccion) {
+	        case "TODOS":
+	            sorter.setSortKeys(null);
+	            break;
+	        case "ID Renta":
+	        	sorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
+	        	break;
+	        case "Nombre":
+	        	sorter.setSortKeys(List.of(new RowSorter.SortKey(1, SortOrder.ASCENDING)));
+	        	break;
+	        case "Fecha inicio":
+	            sorter.setSortKeys(List.of(new RowSorter.SortKey(2, SortOrder.ASCENDING)));
+	            break;
+	        case "Fecha fin":
+	            sorter.setSortKeys(List.of(new RowSorter.SortKey(3, SortOrder.DESCENDING)));
+	            break;
+	        case "Estado":
+	            sorter.setSortKeys(List.of(new RowSorter.SortKey(4, SortOrder.DESCENDING)));
+	            break;
+	    }
+	});
 		
 		busqueda.getDocument().addDocumentListener(new DocumentListener() {
 		    @Override
@@ -1201,7 +1323,7 @@ public class VehicleView {
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();//Render para centrar el texto
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		for (int i = 0; i < 4; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
+		for (int i = 0; i < 5; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
 			clientes_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
 		

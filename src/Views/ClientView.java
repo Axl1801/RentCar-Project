@@ -650,7 +650,7 @@ public class ClientView {
 
 		TextFieldRounded campoNombre = new TextFieldRounded(20,20,true);
 		campoNombre.setFont(new Font("Poppins", Font.PLAIN, 15));
-		campoNombre.setForeground(Color.decode("#8B8B8B"));
+		campoNombre.setForeground(Color.decode("#000000"));
 		campoNombre.setOpaque(false);
 		campoNombre.setText("---");
 		campoNombre.setSize(280,40);
@@ -687,7 +687,7 @@ public class ClientView {
 
 		TextFieldRounded campoCorreo = new TextFieldRounded(20,20,true);
 		campoCorreo.setFont(new Font("Poppins", Font.PLAIN, 15));
-		campoCorreo.setForeground(Color.decode("#8B8B8B"));
+		campoCorreo.setForeground(Color.decode("#000000"));
 		campoCorreo.setOpaque(false);
 		campoCorreo.setText("---");
 		campoCorreo.setSize(280,40);
@@ -724,7 +724,7 @@ public class ClientView {
 
 		TextFieldRounded campoTelefono = new TextFieldRounded(20,20,true);
 		campoTelefono.setFont(new Font("Poppins", Font.PLAIN, 15));
-		campoTelefono.setForeground(Color.decode("#8B8B8B"));
+		campoTelefono.setForeground(Color.decode("#000000"));
 		campoTelefono.setOpaque(false);
 		campoTelefono.setText("---");
 		campoTelefono.setSize(280,40);
@@ -801,9 +801,6 @@ public class ClientView {
 	        String nuevoTelefono = campoTelefono.getText();
 	        
 	        control.update(idCliente, nuevoCorreo, nuevoNombre, nuevoTelefono);
-	        
-	        System.out.println("modeloClientes es: " + modeloClientes); // agregar esto
-	        System.out.println("clientes_table es: " + clientes_table); // agregar esto
 	        LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
 			ventana.dispose();
 		});

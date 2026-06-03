@@ -781,7 +781,7 @@ public class HomeView {
 		PanelRounded contMarcas = new PanelRounded(10,true,true,true,true);
 		contMarcas.setLayout(null);
 		contMarcas.setSize(150,100);
-		contMarcas.setLocation(150,50);
+		contMarcas.setLocation(50,50);
 		contMarcas.setOpaque(false);
 		contOpciones.add(contMarcas);
 
@@ -807,11 +807,41 @@ public class HomeView {
 			addMarca();
 		});
 		contMarcas.add(marcas);
+		
+		PanelRounded contModelos = new PanelRounded(10,true,true,true,true);
+		contModelos.setLayout(null);
+		contModelos.setSize(150,100);
+		contModelos.setLocation(250,50);
+		contModelos.setOpaque(false);
+		contOpciones.add(contModelos);
+
+		LabelRounded tituloModelos = new LabelRounded("Agregar Modelos",10,Color.decode("#000D56"));
+		tituloModelos.setOpaque(false);
+		tituloModelos.setForeground(Color.white);
+		tituloModelos.setBounds(0, 0, 150, 25);
+		tituloModelos.setHorizontalAlignment(JLabel.CENTER);
+		tituloModelos.setFont(new Font("Poppins",Font.BOLD,15));
+		contModelos.add(tituloModelos);
+
+		url = getClass().getResource("/iconos/adicionales/agregar_marca.png");
+
+		ButtonRounded modelos = new ButtonRounded("",10,3);
+		modelos.setFocusPainted(false);
+		modelos.setBounds(0,25,150,75);
+		modelos.setBackground(Color.decode("#D9D9D9"));
+		modelos.setOpaque(false);
+		if (url != null) {
+			modelos.setIcon(new ImageIcon(url));
+		}
+		modelos.addActionListener(e->{
+			addModelo();
+		});
+		contModelos.add(modelos);
 
 		PanelRounded contCategorias = new PanelRounded(10,true,true,true,true);
 		contCategorias.setLayout(null);
 		contCategorias.setSize(150,100);
-		contCategorias.setLocation(350,50);
+		contCategorias.setLocation(450,50);
 		contCategorias.setOpaque(false);
 		contOpciones.add(contCategorias);
 
@@ -1013,7 +1043,7 @@ public class HomeView {
 			@Override
 			public void focusGained(FocusEvent e) {
 				// Cuando el usuario hace clic en la caja
-				if (campoCat.getText().equals("Sedan")) {
+				if (campoCat.getText().equals("Toyota")) {
 					campoCat.setText(""); // Vaciar la caja
 					campoCat.setForeground(Color.decode("#000000"));
 				}
@@ -1023,7 +1053,7 @@ public class HomeView {
 			public void focusLost(FocusEvent e) {
 				// Cuando el usuario hace clic en otro lado
 				if (campoCat.getText().isEmpty()) {
-					campoCat.setText("Sedan");// Restaurar el mensaje
+					campoCat.setText("Toyota");// Restaurar el mensaje
 					campoCat.setForeground(Color.decode("#8B8B8B"));
 				}
 			}
@@ -1037,6 +1067,116 @@ public class HomeView {
 		regCat.setForeground(Color.white);
 		regCat.setHorizontalAlignment(JLabel.CENTER);
 		contCat.add(regCat);
+
+		ventana.setVisible(true);
+	}
+
+	public void addModelo() {
+		// Crear Ventana JDialog
+		JDialog ventana = new JDialog();
+		ventana.setModal(true);
+		ventana.setUndecorated(true);
+		ventana.setSize(1920, 1080);
+		ventana.setBackground(new Color(0, 0, 0, 120)); 
+		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		ventana.setLocationRelativeTo(null);
+		ventana.setLayout(null);
+
+		PanelRounded panelMod = new PanelRounded(10,true,true,true,true);
+		panelMod.setVisible(true);
+		panelMod.setLayout(new BorderLayout());
+		panelMod.setBackground(Color.decode("#FFFFFF"));
+		panelMod.setBounds(635,365,650,350);
+		ventana.add(panelMod);
+
+		PanelRounded panelSupMod = new PanelRounded(10,true,true,false,false);
+		panelSupMod.setVisible(true);
+		panelSupMod.setLayout(new BorderLayout());
+		panelSupMod.setBackground(Color.decode("#000D56"));
+		panelSupMod.setPreferredSize(new Dimension(0,120));
+		panelMod.add(panelSupMod,BorderLayout.NORTH);
+
+		JLabel tituloMod = new JLabel("AGREGAR MODELO");
+		tituloMod.setBorder(new EmptyBorder(0, 0, 0, 20));
+		tituloMod.setForeground(Color.white);
+		tituloMod.setOpaque(false);
+		tituloMod.setHorizontalAlignment(JLabel.CENTER);
+		tituloMod.setFont(new Font("Poppins",Font.BOLD,30));
+		tituloMod.setHorizontalTextPosition(JLabel.CENTER);
+		panelSupMod.add(tituloMod,BorderLayout.CENTER);
+
+		JButton regresar = new JButton();
+		regresar.setContentAreaFilled(false); // Sin fondo
+		regresar.setBorderPainted(false); // Sin borde
+		regresar.setFocusPainted(false); // Sin línea de focus
+		URL url = getClass().getResource("/iconos/adicionales/anterior.png");
+		if (url != null) {
+			regresar.setIcon(new ImageIcon(url));
+		}
+		panelSupMod.add(regresar,BorderLayout.WEST);
+		regresar.addActionListener(e->{
+			ventana.dispose();
+		});
+
+		PanelRounded contMod = new PanelRounded(10,true,true,true,true);
+		contMod.setBackground(Color.white);
+		contMod.setLayout(null);
+		contMod.setVisible(true);
+		panelMod.add(contMod,BorderLayout.CENTER);
+		
+		String[] marcas = {"Elegir Marca", "Chevrolet", "Ford", "Honda", "Hyundai","Jeep","Kia","Land Rover", "Mazda", "Mercedes-Benz", "BMW",
+				"Nissan", "Subaru", "Suzuki","Toyota","Volkswagen"};
+		ComboBoxRounded<String> listMarcas = new ComboBoxRounded<>(marcas);
+		listMarcas.setFont(new Font("Poppins", Font.BOLD, 15));
+		listMarcas.setForeground(Color.black);
+		listMarcas.setOpaque(false);
+		listMarcas.setSize(350,40);
+		listMarcas.setLocation(150,10);
+		contMod.add(listMarcas);
+
+		JLabel etiquetaMod = new JLabel("Modelo");
+		etiquetaMod.setOpaque(false);
+		etiquetaMod.setForeground(Color.black);
+		etiquetaMod.setHorizontalAlignment(JLabel.LEFT);
+		etiquetaMod.setFont(new Font("Poppins",Font.PLAIN,15));
+		etiquetaMod.setBounds(150,50,100,30);
+		contMod.add(etiquetaMod);
+
+		TextFieldRounded campoMod = new TextFieldRounded(20,10,true);
+		campoMod.setBounds(150,80,350,50);
+		campoMod.setOpaque(false);
+		campoMod.setFont(new Font("Poppins",Font.BOLD,12));
+		campoMod.setForeground(Color.decode("#8B8B8B"));
+		campoMod.setHorizontalAlignment(JLabel.LEFT);
+		campoMod.setText("Toyota");
+		campoMod.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Cuando el usuario hace clic en la caja
+				if (campoMod.getText().equals("Toyota")) {
+					campoMod.setText(""); // Vaciar la caja
+					campoMod.setForeground(Color.decode("#000000"));
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Cuando el usuario hace clic en otro lado
+				if (campoMod.getText().isEmpty()) {
+					campoMod.setText("Toyota");// Restaurar el mensaje
+					campoMod.setForeground(Color.decode("#8B8B8B"));
+				}
+			}
+		});
+		contMod.add(campoMod);
+
+		ButtonRounded regMod = new ButtonRounded("Registrar Modelo",10,1);
+		regMod.setBounds(150,140,350,50);
+		regMod.setOpaque(false);
+		regMod.setFont(new Font("Poppins",Font.BOLD,15));
+		regMod.setForeground(Color.white);
+		regMod.setHorizontalAlignment(JLabel.CENTER);
+		contMod.add(regMod);
 
 		ventana.setVisible(true);
 	}
