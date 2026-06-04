@@ -1306,7 +1306,7 @@ public class RentView {
 		detallesCliente.add(panelTabla);
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
-		Object [] table_head = {"Nombre","Vehiculo","Feha Inicio","Fecha Fin","Estado"};
+		Object [] table_head = {"ID", "Nombre", "Vehiculo", "Fecha Inicio", "Fecha Fin", "Estado"};
 		//Creacion de una matriz para los datos de una tabla 
 		
 		DefaultTableModel modeloRentas= new DefaultTableModel(null,table_head){
