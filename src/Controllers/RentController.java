@@ -202,9 +202,40 @@ public class RentController {
 		 return vc.getListaModelos();
 	 }
 	 
+	 //REGRESA EL ID DEL MODELO DEL NBOMBRE
 	 public int obtenerIdModelo(String modelo) {
 		 int id_modelo = vc.obtenerIdModelo(modelo);
 		 return id_modelo;
+	 }
+	 
+	 //REGRESA EL ID DEL ORIGEN DEL VEHICULO
+	 public int getIdOrigenPorRenta(int id_renta) {
+		 int id_origen = rm.getIdOrigenPorRenta(id_renta);
+		 return id_origen;
+	 }
+	 
+	 //REGRESA EL ID DEL DESTINO DEL VEHICULO
+	 public int getIdDestinoPorRenta(int id_renta) {
+		 int id_destino = rm.getIdDestinoPorRenta(id_renta);
+		 return id_destino;
+	 }
+	 
+	 //REGRESA EL ID DE LA SUCURSAL 
+	 public int getIdSucursalPorNombre(String nombreSucursal) {
+		 int id_sucursal = rm.getIdSucursalPorNombre(nombreSucursal);
+		 return id_sucursal;
+	 }
+	 
+	 //REGRESA LA FECHA DE INICIO DE LA RENTA
+	 public Date getFechaInicioRenta(int id_renta) {
+		 Date Fecha = rm.getFechaInicioRenta(id_renta);
+		 return Fecha;
+	 }
+	 
+	 //REGRESA LA FECHA DEL FINAL DE LA RENTA
+	 public Date getFechaFinRenta(int id_renta) {
+		 Date Fecha = rm.getFechaFinRenta(id_renta);
+		 return Fecha;
 	 }
 	 
 }

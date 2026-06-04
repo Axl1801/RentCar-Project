@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -676,6 +677,147 @@ public class RentModel {
         int manteni = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Mantenimiento'");
         System.out.println("numeroVehiculos_manteni: " + manteni);
         return manteni;
+    }
+    
+    public int getIdOrigenPorRenta(int id_renta) {
+    	int idOrigen = -1; 
+    	String query = "SELECT id_origen FROM Rentas WHERE id_renta = ?";
+
+    	Properties propiedades = new Properties();
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+    		propiedades.load(entrada);
+    		String url = propiedades.getProperty("db.url");
+    		String user = propiedades.getProperty("db.user");
+    		String contra = propiedades.getProperty("db.password");
+
+    		try (Connection conn = DriverManager.getConnection(url, user, contra);
+    				PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+    			ps.setInt(1, id_renta);
+                
+    			try (ResultSet rs = ps.executeQuery()) {
+    				if (rs.next()) {
+    	                   idOrigen = rs.getInt("id_origen");
+    				}
+    			}
+    		}
+    	} catch (Exception e) {
+    		System.out.println("Error al buscar el origen de la renta: " + e.getMessage());
+    	}
+    	return idOrigen;
+    }
+
+    public int getIdDestinoPorRenta(int id_renta) {
+    	int idDestino = -1; 
+    	String query = "SELECT id_destino FROM Rentas WHERE id_renta = ?";
+
+    	Properties propiedades = new Properties();
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+    		propiedades.load(entrada);
+    		String url = propiedades.getProperty("db.url");
+    		String user = propiedades.getProperty("db.user");
+    		String contra = propiedades.getProperty("db.password");
+
+    		try (Connection conn = DriverManager.getConnection(url, user, contra);
+    				PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+    			ps.setInt(1, id_renta);
+                
+    			try (ResultSet rs = ps.executeQuery()) {
+    				if (rs.next()) {
+    					idDestino = rs.getInt("id_destino");
+                    }
+    			}
+    		}
+    	} catch (Exception e) {
+    		System.out.println("Error al buscar el destino de la renta: " + e.getMessage());
+    	}
+    	return idDestino;
+    }
+    
+    public int getIdSucursalPorNombre(String nombreSucursal) {
+    	int idSucursal = -1;
+        
+    	String query = "SELECT id_locacion FROM Locacion WHERE nombre_sucursal = ? LIMIT 1";
+
+    	Properties propiedades = new Properties();
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+    		propiedades.load(entrada);
+    		String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+            		PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+            	ps.setString(1, nombreSucursal);
+                
+            	try (ResultSet rs = ps.executeQuery()) {
+            		if (rs.next()) {
+            			idSucursal = rs.getInt("id_locacion");
+            		}
+            	}
+            }
+    	} catch (Exception e) {
+    		System.out.println("Error al buscar el ID de la sucursal: " + e.getMessage());
+    	}
+    	return idSucursal;
+    }
+    
+    public Date getFechaInicioRenta(int id_renta) {
+    	Date fechaInicio = null; 
+    	String query = "SELECT inicio_renta FROM Rentas WHERE id_renta = ?";
+
+    	Properties propiedades = new Properties();
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+    		propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+            		PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+            	ps.setInt(1, id_renta);
+                
+            	try (ResultSet rs = ps.executeQuery()) {
+            		if (rs.next()) {
+                		fechaInicio = rs.getDate("inicio_renta");
+            		}
+            	}
+            }
+    	} catch (Exception e) {
+    		System.out.println("Error al buscar la fecha de inicio: " + e.getMessage());
+    	}
+        return fechaInicio;
+    }
+
+    public Date getFechaFinRenta(int id_renta) {
+    	Date fechaFin = null; 
+    	String query = "SELECT fin_renta FROM Rentas WHERE id_renta = ?";
+        
+    	Properties propiedades = new Properties();
+        try (InputStream entrada = new FileInputStream("Claves.txt")) {
+            propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+            		PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+                ps.setInt(1, id_renta);
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        fechaFin = rs.getDate("fin_renta");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al buscar la fecha de fin: " + e.getMessage());
+        }
+        return fechaFin;
     }
     
     public int getId_renta() { 
