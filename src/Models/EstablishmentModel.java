@@ -33,13 +33,12 @@ public class EstablishmentModel {
 	    }
 
 	 
-	public ArrayList<EstablishmentModel> get()
-	{
+	public ArrayList<EstablishmentModel> get(){
 		ArrayList<EstablishmentModel> lugar = new ArrayList<>();
 	    	
-	   	String query = "SELECT * FROM `Locacion`";
-	    	
-	   	Connection conn = null; 	 
+		String query = "SELECT * FROM `Locacion`";
+		
+		Connection conn = null; 	 
 		System.out.println(query);
 			
 		Properties propiedades = new Properties();
@@ -88,57 +87,56 @@ public class EstablishmentModel {
 		return lugar;  	
 	 }
 
-	 public  boolean make(int id_locacion, String nombre_sucursal, String direccion)
-	    {
-		 String query = "INSERT INTO `Loacion` (`id_locacion`, `nombre_sucursal`, `direccion`) VALUES (?, ?, ?);";
+	public  boolean make(int id_locacion, String nombre_sucursal, String direccion){
+		String query = "INSERT INTO `Loacion` (`id_locacion`, `nombre_sucursal`, `direccion`) VALUES (?, ?, ?);";
+		
+		Connection conn = null;						
+		Properties propiedades = new Properties();
 			
-			Connection conn = null;						
-			Properties propiedades = new Properties();
-			
-			try (InputStream entrada = new FileInputStream("Claves.txt")) {
-				propiedades.load(entrada);			
-				String url = propiedades.getProperty("db.url");
-	            String user = propiedades.getProperty("db.user");
-	            String contra = propiedades.getProperty("db.password");
+		try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			propiedades.load(entrada);			
+			String url = propiedades.getProperty("db.url");
+			String user = propiedades.getProperty("db.user");
+			String contra = propiedades.getProperty("db.password");
 	            
-	            try {
-	    			Class.forName("com.mysql.cj.jdbc.Driver");
-	    			conn = DriverManager.getConnection(url, user, contra);
+			try {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				conn = DriverManager.getConnection(url, user, contra);
 
-	    			PreparedStatement ps = conn.prepareStatement(query);
-					ps.setInt(1, id_locacion);
-					ps.setString(2, nombre_sucursal);
-	    			ps.setString(3, direccion);
+				PreparedStatement ps = conn.prepareStatement(query);
+				ps.setInt(1, id_locacion);
+				ps.setString(2, nombre_sucursal);
+				ps.setString(3, direccion);
 
-	    			int rowsAffected = ps.executeUpdate();
+				int rowsAffected = ps.executeUpdate();
 	    			
-	    			if (rowsAffected > 0)
-	    			{
+				if (rowsAffected > 0)
+				{
 	    				
-	    				ps.close();
-	    				conn.close();
+					ps.close();
+					conn.close();
 	    				
-	    				return true;
-	    			}
+					return true;
+				}
 
-	    			ps.close();
-	    			conn.close();
-	    		} catch (Exception e) {
-	    			e.printStackTrace();
-	    		}
-	    		finally {
-	    			try {
-	    				conn.close();
-	    			}catch(Exception e) {}
-	    		}
+				ps.close();
+				conn.close();
+	   			} catch (Exception e) {
+	   				e.printStackTrace();
+	   			}
+			finally {
+				try {
+					conn.close();
+				}catch(Exception e) {}
+			}
 	    		
-			} catch (IOException e) {
-	            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
-	        }  		 
-			return false;	 
-	    }
+		} catch (IOException e) {
+			System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
+		}  		 
+		return false;	 
+	}
 	 
-	 public boolean update(int id_locacion, String nombre_sucursal, String direccion) {
+	public boolean update(int id_locacion, String nombre_sucursal, String direccion) {
 		 String query = "UPDATE `Locacion` SET `nombre_sucursal` = ?, `direccion` = ? WHERE `id_locacion` = ?;";
 		 Properties propiedades = new Properties();
 		 Connection conn = null;						
@@ -182,29 +180,67 @@ public class EstablishmentModel {
 	            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 	        }  		 
 		return false;		 
-	 }
+	}
+	
+	public double calcularDistancia(int id_origen, int id_destino) {
+        
+		if (id_origen == id_destino) {
+			return 0.0;
+		}
+
+		double distanciaKm = 0.0;
+		String query = "SELECT SUM(weight) FROM motor_rutas WHERE latch = 'dijkstra' AND origid = ? AND destid = ?";
+        
+		Properties propiedades = new Properties();
+
+		try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+                 PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+                ps.setInt(1, id_origen);
+                ps.setInt(2, id_destino);
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        distanciaKm = rs.getDouble(1);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al consultar el Grafo de Distancias: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return distanciaKm;
+    }
 	 
-	 	public int getId() {
-		    return this.id;
-		}
+	public int getId() {
+		return this.id;
+	}
 
-		public void setId(int id) {
-			this.id = id;
-		}
+	public void setId(int id) {
+		this.id = id;
+	}
 
-		public String getnombre_sucursal() {
-			return nombre_sucursal;
-		}
+	public String getnombre_sucursal() {
+		return nombre_sucursal;
+	}
 
-		public void setName(String nombre_sucursal) {
-			this.nombre_sucursal = nombre_sucursal;
-		}
+	public void setName(String nombre_sucursal) {
+		this.nombre_sucursal = nombre_sucursal;
+	}
 
-		public String getdireccion() {
-			return direccion;
-		}
+	public String getdireccion() {
+		return direccion;
+	}
 
-		public void setEmail(String direccion) {
-			this.direccion = direccion;
-		}
+	public void setEmail(String direccion) {
+		this.direccion = direccion;
+	}
+	
 }
