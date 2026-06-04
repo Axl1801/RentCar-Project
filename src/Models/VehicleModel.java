@@ -100,9 +100,9 @@ public class VehicleModel implements FilaTabla{
 		return carros;  	
 	}
 
-	public boolean make(byte[] foto, int id_modelo, int id_categoria, int anio, BigDecimal precio_dia, String estado){
+	public boolean make(byte[] foto, int id_marca, int id_modelo, int id_categoria, int anio, BigDecimal precio_dia, String estado){
 		 
-		 String query = "INSERT INTO `Vehiculos` (`foto`, `id_modelo`, `id_categoria`, `anio`, `precio_dia`, `estado`) VALUES (?, ?, ?, ?, ?, ?);";
+		 String query = "INSERT INTO `Vehiculos` (`foto`, `id_marca`, `id_modelo`, `id_categoria`, `anio`, `precio_dia`, `estado`) VALUES (?, ?, ?, ?, ?, ?, ?);";
 			
 		 Connection conn = null;						
 		 Properties propiedades = new Properties();
@@ -119,11 +119,12 @@ public class VehicleModel implements FilaTabla{
 
 	    			PreparedStatement ps = conn.prepareStatement(query);
 	    			ps.setBytes(1, foto);
-	    			ps.setInt(2, id_modelo);
-	    			ps.setInt(3, id_categoria);
-	    			ps.setInt(4, anio);
-	    			ps.setBigDecimal(5, precio_dia);
-	    			ps.setString(6, estado);
+	    			ps.setInt(2, id_marca);
+	    			ps.setInt(3, id_modelo);
+	    			ps.setInt(4, id_categoria);
+	    			ps.setInt(5, anio);
+	    			ps.setBigDecimal(6, precio_dia);
+	    			ps.setString(7, estado);
 	    			
 	    			int rowsAffected = ps.executeUpdate();
 	    			if (rowsAffected > 0) { ps.close(); conn.close(); return true; }
@@ -571,6 +572,87 @@ public class VehicleModel implements FilaTabla{
 			 }
 		 } catch (Exception e) {
 			 System.out.println("Error al buscar el ID del modelo: " + e.getMessage());
+		 }
+		 return idModelo;
+	 }
+	 
+	 public int obtenerIdMarca(String nombreMarca) {
+		 int idMarca = -1;
+		 String query = "SELECT id_marca FROM Marcas WHERE nombre = ?";
+
+		 Properties propiedades = new Properties();
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query)) {
+	                 
+				 ps.setString(1, nombreMarca);
+				 try (ResultSet rs = ps.executeQuery()) {
+					 if (rs.next()) {
+						 idMarca = rs.getInt("id_marca");
+					 }
+				 }
+			 }
+		 } catch (Exception e) {
+			 System.out.println("Error al buscar el ID de la marca: " + e.getMessage());
+		 }
+		 return idMarca;
+	 }
+	 
+	 public int obtenerIdCategoria(String nombreCategoria) {
+		 int idCategoria = -1;
+		 String query = "SELECT id_marca FROM Marcas WHERE nombre = ?";
+
+		 Properties propiedades = new Properties();
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query)) {
+	                 
+				 ps.setString(1, nombreCategoria);
+				 try (ResultSet rs = ps.executeQuery()) {
+					 if (rs.next()) {
+						 idCategoria = rs.getInt("id_marca");
+					 }
+				 }
+			 }
+		 } catch (Exception e) {
+			 System.out.println("Error al buscar el ID de la marca: " + e.getMessage());
+		 }
+		 return idCategoria;
+	 }
+	 
+	 public int obtenerIdModelo(String nombreModelo) {
+		 int idModelo = -1;
+		 String query = "SELECT id_marca FROM Marcas WHERE nombre = ?";
+
+		 Properties propiedades = new Properties();
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query)) {
+	                 
+				 ps.setString(1, nombreModelo);
+				 try (ResultSet rs = ps.executeQuery()) {
+					 if (rs.next()) {
+						 idModelo = rs.getInt("id_marca");
+					 }
+				 }
+			 }
+		 } catch (Exception e) {
+			 System.out.println("Error al buscar el ID de la marca: " + e.getMessage());
 		 }
 		 return idModelo;
 	 }

@@ -55,9 +55,9 @@ public class VehicleController {
 	}
 	
 	//Agrega un nuevo Vehiculo a la base de datos *se tiene que mandar foto, modelo, categoria, año, precio y estado* EL ID SE ASIGNA SOLO
-	public boolean addVehicle(byte[] f, int im, int ic, int a, BigDecimal pd, String e)
+	public boolean addVehicle(byte[] f, int ima, int im, int ic, int a, BigDecimal pd, String e)
 	{
-		boolean flag = vm.make(f, im, ic, a, pd, e);
+		boolean flag = vm.make(f, ima, im, ic, a, pd, e);
 		return flag;
 	}
 	
@@ -129,5 +129,23 @@ public class VehicleController {
 	 public String getCategoriaVehiculo(int id_vehiculo) {
 		 return vm.getCategoriaVehiculo(id_vehiculo);
 	 }
+	 
+	 //REGRESA EL ID MARCA
+	 public int obtenerIdMarca(String marca) {
+		 int id_marca = vm.obtenerIdMarca(marca);
+		 return id_marca;
+	 }
+	 
+	 //REGRESA EL ID MODELO
+	 public int obtenerIdModelo(String modelo) {
+		 int id_marca = vm.obtenerIdMarca(modelo);
+		 return id_marca;
+	 }
 	
+	 //REGRESA EL ID CATEGORIA
+	 public int obtenerIdCategoria(String categoria) {
+		 int id_marca = vm.obtenerIdMarca(categoria);
+		 return id_marca;
+	 }
+	 
 }
