@@ -57,6 +57,15 @@ import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
 
+import java.awt.Component;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
 public class VehicleView {
 	private byte[] fotoSeleccionada;
 	VehicleController control;
@@ -373,6 +382,35 @@ public class VehicleView {
 		Vehicle_table = new JTable(modeloVehiculos);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloVehiculos);
 		Vehicle_table.setRowSorter(sorter);
+		
+		Vehicle_table.setRowHeight(100);
+		
+		Vehicle_table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				
+				JLabel etiquetaCelda = new JLabel();
+				etiquetaCelda.setHorizontalAlignment(JLabel.CENTER);
+
+				if (isSelected) {
+					etiquetaCelda.setBackground(table.getSelectionBackground());
+					etiquetaCelda.setOpaque(true);
+				}
+
+				if (value != null && value instanceof byte[]) {
+					byte[] bytesFoto = (byte[]) value;
+					ImageIcon iconoOriginal = new ImageIcon(bytesFoto);
+					Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(80, 50, Image.SCALE_SMOOTH);
+					etiquetaCelda.setIcon(new ImageIcon(imagenEscalada));
+					etiquetaCelda.setText(""); 
+				} else {
+					etiquetaCelda.setIcon(null);
+					etiquetaCelda.setText("Sin foto");
+				}
+
+				return etiquetaCelda;
+			}
+		});
 		//Ordenamientos de cada columna
 		list.addActionListener(e -> {
 		    String seleccion = (String) list.getSelectedItem();
@@ -483,7 +521,9 @@ public class VehicleView {
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		for (int i = 0; i < 7; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
-			Vehicle_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+			if (i != 1) {
+				Vehicle_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+			}
 		}
 		JTableHeader header = Vehicle_table.getTableHeader();
 		header.setBackground(Color.decode("#AFAFAF"));
@@ -1255,29 +1295,87 @@ public class VehicleView {
 		detallesCliente.add(panelTabla);
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
-		Object [] table_head = {"ID Renta","Vehiculo","Feha Inicio","Fecha Fin","Estado"};
+		Object [] table_head = {"ID","Foto","Modelo","Marca","Año","Precio (Dia)", "Estado","Acciones"};
+		
+		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
+		modeloVehiculos = new DefaultTableModel(null,table_head) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return column == 7; 
+			}
+			
+			@Override
+			public Class<?> getColumnClass(int column) {
 
-		DefaultTableModel modeloVehiculo = new DefaultTableModel(null,table_head){
-		    @Override
-		    public boolean isCellEditable(int row, int column) {
-		        return false; // Ninguna celda será editable
-		    }
+			    if (getRowCount() > 0) {
+			        Object value = getValueAt(0, column);
+
+			        if (value != null) {
+			            return value.getClass();
+			        }
+			    }
+
+			    return Object.class;
+			}
 		};
-		ArrayList<VehicleModel> listaVehiculos = control.obtenerRentasVehiculo(idVehiculo);
-		for (VehicleModel Verhiculo : listaVehiculos) {
-			Object[] fila = new Object[5];
-			fila[0] = Verhiculo.getIdLetraRenta();
-			fila[1] = Verhiculo.getName();
-			fila[2] = Verhiculo.getInicio_renta();
-			fila[3] = Verhiculo.getFin_renta();
-			fila[4] = Verhiculo.getestado();
-			modeloVehiculo.addRow(fila);
+		
+		// Pide la lista al controlador
+		ArrayList<VehicleModel> listaVehiculos = control.obtenerVehiculos();
+		
+		// La imprime por fila 
+		for (VehicleModel Vehiculo : listaVehiculos) {
+		    Object[] fila = new Object[8];
+		    fila[0] = Vehiculo.getIdLetra();
+		    fila[1] = Vehiculo.getfoto(); // Aquí van los bytes puros
+		    fila[2] = Vehiculo.getmodelo();
+		    fila[3] = Vehiculo.getmarca();
+		    fila[4] = Vehiculo.getanio();
+		    fila[5] = Vehiculo.getprecio_dia();
+		    fila[6] = Vehiculo.getestado();
+		    fila[7] = "";	    
+		    modeloVehiculos.addRow(fila);
 		}
 		
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
-		JTable clientes_table = new JTable(modeloVehiculo);
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloVehiculo);
-		clientes_table.setRowSorter(sorter);
+		Vehicle_table = new JTable(modeloVehiculos);
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloVehiculos);
+		Vehicle_table.setRowSorter(sorter);
+
+		Vehicle_table.setRowHeight(100);
+		
+		// 2. Le decimos a la Columna 1 (que es "Foto") cómo transformar los bytes en imagen
+		Vehicle_table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				
+				JLabel etiquetaCelda = new JLabel();
+				etiquetaCelda.setHorizontalAlignment(JLabel.CENTER);
+
+				// Si el usuario selecciona la fila, le respetamos su color azul de fondo
+				if (isSelected) {
+					etiquetaCelda.setBackground(table.getSelectionBackground());
+					etiquetaCelda.setOpaque(true);
+				}
+
+				// Verificamos si la celda tiene información y si esa info son bytes
+				if (value != null && value instanceof byte[]) {
+					byte[] bytesFoto = (byte[]) value;
+					
+					// Convertimos a imagen y la escalamos a 80x50 para que quede perfecta en la celda
+					ImageIcon iconoOriginal = new ImageIcon(bytesFoto);
+					Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(80, 50, Image.SCALE_SMOOTH);
+					
+					etiquetaCelda.setIcon(new ImageIcon(imagenEscalada));
+					etiquetaCelda.setText(""); // Borramos cualquier texto feo
+				} else {
+					// Si el carro no tiene foto, ponemos este texto
+					etiquetaCelda.setIcon(null);
+					etiquetaCelda.setText("Sin foto");
+				}
+
+				return etiquetaCelda;
+			}
+		});
 		
 		list.addActionListener(e -> {
 		    String seleccion = (String) list.getSelectedItem();
@@ -1345,15 +1443,15 @@ public class VehicleView {
 		});
 		
 		//creacion y customización del scroll pane
-		JScrollPane scrollPane = new JScrollPane(clientes_table);
+		JScrollPane scrollPane = new JScrollPane(Vehicle_table);
 		scrollPane.getVerticalScrollBar().setUI(new ScrollBarCustom());
 		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		
-		clientes_table.setRowHeight(40);
-		clientes_table.setBackground(Color.decode("#D9D9D9"));
-		clientes_table.setShowVerticalLines(false);
-		clientes_table.setShowHorizontalLines(true);
+		Vehicle_table.setRowHeight(40);
+		Vehicle_table.setBackground(Color.decode("#D9D9D9"));
+		Vehicle_table.setShowVerticalLines(false);
+		Vehicle_table.setShowHorizontalLines(true);
 		panelTabla.add(scrollPane, BorderLayout.CENTER);
 		
 		//Personalizacion de la tabla
@@ -1361,10 +1459,12 @@ public class VehicleView {
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		for (int i = 0; i < 5; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
-			clientes_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+			if (i != 1) {
+				Vehicle_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+			}
 		}
 		
-		JTableHeader header = clientes_table.getTableHeader();
+		JTableHeader header = Vehicle_table.getTableHeader();
 		header.setBackground(Color.decode("#AFAFAF"));
 		header.setFont(new Font("Poppins", Font.BOLD, 18));
 		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();

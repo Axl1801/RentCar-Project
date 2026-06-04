@@ -56,10 +56,14 @@ public class RentModel {
     	
         ArrayList<RentModel> rentas = new ArrayList<>();
         
-        String query = "SELECT r.*, c.nombre AS name, v.modelo AS nombre, v.foto " +
+        String query = "SELECT r.*, " +
+        				"c.name, " +           
+        				"mo.nombre AS modelo_texto, " +
+        				"v.foto " +
         				"FROM Rentas r " +
         				"INNER JOIN Clientes c ON r.id_cliente = c.id_cliente " +
-        				"INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo";
+        				"INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo " +
+        				"INNER JOIN Modelos mo ON v.id_modelo = mo.id_modelo";
         
         System.out.println("Ejecutando: " + query);
         Properties propiedades = new Properties();
@@ -88,7 +92,7 @@ public class RentModel {
                     tmp.setCosto_total(rs.getBigDecimal("costo_total"));
                     tmp.setEstado(rs.getString("estado"));
                     tmp.setnameCliente(rs.getString("name")); 
-                    tmp.setnombreModelo(rs.getString("nombre")); 
+                    tmp.setnombreModelo(rs.getString("modelo_texto")); 
                     tmp.setfoto(rs.getBytes("foto"));
 
                     rentas.add(tmp);

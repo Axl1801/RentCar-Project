@@ -2,6 +2,7 @@ package Views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -372,7 +373,35 @@ public class RentView {
 		Rent_table = new JTable(modeloRentas);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloRentas);
 		Rent_table.setRowSorter(sorter);
+		Rent_table.setRowHeight(60);
 		
+		Rent_table.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				
+				JLabel etiquetaCelda = new JLabel();
+				etiquetaCelda.setHorizontalAlignment(JLabel.CENTER);
+
+				if (isSelected) {
+					etiquetaCelda.setBackground(table.getSelectionBackground());
+					etiquetaCelda.setOpaque(true);
+				}
+
+				if (value != null && value instanceof byte[]) {
+					byte[] bytesFoto = (byte[]) value;
+					ImageIcon iconoOriginal = new ImageIcon(bytesFoto);
+					Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(80, 50, Image.SCALE_SMOOTH);
+					etiquetaCelda.setIcon(new ImageIcon(imagenEscalada));
+					etiquetaCelda.setText(""); 
+				} else {
+					etiquetaCelda.setIcon(null);
+					etiquetaCelda.setText("Sin foto");
+				}
+
+				return etiquetaCelda;
+			}
+		});
+				
 		list.addActionListener(e -> {
 		    String seleccion = (String) list.getSelectedItem();
 		    
@@ -480,7 +509,9 @@ public class RentView {
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		for (int i = 0; i < 7; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
+			if (i != 3) {
 			Rent_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+			}
 		}
 		JTableHeader header = Rent_table.getTableHeader();
 		header.setBackground(Color.decode("#AFAFAF"));
