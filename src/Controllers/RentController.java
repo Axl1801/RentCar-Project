@@ -2,6 +2,7 @@ package Controllers;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -19,6 +20,7 @@ import Views.RentView;
 public class RentController {
 	private RentView rv;
 	private RentModel rm;
+	private VehicleController vc;
 	
 	public RentController() {
 		rv = new RentView();
@@ -30,12 +32,12 @@ public class RentController {
 		return rv.Rent();
 	}
 	
-	public void editRent() {
-		rv.editRent();
+	public void editRent(int IDrenta,String cliente, String modelo, LocalDate fechaInicio, LocalDate fechaFinal, byte[] foto ) {
+		rv.editRent(IDrenta,cliente,modelo,fechaInicio,fechaFinal, foto);
 	}
 	
-	public void showHistorial() {
-		rv.historialRenta();
+	public void showHistorial(int idRenta) {
+		rv.historialRenta(idRenta);
 	}
 	
 	//Genera el listado de RENTAS con su informacion
@@ -149,9 +151,21 @@ public class RentController {
     }
 	
 	//REGRESA LISTA DE PRECIOS
-	public ArrayList<Double> getListaPrecios() {
-		return new ArrayList<>(Arrays.asList(75.0, 100.0, 150.0, 175.0, 200.0, 250.0, 275.0, 300.0, 350.0, 375.0, 400.0));
-	}
+	public ArrayList<BigDecimal> getListaPrecios() {
+		return new ArrayList<>(Arrays.asList(
+		        BigDecimal.valueOf(0.00),
+		        BigDecimal.valueOf(75.00),
+		        BigDecimal.valueOf(100.00),
+		        BigDecimal.valueOf(150.00),
+		        BigDecimal.valueOf(175.00),
+		        BigDecimal.valueOf(200.00),
+		        BigDecimal.valueOf(250.00),
+		        BigDecimal.valueOf(275.00),
+		        BigDecimal.valueOf(300.00),
+		        BigDecimal.valueOf(350.00),
+		        BigDecimal.valueOf(375.00),
+		        BigDecimal.valueOf(400.00)));
+    }
 		
 	//REGRESA LISTA DE AÑOS 
 	public ArrayList<Integer> getListaAnios() {
@@ -182,4 +196,15 @@ public class RentController {
 	public int clientelID(String cliente) {	
 		return rm.getIdPorNombre_Clientes(cliente);
 	}
+	
+	 //REGRESA LISTA DE MODELOS
+	 public ArrayList<String> getListaModelos() {
+		 return vc.getListaModelos();
+	 }
+	 
+	 public int obtenerIdModelo(String modelo) {
+		 int id_modelo = vc.obtenerIdModelo(modelo);
+		 return id_modelo;
+	 }
+	 
 }

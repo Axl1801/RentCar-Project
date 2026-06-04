@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -80,7 +81,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 					vc.showHistorial(idRow);
 				}
 				else if(accion.equals("Rentas")) {
-					rc.showHistorial();
+					rc.showHistorial(idRow);
 				}
 
 			});
@@ -110,7 +111,12 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 					vc.EditVehicleView(idVehiculo, marca, modelo, categoria, estado, año, precio);
 				}
 				else if(accion.equals("Rentas")) {
-					rc.editRent();
+					String cliente = table.getModel().getValueAt(modelRow, 1).toString();
+					String modelo = table.getModel().getValueAt(modelRow, 2).toString();
+					byte[] foto = (byte[])table.getModel().getValueAt(modelRow, 3);
+					LocalDate fechaInicio = (LocalDate)table.getModel().getValueAt(modelRow, 4);
+					LocalDate fechaFin = (LocalDate)table.getModel().getValueAt(modelRow, 5);
+					rc.editRent(idRow,cliente,modelo,fechaInicio,fechaFin,foto);
 				}
 
 			});
@@ -129,7 +135,8 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 					vc.EliminarVehiculo(idRow);
 				}
 				else if(accion.equals("Rentas")) {
-					//PENDIENTE BORRAR REGISTRO
+					rc.cancelarRenta(idRow);
+					rc.eliminarRenta(idRow);
 				}
 				
 				((DefaultTableModel) table.getModel()).removeRow(modelRow);

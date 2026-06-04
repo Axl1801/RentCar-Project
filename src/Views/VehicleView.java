@@ -327,7 +327,6 @@ public class VehicleView {
 		tablaVehiculos.setVisible(true);
 		tablaVehiculos.setBackground(Color.decode("#D9D9D9"));
 		tablaVehiculos.setLayout(new BorderLayout());
-		//Panel con la tabla de Vehiculos
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID","Foto","Modelo","Marca","Año","Precio (Dia)", "Estado","Acciones"};
@@ -355,9 +354,9 @@ public class VehicleView {
 		};
 		
 		// Pide la lista al controlador
-		ArrayList<VehicleModel> listaClientes = control.obtenerVehiculos();
+		ArrayList<VehicleModel> listaVehiculos = control.obtenerVehiculos();
 		// La imprime por fila 
-		for (VehicleModel Vehiculo : listaClientes) {
+		for (VehicleModel Vehiculo : listaVehiculos) {
 		    Object[] fila = new Object[8];
 		    fila[0] = Vehiculo.getIdLetra();
 		    fila[1] = Vehiculo.getfoto();
@@ -374,7 +373,7 @@ public class VehicleView {
 		Vehicle_table = new JTable(modeloVehiculos);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloVehiculos);
 		Vehicle_table.setRowSorter(sorter);
-		
+		//Ordenamientos de cada columna
 		list.addActionListener(e -> {
 		    String seleccion = (String) list.getSelectedItem();
 		    
@@ -434,7 +433,7 @@ public class VehicleView {
 		    @Override
 		    public void focusGained(FocusEvent e) {
 		        // Cuando el usuario hace clic en la caja
-		        if (busqueda.getText().equals("Buscar Cliente")) {
+		        if (busqueda.getText().equals("Buscar Vehiculo")) {
 		            busqueda.setText(""); // Vaciamos la caja
 		        }
 		    }
@@ -443,7 +442,7 @@ public class VehicleView {
 		    public void focusLost(FocusEvent e) {
 		        // Cuando el usuario hace clic en otro lado
 		        if (busqueda.getText().isEmpty()) {
-		            busqueda.setText("Buscar Cliente"); // Restauramos el mensaje
+		            busqueda.setText("Buscar Vehiculo"); // Restauramos el mensaje
 		        }
 		    }
 		});
@@ -623,7 +622,6 @@ public class VehicleView {
 		botonFoto.setSize(280,40);
 		botonFoto.setLocation(370,160);
 		botonFoto.addActionListener(e->{
-
 		    JFileChooser selector = new JFileChooser();
 		    
 		    selector.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes","jpg", "jpeg", "png", "webp"));
@@ -1257,7 +1255,7 @@ public class VehicleView {
 		detallesCliente.add(panelTabla);
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
-		Object [] table_head = {"ID Renta","Nombre","Feha Inicio","Fecha Fin","Estado"};
+		Object [] table_head = {"ID Renta","Vehiculo","Feha Inicio","Fecha Fin","Estado"};
 
 		DefaultTableModel modeloVehiculo = new DefaultTableModel(null,table_head){
 		    @Override
@@ -1273,8 +1271,6 @@ public class VehicleView {
 			fila[2] = Verhiculo.getInicio_renta();
 			fila[3] = Verhiculo.getFin_renta();
 			fila[4] = Verhiculo.getestado();
-			
-	    
 			modeloVehiculo.addRow(fila);
 		}
 		

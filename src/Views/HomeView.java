@@ -50,12 +50,14 @@ import Utilities.TextFieldRounded;
 import Utilities.ToggleButtonRounded;
 
 public class HomeView {
+	
+	HomeController control;
 	public HomeView(){
 
 	}
 
-	public void home() {
-
+	public void setControlador(HomeController c) {
+		this.control = c;
 	}
 
 	public void showHome() {
@@ -966,6 +968,10 @@ public class HomeView {
 		regCat.setFont(new Font("Poppins",Font.BOLD,15));
 		regCat.setForeground(Color.white);
 		regCat.setHorizontalAlignment(JLabel.CENTER);
+		regCat.addActionListener(e->{
+			control.generarCategoria(campoCat.getText());
+		});
+		
 		contCat.add(regCat);
 
 		ventana.setVisible(true);
@@ -982,28 +988,28 @@ public class HomeView {
 		ventana.setLocationRelativeTo(null);
 		ventana.setLayout(null);
 
-		PanelRounded panelCat = new PanelRounded(10,true,true,true,true);
-		panelCat.setVisible(true);
-		panelCat.setLayout(new BorderLayout());
-		panelCat.setBackground(Color.decode("#FFFFFF"));
-		panelCat.setBounds(635,365,650,350);
-		ventana.add(panelCat);
+		PanelRounded panelMarca = new PanelRounded(10,true,true,true,true);
+		panelMarca.setVisible(true);
+		panelMarca.setLayout(new BorderLayout());
+		panelMarca.setBackground(Color.decode("#FFFFFF"));
+		panelMarca.setBounds(635,365,650,350);
+		ventana.add(panelMarca);
 
-		PanelRounded panelSupCat = new PanelRounded(10,true,true,false,false);
-		panelSupCat.setVisible(true);
-		panelSupCat.setLayout(new BorderLayout());
-		panelSupCat.setBackground(Color.decode("#000D56"));
-		panelSupCat.setPreferredSize(new Dimension(0,120));
-		panelCat.add(panelSupCat,BorderLayout.NORTH);
+		PanelRounded panelSupMarca = new PanelRounded(10,true,true,false,false);
+		panelSupMarca.setVisible(true);
+		panelSupMarca.setLayout(new BorderLayout());
+		panelSupMarca.setBackground(Color.decode("#000D56"));
+		panelSupMarca.setPreferredSize(new Dimension(0,120));
+		panelMarca.add(panelSupMarca,BorderLayout.NORTH);
 
-		JLabel tituloCat = new JLabel("AGREGAR CATEGORIA");
-		tituloCat.setBorder(new EmptyBorder(0, 0, 0, 30));
-		tituloCat.setForeground(Color.white);
-		tituloCat.setOpaque(false);
-		tituloCat.setHorizontalAlignment(JLabel.CENTER);
-		tituloCat.setFont(new Font("Poppins",Font.BOLD,30));
-		tituloCat.setHorizontalTextPosition(JLabel.CENTER);
-		panelSupCat.add(tituloCat,BorderLayout.CENTER);
+		JLabel tituloMarca = new JLabel("AGREGAR MARCA");
+		tituloMarca.setBorder(new EmptyBorder(0, 0, 0, 30));
+		tituloMarca.setForeground(Color.white);
+		tituloMarca.setOpaque(false);
+		tituloMarca.setHorizontalAlignment(JLabel.CENTER);
+		tituloMarca.setFont(new Font("Poppins",Font.BOLD,30));
+		tituloMarca.setHorizontalTextPosition(JLabel.CENTER);
+		panelMarca.add(tituloMarca,BorderLayout.CENTER);
 
 		JButton regresar = new JButton();
 		regresar.setContentAreaFilled(false); // Sin fondo
@@ -1013,60 +1019,63 @@ public class HomeView {
 		if (url != null) {
 			regresar.setIcon(new ImageIcon(url));
 		}
-		panelSupCat.add(regresar,BorderLayout.WEST);
+		panelMarca.add(regresar,BorderLayout.WEST);
 		regresar.addActionListener(e->{
 			ventana.dispose();
 		});
 
-		PanelRounded contCat = new PanelRounded(10,true,true,true,true);
-		contCat.setBackground(Color.white);
-		contCat.setLayout(null);
-		contCat.setVisible(true);
-		panelCat.add(contCat,BorderLayout.CENTER);
+		PanelRounded contMarca = new PanelRounded(10,true,true,true,true);
+		contMarca.setBackground(Color.white);
+		contMarca.setLayout(null);
+		contMarca.setVisible(true);
+		panelMarca.add(contMarca,BorderLayout.CENTER);
 
-		JLabel etiquetaCat = new JLabel("Marca");
-		etiquetaCat.setOpaque(false);
-		etiquetaCat.setForeground(Color.black);
-		etiquetaCat.setHorizontalAlignment(JLabel.LEFT);
-		etiquetaCat.setFont(new Font("Poppins",Font.PLAIN,15));
-		etiquetaCat.setBounds(150,40,100,30);
-		contCat.add(etiquetaCat);
+		JLabel etiquetaMarca = new JLabel("Marca");
+		etiquetaMarca.setOpaque(false);
+		etiquetaMarca.setForeground(Color.black);
+		etiquetaMarca.setHorizontalAlignment(JLabel.LEFT);
+		etiquetaMarca.setFont(new Font("Poppins",Font.PLAIN,15));
+		etiquetaMarca.setBounds(150,40,100,30);
+		contMarca.add(etiquetaMarca);
 
-		TextFieldRounded campoCat = new TextFieldRounded(20,10,true);
-		campoCat.setBounds(150,80,350,50);
-		campoCat.setOpaque(false);
-		campoCat.setFont(new Font("Poppins",Font.BOLD,12));
-		campoCat.setForeground(Color.decode("#8B8B8B"));
-		campoCat.setHorizontalAlignment(JLabel.LEFT);
-		campoCat.setText("Toyota");
-		campoCat.addFocusListener(new FocusAdapter() {
+		TextFieldRounded campoMarca = new TextFieldRounded(20,10,true);
+		campoMarca.setBounds(150,80,350,50);
+		campoMarca.setOpaque(false);
+		campoMarca.setFont(new Font("Poppins",Font.BOLD,12));
+		campoMarca.setForeground(Color.decode("#8B8B8B"));
+		campoMarca.setHorizontalAlignment(JLabel.LEFT);
+		campoMarca.setText("Toyota");
+		campoMarca.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
 				// Cuando el usuario hace clic en la caja
-				if (campoCat.getText().equals("Toyota")) {
-					campoCat.setText(""); // Vaciar la caja
-					campoCat.setForeground(Color.decode("#000000"));
+				if (campoMarca.getText().equals("Toyota")) {
+					campoMarca.setText(""); // Vaciar la caja
+					campoMarca.setForeground(Color.decode("#000000"));
 				}
 			}
 
 			@Override
 			public void focusLost(FocusEvent e) {
 				// Cuando el usuario hace clic en otro lado
-				if (campoCat.getText().isEmpty()) {
-					campoCat.setText("Toyota");// Restaurar el mensaje
-					campoCat.setForeground(Color.decode("#8B8B8B"));
+				if (campoMarca.getText().isEmpty()) {
+					campoMarca.setText("Toyota");// Restaurar el mensaje
+					campoMarca.setForeground(Color.decode("#8B8B8B"));
 				}
 			}
 		});
-		contCat.add(campoCat);
+		contMarca.add(campoMarca);
 
-		ButtonRounded regCat = new ButtonRounded("Registrar Marca",10,1);
-		regCat.setBounds(150,140,350,50);
-		regCat.setOpaque(false);
-		regCat.setFont(new Font("Poppins",Font.BOLD,15));
-		regCat.setForeground(Color.white);
-		regCat.setHorizontalAlignment(JLabel.CENTER);
-		contCat.add(regCat);
+		ButtonRounded regMarca = new ButtonRounded("Registrar Marca",10,1);
+		regMarca.setBounds(150,140,350,50);
+		regMarca.setOpaque(false);
+		regMarca.setFont(new Font("Poppins",Font.BOLD,15));
+		regMarca.setForeground(Color.white);
+		regMarca.setHorizontalAlignment(JLabel.CENTER);
+		regMarca.addActionListener(e->{
+			control.generarMarca(campoMarca.getText());
+		});
+		contMarca.add(regMarca);
 
 		ventana.setVisible(true);
 	}

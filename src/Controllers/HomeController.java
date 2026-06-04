@@ -71,7 +71,7 @@ public class HomeController {
 	 }
 	 
 	 //AGREGA UNA MARCA AL SISTEMA
-	 public void generarMARCA(String marca) {
+	 public void generarMarca(String marca) {
 		 hm.insertarMarca(marca);
 	 }
 	 

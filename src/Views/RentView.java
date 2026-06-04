@@ -11,20 +11,31 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
+import javax.swing.RowFilter.Entry;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -34,11 +45,13 @@ import javax.swing.table.TableRowSorter;
 
 import Controllers.RentController;
 import Controllers.VehicleController;
+import Models.RentModel;
 import Models.VehicleModel;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
 import Utilities.ComboBoxRounded;
+import Utilities.DatePickerRounded;
 import Utilities.LabelRounded;
 import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
@@ -46,8 +59,9 @@ import Utilities.TextFieldRounded;
 
 public class RentView {
 	RentController control;
-	private JTable Vehicle_table;
-	private DefaultTableModel modeloVehiculos;
+	private JTable Rent_table;
+	private DefaultTableModel modeloRentas;
+	private byte[] fotoSeleccionada;
 	public RentView(){
 		
 	}
@@ -228,7 +242,7 @@ public class RentView {
 		panelOrdenar.setLayout(new BorderLayout());
 		
 		//Creacion de un arreglo para introducir cada copcion dentro de un ComboBox
-		String[] Ordenamientos = {"TODOS", "Modelo Reciente", "Precio", "Orden Alfabetico"};
+		String[] Ordenamientos = {"TODOS", "Cliente", "Vehiculo", "Inicio(DSC)", "Fin(DSC)","Estado"};
 		ComboBoxRounded<String> list = new ComboBoxRounded<>(Ordenamientos);
 		
 		//Personalizacion del comboBox
@@ -264,9 +278,6 @@ public class RentView {
 		filtros.setHorizontalAlignment(JLabel.CENTER);  
 		filtros.setIconTextGap(10);                      
 		filtros.setHorizontalTextPosition(JLabel.LEFT);
-		filtros.addActionListener(e->{
-			filtrosAvanzados();
-		});
 		panelFiltros.add(filtros);	
 		
 		gbc.gridx = 3;
@@ -308,32 +319,84 @@ public class RentView {
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(10, 20, 10, 20);
 		RentPanel.add(añadirRenta, gbc);
-		//Panel con la tabla de clientes
-		PanelRounded tablaClientes = new PanelRounded(10, true, true, true, true);
-		tablaClientes.setOpaque(false);
-		tablaClientes.setVisible(true);
-		tablaClientes.setBackground(Color.decode("#D9D9D9"));
+		
 		//Creacion del panel para la tabla de clientes
-		tablaClientes.setLayout(new BorderLayout());
+		PanelRounded tablaRentas = new PanelRounded(10, true, true, true, true);
+		tablaRentas.setOpaque(false);
+		tablaRentas.setVisible(true);
+		tablaRentas.setBackground(Color.decode("#D9D9D9"));
+		tablaRentas.setLayout(new BorderLayout());
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"ID","Cliente","Vehiculo","Foto","Inicio","Fin", "Estado","Acciones"};
 
 		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
-		modeloVehiculos = new DefaultTableModel(null,table_head) {
+		modeloRentas = new DefaultTableModel(null,table_head) {
 			@Override
 		    public boolean isCellEditable(int row, int column) {
 		        return column == 7; 
+		          
 		    }
+			
+			@Override
+			public Class<?> getColumnClass(int column) {
+
+			    if (getRowCount() > 0) {
+			        Object value = getValueAt(0, column);
+
+			        if (value != null) {
+			            return value.getClass();
+			        }
+			    }
+
+			    return Object.class;
+			}
 		};
 		
 		// Pide la lista al controlador
-		//ArrayList<RentModel> listaRentas = control.|;
+		ArrayList<RentModel> listaRentas = control.obtenerRentas();
+		//ArrayList<RentModel> listaRentas = control;
+		for (RentModel Renta : listaRentas) {
+		    Object[] fila = new Object[8];
+		    fila[0] = Renta.getIdLetra();
+		    fila[1] = Renta.getnameCliente();
+		    fila[2] = Renta.getId_vehiculo();
+		    fila[3] = Renta.getfoto();
+		    fila[4] = Renta.getInicio_renta();
+		    fila[5] = Renta.getFin_renta();
+		    fila[6] = Renta.getEstado();
+		    fila[7] = "";	    
+		    modeloRentas.addRow(fila);
+		}
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
-		JTable clientes_table = new JTable(modeloVehiculos);
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloVehiculos);
-		clientes_table.setRowSorter(sorter);
+		Rent_table = new JTable(modeloRentas);
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloRentas);
+		Rent_table.setRowSorter(sorter);
 		
+		list.addActionListener(e -> {
+		    String seleccion = (String) list.getSelectedItem();
+		    
+		    switch (seleccion) {
+		        case "TODOS":
+		            sorter.setSortKeys(null);
+		            break;
+		        case "Cliente":
+		        	sorter.setSortKeys(List.of(new RowSorter.SortKey(2, SortOrder.DESCENDING)));
+		        	break;
+		        case "Vehiculo":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(3, SortOrder.ASCENDING)));
+		            break;
+		        case "Inicio(DSC)":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(4, SortOrder.DESCENDING)));
+		            break;
+		        case "Fin(DSC)":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(5, SortOrder.DESCENDING)));
+		            break;
+		        case "Estado":
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(6, SortOrder.DESCENDING)));
+		            break;
+		    }
+		});
 		/*Agregamos el metodo para que el campo de texto busqueda filtre en tiempo real la tabla 
 		mediante un DocumentListener*/
 		busqueda.getDocument().addDocumentListener(new DocumentListener() {
@@ -357,6 +420,11 @@ public class RentView {
 		    }
 		});
 		
+		//Agregamos el ActionListener como parametro a la vista de filtros para usarla
+		filtros.addActionListener(e->{
+			filtrosAvanzados(sorter);
+		});
+		
 		//Agregamos un Focus listener para que al ingresar texto se desaparezca el texto por defecto como un placeHolder
 		busqueda.addFocusListener(new FocusAdapter() {
 		    @Override
@@ -378,7 +446,7 @@ public class RentView {
 		
 		
 		//creacion y customización del scroll pane
-		JScrollPane scrollPane = new JScrollPane(clientes_table);
+		JScrollPane scrollPane = new JScrollPane(Rent_table);
 		scrollPane.getVerticalScrollBar().setUI(new ScrollBarCustom());
 		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -398,23 +466,23 @@ public class RentView {
 		ImageIcon btnEliminar = new ImageIcon(iconEliminar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		ImageIcon btnDescargar = new ImageIcon(iconDescargar.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
 		//Agregamos botones customizados con popup a la 5ta columna de la tabla y personalizamos la columna	
-		clientes_table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
-		clientes_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Rentas",clientes_table, null,null,control));
-		clientes_table.setRowHeight(40);
-		clientes_table.getColumnModel().getColumn(7).setPreferredWidth(60);
-		clientes_table.setBackground(Color.decode("#D9D9D9"));
-		clientes_table.setShowVerticalLines(false);
-		clientes_table.setShowHorizontalLines(true);
-		tablaClientes.add(scrollPane, BorderLayout.CENTER);
+		Rent_table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRoundedRenderer(btnPrincipal));
+		Rent_table.getColumnModel().getColumn(7).setCellEditor(new ButtonRoundedEditor(new JCheckBox(), btnPrincipal,btnVer,btnEditar,btnEliminar,btnDescargar,"Rentas",Rent_table, null,null,control));
+		Rent_table.setRowHeight(40);
+		Rent_table.getColumnModel().getColumn(7).setPreferredWidth(60);
+		Rent_table.setBackground(Color.decode("#D9D9D9"));
+		Rent_table.setShowVerticalLines(false);
+		Rent_table.setShowHorizontalLines(true);
+		tablaRentas.add(scrollPane, BorderLayout.CENTER);
 		
 		//Personalizacion de la tabla
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();//Render para centrar el texto
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		for (int i = 0; i < 7; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
-			clientes_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+			Rent_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
-		JTableHeader header = clientes_table.getTableHeader();
+		JTableHeader header = Rent_table.getTableHeader();
 		header.setBackground(Color.decode("#AFAFAF"));
 		header.setFont(new Font("Poppins", Font.BOLD, 18));
 		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();
@@ -431,13 +499,12 @@ public class RentView {
 		gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(20, 20, 20, 20);
-		RentPanel.add(tablaClientes, gbc);
+		RentPanel.add(tablaRentas, gbc);
 
 		return RentPanel;
 	}
 
 	public void addRent() {
-		
 		// Crear Ventana JDialog
 		  JDialog ventana = new JDialog();
 		  ventana.setModal(true);
@@ -476,9 +543,7 @@ public class RentView {
 		cliente.setLocation(50,130);
 		añadirRenta.add(cliente);
 		
-		String[] Clientes = {"---","Diego Ramirez", "Sofia Torres", "Luis Mendoza", "Valeria Cruz","Axel Garcia","Esau Hernandez",
-				"Osmin Ojeda", "Ronaldo Centeno", "Fabian Green", "Cereneo Manzanares",
-				"Fernanda Jacome", "Isbeth Cortez", "Jonathan Soto","Israel Duran","Arturo Decasso"};
+		ArrayList<String> Clientes = control.getNombresClientes();
 		ComboBoxRounded<String> listClientes = new ComboBoxRounded<>(Clientes);
 		listClientes.setFont(new Font("Poppins", Font.BOLD, 15));
 		listClientes.setForeground(Color.black);
@@ -497,27 +562,16 @@ public class RentView {
 		etiquetaVehiculo.setLocation(50,230);
 		añadirRenta.add(etiquetaVehiculo);
 		
-		String[] vehiculos = {"---", "Chevrolet Express Passebger", "Bronco Sport",
-				"Ford Transit","Honda Accord","Honda Civic",
-				"Honda CR-V", "Honda Fit", "Honda Oddyssey",
-				"Honda Pilot","Hyundai Accent", "Hyundai Elantra",
-				"Jeep Renegade","Jeep Wrangler","Kia K4","Kia Rio",
-				"Land Rover Defender 110","Mazda 3","Mazda CX-5",
-				"Mercedes-Benz Vito Tourer","Mini Cooper 5 Door",
-				"Nissan Centra","Nissan Versa","Subaru Forester",
-				"Suzuki Jimny","Toyota Camry","Toyota Corolla","Toyota RAV4","Volkswagen Jetta"};
-		ComboBoxRounded<String> listEstados = new ComboBoxRounded<>(vehiculos);
-		listEstados.setFont(new Font("Poppins", Font.BOLD, 15));
-		listEstados.setForeground(Color.black);
-		listEstados.setOpaque(false);
-		listEstados.setSize(280,40);
-		listEstados.setLocation(50,260);
-		añadirRenta.add(listEstados);
+		ArrayList<String> vehiculos = control.getListaModelos();
+		ComboBoxRounded<String> listVehiculos = new ComboBoxRounded<>(vehiculos);
+		listVehiculos.setFont(new Font("Poppins", Font.BOLD, 15));
+		listVehiculos.setForeground(Color.black);
+		listVehiculos.setOpaque(false);
+		listVehiculos.setSize(280,40);
+		listVehiculos.setLocation(50,260);
+		añadirRenta.add(listVehiculos);
 		
 		//Label telefono y su respectivo campo de texto
-		String[]  fechas = {"DD/MM/YYYY","30/03/2026","10/04/2026","01/04/2026","20/03/2026","18/03/2026","14/02/2026","31/11/2026","17/01/2026","15/06/2026",
-			    "14/12/2026","13/09/2026","27/03/2026","18/01/2026","25/04/2026","10/10/2026"
-			};
 		JLabel tituloFechaInicio = new JLabel("Fecha De Inicio");
 		tituloFechaInicio.setOpaque(false);
 		tituloFechaInicio.setForeground(Color.black);
@@ -527,7 +581,7 @@ public class RentView {
 		tituloFechaInicio.setLocation(50,330);
 		añadirRenta.add(tituloFechaInicio);
 		
-		ComboBoxRounded<String> listFechasInicio= new ComboBoxRounded<>(fechas);
+		DatePickerRounded listFechasInicio = new DatePickerRounded();
 		listFechasInicio.setFont(new Font("Poppins", Font.BOLD, 15));
 		listFechasInicio.setForeground(Color.black);
 		listFechasInicio.setOpaque(false);
@@ -544,8 +598,7 @@ public class RentView {
 		tituloFechaFinal.setLocation(50,430);
 		añadirRenta.add(tituloFechaFinal);
 		
-
-		ComboBoxRounded<String> listFechasFinal = new ComboBoxRounded<>(fechas);
+		DatePickerRounded listFechasFinal = new DatePickerRounded();
 		listFechasFinal.setFont(new Font("Poppins", Font.BOLD, 15));
 		listFechasFinal.setForeground(Color.black);
 		listFechasFinal.setOpaque(false);
@@ -562,8 +615,8 @@ public class RentView {
 		precio.setLocation(50,530);
 		añadirRenta.add(precio);
 		
-		String[] preciosMin = {"$", "750", "850", "950","1200","1500","1800", "2000"};
-		ComboBoxRounded<String> listPreciosMax = new ComboBoxRounded<>(preciosMin);
+		ArrayList<BigDecimal> precios = control.getListaPrecios();
+		ComboBoxRounded<BigDecimal> listPreciosMax = new ComboBoxRounded<>(precios);
 		listPreciosMax.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPreciosMax.setForeground(Color.black);
 		listPreciosMax.setOpaque(false);
@@ -580,7 +633,7 @@ public class RentView {
 		sucursal.setLocation(50,630);
 		añadirRenta.add(sucursal);
 		
-		String[] sucursales = {"Sucursal", "8 de Octubre", "Camino Real", "Chametla","Malecón"};
+		ArrayList<String> sucursales = control.getNombresSucursales();
 		ComboBoxRounded<String> listSucursales = new ComboBoxRounded<>(sucursales);
 		listSucursales.setFont(new Font("Poppins", Font.BOLD, 15));
 		listSucursales.setForeground(Color.black);
@@ -612,10 +665,34 @@ public class RentView {
 		fotoVehiculo.setLocation(370,430);
 		añadirRenta.add(fotoVehiculo);
 		
-		ButtonRounded LabelFotografiaVehiculo = new ButtonRounded("",15,6);
-		LabelFotografiaVehiculo.setBounds(370,460,280,250);
-		LabelFotografiaVehiculo.setOpaque(false);
-		añadirRenta.add(LabelFotografiaVehiculo);
+		ButtonRounded botonFotografiaVehiculo = new ButtonRounded("",15,6);
+		botonFotografiaVehiculo.setBounds(370,460,280,250);
+		botonFotografiaVehiculo.setOpaque(false);
+		botonFotografiaVehiculo.addActionListener(e->{
+			 JFileChooser selector = new JFileChooser();
+			    
+			    selector.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes","jpg", "jpeg", "png", "webp"));
+			    
+			    int resultado = selector.showOpenDialog(null);
+			    
+			    if (resultado == JFileChooser.APPROVE_OPTION) {
+
+			        File archivo = selector.getSelectedFile();
+
+			        if (archivo != null) {
+
+			            try {
+
+			                fotoSeleccionada =
+			                    Files.readAllBytes(archivo.toPath());
+
+			            } catch (IOException ex) {
+			                ex.printStackTrace();
+			            }
+			        }
+			    }
+		});
+		añadirRenta.add(botonFotografiaVehiculo);
 		
 		//Botones
 		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
@@ -638,6 +715,13 @@ public class RentView {
 		registrarRenta.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarRenta.setHorizontalTextPosition(JLabel.RIGHT);
 		registrarRenta.addActionListener(e->{
+		/*control.registrarNuevaRenta(control.clientelID(listClientes.getSelectedItem().toString()),
+				control.obtenerIdModelo(listVehiculos.getSelectedItem().toString()),
+				0,
+				0,
+				(LocalDate)listFechasInicio.getDate(),
+				(LocalDate)listFechasFinal.getDate(),
+				"Activo");*/
       	ventana.dispose();
 		});
 		registrarRenta.setSize(200,60);
@@ -652,7 +736,7 @@ public class RentView {
 	
 	}
 
-	public void editRent() {
+	public void editRent(int IDrenta, String Cliente, String modelo, LocalDate fehcaInicio, LocalDate fechaFinal, byte[] f) {
 		// Crear Ventana JDialog
 		JDialog ventana = new JDialog();
 		ventana.setModal(true);
@@ -691,10 +775,7 @@ public class RentView {
 		cliente.setLocation(50,130);
 		añadirRenta.add(cliente);
 		
-		String[] Clientes = {"---","Diego Ramirez", "Sofia Torres", "Luis Mendoza", "Valeria Cruz","Axel Garcia","Esau Hernandez",
-				"Osmin Ojeda", "Ronaldo Centeno", "Fabian Green", "Cereneo Manzanares",
-				"Fernanda Jacome", "Isbeth Cortez", "Jonathan Soto","Israel Duran","Arturo Decasso"};
-		ComboBoxRounded<String> listClientes = new ComboBoxRounded<>(Clientes);
+		ComboBoxRounded<String> listClientes = new ComboBoxRounded<>();
 		listClientes.setFont(new Font("Poppins", Font.BOLD, 15));
 		listClientes.setForeground(Color.black);
 		listClientes.setOpaque(false);
@@ -712,27 +793,14 @@ public class RentView {
 		etiquetaVehiculo.setLocation(50,230);
 		añadirRenta.add(etiquetaVehiculo);
 		
-		String[] vehiculos = {"---", "Chevrolet Express Passebger", "Bronco Sport",
-				"Ford Transit","Honda Accord","Honda Civic",
-				"Honda CR-V", "Honda Fit", "Honda Oddyssey",
-				"Honda Pilot","Hyundai Accent", "Hyundai Elantra",
-				"Jeep Renegade","Jeep Wrangler","Kia K4","Kia Rio",
-				"Land Rover Defender 110","Mazda 3","Mazda CX-5",
-				"Mercedes-Benz Vito Tourer","Mini Cooper 5 Door",
-				"Nissan Centra","Nissan Versa","Subaru Forester",
-				"Suzuki Jimny","Toyota Camry","Toyota Corolla","Toyota RAV4","Volkswagen Jetta"};
-		ComboBoxRounded<String> listEstados = new ComboBoxRounded<>(vehiculos);
-		listEstados.setFont(new Font("Poppins", Font.BOLD, 15));
-		listEstados.setForeground(Color.black);
-		listEstados.setOpaque(false);
-		listEstados.setSize(280,40);
-		listEstados.setLocation(50,260);
-		añadirRenta.add(listEstados);
-		
-		//Label telefono y su respectivo campo de texto
-		String[]  fechas = {"DD/MM/YYYY","30/03/2026","10/04/2026","01/04/2026","20/03/2026","18/03/2026","14/02/2026","31/11/2026","17/01/2026","15/06/2026",
-			    "14/12/2026","13/09/2026","27/03/2026","18/01/2026","25/04/2026","10/10/2026"
-			};
+		ComboBoxRounded<String> listVehiculos = new ComboBoxRounded<>();
+		listVehiculos.setFont(new Font("Poppins", Font.BOLD, 15));
+		listVehiculos.setForeground(Color.black);
+		listVehiculos.setOpaque(false);
+		listVehiculos.setSize(280,40);
+		listVehiculos.setLocation(50,260);
+		añadirRenta.add(listVehiculos);
+
 		JLabel tituloFechaInicio = new JLabel("Fecha De Inicio");
 		tituloFechaInicio.setOpaque(false);
 		tituloFechaInicio.setForeground(Color.black);
@@ -742,12 +810,13 @@ public class RentView {
 		tituloFechaInicio.setLocation(50,330);
 		añadirRenta.add(tituloFechaInicio);
 		
-		ComboBoxRounded<String> listFechasInicio= new ComboBoxRounded<>(fechas);
+		DatePickerRounded listFechasInicio= new DatePickerRounded();
 		listFechasInicio.setFont(new Font("Poppins", Font.BOLD, 15));
 		listFechasInicio.setForeground(Color.black);
 		listFechasInicio.setOpaque(false);
 		listFechasInicio.setSize(280,40);
 		listFechasInicio.setLocation(50,360);
+		listFechasInicio.setDate(fehcaInicio);
 		añadirRenta.add(listFechasInicio);
 		
 		JLabel tituloFechaFinal = new JLabel("Fecha De Entrega");
@@ -758,44 +827,44 @@ public class RentView {
 		tituloFechaFinal.setSize(150,25);
 		tituloFechaFinal.setLocation(50,430);
 		añadirRenta.add(tituloFechaFinal);
-		
 
-		ComboBoxRounded<String> listFechasFinal = new ComboBoxRounded<>(fechas);
+		DatePickerRounded listFechasFinal = new DatePickerRounded();
 		listFechasFinal.setFont(new Font("Poppins", Font.BOLD, 15));
 		listFechasFinal.setForeground(Color.black);
 		listFechasFinal.setOpaque(false);
 		listFechasFinal.setSize(280,40);
 		listFechasFinal.setLocation(50,460);
+		listFechasFinal.setDate(fechaFinal);
 		añadirRenta.add(listFechasFinal);
 		
-		JLabel precio = new JLabel("Precio Por Dia");
-		precio.setOpaque(false);
-		precio.setForeground(Color.black);
-		precio.setHorizontalAlignment(JLabel.LEFT);
-		precio.setFont(new Font("Poppins",Font.PLAIN,15));
-		precio.setSize(150,25);
-		precio.setLocation(50,530);
-		añadirRenta.add(precio);
+		ArrayList<String> sucursales = control.getNombresSucursales();
 		
-		String[] preciosMin = {"$", "750", "850", "950","1200","1500","1800", "2000"};
-		ComboBoxRounded<String> listPreciosMax = new ComboBoxRounded<>(preciosMin);
-		listPreciosMax.setFont(new Font("Poppins", Font.BOLD, 15));
-		listPreciosMax.setForeground(Color.black);
-		listPreciosMax.setOpaque(false);
-		listPreciosMax.setSize(280,40);
-		listPreciosMax.setLocation(50,560);
-		añadirRenta.add(listPreciosMax);
+		JLabel sucursalRecoleccion = new JLabel("Sucursal de Recoleccion");
+		sucursalRecoleccion.setOpaque(false);
+		sucursalRecoleccion.setForeground(Color.black);
+		sucursalRecoleccion.setHorizontalAlignment(JLabel.LEFT);
+		sucursalRecoleccion.setFont(new Font("Poppins",Font.PLAIN,15));
+		sucursalRecoleccion.setSize(150,25);
+		sucursalRecoleccion.setLocation(50,530);
+		añadirRenta.add(sucursalRecoleccion);
 		
-		JLabel sucursal = new JLabel("Sucursal de Recoleccion");
-		sucursal.setOpaque(false);
-		sucursal.setForeground(Color.black);
-		sucursal.setHorizontalAlignment(JLabel.LEFT);
-		sucursal.setFont(new Font("Poppins",Font.PLAIN,15));
-		sucursal.setSize(200,25);
-		sucursal.setLocation(50,630);
-		añadirRenta.add(sucursal);
+		ComboBoxRounded<String> listSucursalesEntrega = new ComboBoxRounded<>(sucursales);
+		listSucursalesEntrega.setFont(new Font("Poppins", Font.BOLD, 15));
+		listSucursalesEntrega.setForeground(Color.black);
+		listSucursalesEntrega.setOpaque(false);
+		listSucursalesEntrega.setSize(280,40);
+		listSucursalesEntrega.setLocation(50,560);
+		añadirRenta.add(listSucursalesEntrega);
 		
-		String[] sucursales = {"Sucursal", "8 de Octubre", "Camino Real", "Chametla","Malecón"};
+		JLabel sucursalEntrega = new JLabel("Sucursal de Entrega");
+		sucursalEntrega.setOpaque(false);
+		sucursalEntrega.setForeground(Color.black);
+		sucursalEntrega.setHorizontalAlignment(JLabel.LEFT);
+		sucursalEntrega.setFont(new Font("Poppins",Font.PLAIN,15));
+		sucursalEntrega.setSize(200,25);
+		sucursalEntrega.setLocation(50,630);
+		añadirRenta.add(sucursalEntrega);
+		
 		ComboBoxRounded<String> listSucursales = new ComboBoxRounded<>(sucursales);
 		listSucursales.setFont(new Font("Poppins", Font.BOLD, 15));
 		listSucursales.setForeground(Color.black);
@@ -816,6 +885,14 @@ public class RentView {
 		ButtonRounded LabelFotografia = new ButtonRounded("",15,6);
 		LabelFotografia.setBounds(370,160,280,250);
 		LabelFotografia.setOpaque(false);
+		ImageIcon icon = new ImageIcon(f);
+		Image imagenEscalada = icon.getImage().getScaledInstance(
+			        280,    // ancho
+			        250,    // alto
+			        Image.SCALE_SMOOTH);
+
+				LabelFotografia.setIcon(new ImageIcon(imagenEscalada));
+				
 		añadirRenta.add(LabelFotografia);
 		
 		JLabel fotoVehiculo = new JLabel("Foto Del Vehiculo");
@@ -846,6 +923,8 @@ public class RentView {
 		});
 		añadirRenta.add(cancelarCliente);
 		
+		listClientes.addItem(Cliente);
+		listVehiculos.addItem(modelo);
 		ButtonRounded editarRenta = new ButtonRounded("Editar Renta",10,1);
 		editarRenta.setOpaque(false);
 		editarRenta.setForeground(Color.white);
@@ -868,7 +947,7 @@ public class RentView {
 	
 	}
 	
-	public void filtrosAvanzados() {
+	public void filtrosAvanzados(TableRowSorter<DefaultTableModel> sorter) {
 		 // Crear Ventana JDialog
        JDialog ventana = new JDialog();
        ventana.setModal(true);
@@ -907,9 +986,7 @@ public class RentView {
 		cliente.setLocation(50,130);
 		filtrosAvanzados.add(cliente);
 		
-		String[] Clientes = {"---","Diego Ramirez", "Sofia Torres", "Luis Mendoza", "Valeria Cruz","Axel Garcia","Esau Hernandez",
-				"Osmin Ojeda", "Ronaldo Centeno", "Fabian Green", "Cereneo Manzanares",
-				"Fernanda Jacome", "Isbeth Cortez", "Jonathan Soto","Israel Duran","Arturo Decasso"};
+		ArrayList<String> Clientes = control.getNombresClientes();
 		ComboBoxRounded<String> listClientes = new ComboBoxRounded<>(Clientes);
 		listClientes.setFont(new Font("Poppins", Font.BOLD, 15));
 		listClientes.setForeground(Color.black);
@@ -928,7 +1005,7 @@ public class RentView {
 		Estado.setLocation(50,230);
 		filtrosAvanzados.add(Estado);
 		
-		String[] estados = {"Activo ", "Finalizado", "Rentado", "En mantenimiento","Disponible"};
+		ArrayList<String> estados = control.getListaEstados();
 		ComboBoxRounded<String> listEstados = new ComboBoxRounded<>(estados);
 		listEstados.setFont(new Font("Poppins", Font.BOLD, 15));
 		listEstados.setForeground(Color.black);
@@ -937,71 +1014,47 @@ public class RentView {
 		listEstados.setLocation(50,260);
 		filtrosAvanzados.add(listEstados);
 		
-		//Label telefono y su respectivo campo de texto
-		JLabel idRenta = new JLabel("ID Renta");
-		idRenta.setOpaque(false);
-		idRenta.setForeground(Color.black);
-		idRenta.setHorizontalAlignment(JLabel.LEFT);
-		idRenta.setFont(new Font("Poppins",Font.PLAIN,15));
-		idRenta.setSize(70,25);
-		idRenta.setLocation(50,330);
-		filtrosAvanzados.add(idRenta);
+		JLabel tituloFechaInicio = new JLabel("Fecha de Inicio");
+		tituloFechaInicio.setOpaque(false);
+		tituloFechaInicio.setForeground(Color.black);
+		tituloFechaInicio.setHorizontalAlignment(JLabel.LEFT);
+		tituloFechaInicio.setFont(new Font("Poppins",Font.PLAIN,15));
+		tituloFechaInicio.setSize(70,25);
+		tituloFechaInicio.setLocation(370,130);
+		filtrosAvanzados.add(tituloFechaInicio);
 		
-		String[] rentas = { "ID Renta","R-001","R-002","R-003","R-004","R-005","R-006","R-007","R-008","R-009","R-010","R-011",
-			    "R-012","R-013", "R-014","R-015"};
-		ComboBoxRounded<String> listRentas= new ComboBoxRounded<>(rentas);
-		listRentas.setFont(new Font("Poppins", Font.BOLD, 15));
-		listRentas.setForeground(Color.black);
-		listRentas.setOpaque(false);
-		listRentas.setSize(280,40);
-		listRentas.setLocation(50,360);
-		filtrosAvanzados.add(listRentas);
+		DatePickerRounded selectorFechaInicio = new DatePickerRounded();
+		selectorFechaInicio.setFont(new Font("Poppins", Font.BOLD, 15));
+		selectorFechaInicio.setForeground(Color.black);
+		selectorFechaInicio.setOpaque(false);
+		selectorFechaInicio.setSize(280,40);
+		selectorFechaInicio.setLocation(370,160);
+		filtrosAvanzados.add(selectorFechaInicio);
 		
-		JLabel tituloFecha = new JLabel("Fecha");
-		tituloFecha.setOpaque(false);
-		tituloFecha.setForeground(Color.black);
-		tituloFecha.setHorizontalAlignment(JLabel.LEFT);
-		tituloFecha.setFont(new Font("Poppins",Font.PLAIN,15));
-		tituloFecha.setSize(70,25);
-		tituloFecha.setLocation(370,130);
-		filtrosAvanzados.add(tituloFecha);
+		JLabel tituloFechaFin = new JLabel("Fecha de Inicio");
+		tituloFechaFin.setOpaque(false);
+		tituloFechaFin.setForeground(Color.black);
+		tituloFechaFin.setHorizontalAlignment(JLabel.LEFT);
+		tituloFechaFin.setFont(new Font("Poppins",Font.PLAIN,15));
+		tituloFechaFin.setSize(70,25);
+		tituloFechaFin.setLocation(370,330);
+		filtrosAvanzados.add(tituloFechaFin);
 		
-		String[] fechas = {"DD/MM/YYYY","30/03/2026","10/04/2026","01/04/2026","20/03/2026","18/03/2026","14/02/2026","31/11/2026","17/01/2026","15/06/2026",
-			    "14/12/2026","13/09/2026","27/03/2026","18/01/2026","25/04/2026","10/10/2026"
-			};
-		ComboBoxRounded<String> listFechas = new ComboBoxRounded<>(fechas);
-		listFechas.setFont(new Font("Poppins", Font.BOLD, 15));
-		listFechas.setForeground(Color.black);
-		listFechas.setOpaque(false);
-		listFechas.setSize(280,40);
-		listFechas.setLocation(370,160);
-		filtrosAvanzados.add(listFechas);
+		DatePickerRounded selectorFechaFin = new DatePickerRounded();
+		selectorFechaFin.setFont(new Font("Poppins", Font.BOLD, 15));
+		selectorFechaFin.setForeground(Color.black);
+		selectorFechaFin.setOpaque(false);
+		selectorFechaFin.setSize(280,40);
+		selectorFechaFin.setLocation(370,360);
+		filtrosAvanzados.add(selectorFechaFin);
 		
-		JLabel precio = new JLabel("Precio P/Dia");
-		precio.setOpaque(false);
-		precio.setForeground(Color.black);
-		precio.setHorizontalAlignment(JLabel.LEFT);
-		precio.setFont(new Font("Poppins",Font.PLAIN,15));
-		precio.setSize(150,25);
-		precio.setLocation(370,230);
-		filtrosAvanzados.add(precio);
-		
-		String[] preciosMin = {"Min. $", "750", "850", "950","1200","1500","1800", "2000"};
-		ComboBoxRounded<String> listPreciosMax = new ComboBoxRounded<>(preciosMin);
-		listPreciosMax.setFont(new Font("Poppins", Font.BOLD, 15));
-		listPreciosMax.setForeground(Color.black);
-		listPreciosMax.setOpaque(false);
-		listPreciosMax.setSize(120,40);
-		listPreciosMax.setLocation(370,260);
-		filtrosAvanzados.add(listPreciosMax);
-		
-		String[] preciosMax = {"Max. $", "750", "850", "950","1200","1500","1800", "2000"};
-		ComboBoxRounded<String> listPreciosMin = new ComboBoxRounded<>(preciosMax);
+		ArrayList<BigDecimal> precios = control.getListaPrecios();
+		ComboBoxRounded<BigDecimal> listPreciosMin = new ComboBoxRounded<>(precios);
 		listPreciosMin.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPreciosMin.setForeground(Color.black);
 		listPreciosMin.setOpaque(false);
 		listPreciosMin.setSize(120,40);
-		listPreciosMin.setLocation(510,260);
+		listPreciosMin.setLocation(370,260);
 		filtrosAvanzados.add(listPreciosMin);
 		
 		//Botones
@@ -1025,11 +1078,71 @@ public class RentView {
 		aplicarFiltros.setFont(new Font("Poppins",Font.BOLD,20));
 		aplicarFiltros.setHorizontalTextPosition(JLabel.RIGHT);
 		aplicarFiltros.addActionListener(e->{
-       	ventana.dispose();
+       	
+		List<RowFilter<Object, Object>> filtros = new ArrayList<>();
+		String Fclientes = listClientes.getSelectedItem().toString();
+		String Festados = listEstados.getSelectedItem().toString();
+		LocalDate FfechaInicio = selectorFechaInicio.getDate();
+		LocalDate FfechaFinal = selectorFechaFin.getDate();
+		
+		if (!Fclientes.equals("Todos")) {
+		    filtros.add(
+		        RowFilter.regexFilter(
+		            "^" + Pattern.quote(Fclientes) + "$",
+		            2
+		        )
+		    );
+		}
+		if (!Festados.equals("Todos")) {
+		    filtros.add(
+		        RowFilter.regexFilter(
+		            "^" + Pattern.quote(Festados) + "$",
+		            6
+		        )
+		    );
+		}
+		
+		if (FfechaInicio != null) {
+
+		    filtros.add(new RowFilter<Object, Object>() {
+
+		        @Override
+		        public boolean include(
+		                Entry<? extends Object,
+		                ? extends Object> entry) {
+
+		            LocalDate fechaTabla =
+		                (LocalDate) entry.getValue(4);
+
+		            return fechaTabla.equals(FfechaInicio);
+		        }
+		    });
+		}
+		
+		if (FfechaFinal != null) {
+
+		    filtros.add(new RowFilter<Object, Object>() {
+
+		        @Override
+		        public boolean include(
+		                Entry<? extends Object,
+		                ? extends Object> entry) {
+
+		            LocalDate fechaTabla =
+		                (LocalDate) entry.getValue(5);
+
+		            return fechaTabla.equals(FfechaFinal);
+		        }
+		    });
+		}
+
+		sorter.setRowFilter(RowFilter.andFilter(filtros));
+    	ventana.dispose();
 		});
+		
 		aplicarFiltros.setSize(200,60);
 		aplicarFiltros.setLocation(350,500);
-       URL url = getClass().getResource("/iconos/adicionales/buscar.png");//Carga ubi imagen
+       URL url = getClass().getResource("/iconos/adicionales/buscar_blanco.png");//Carga ubi imagen
 	    
 	    if (url != null) {
 	    	aplicarFiltros.setIcon(new ImageIcon(url));
@@ -1043,7 +1156,7 @@ public class RentView {
 	
 	}
 
-	public void historialRenta() {
+	public void historialRenta(int idRenta) {
         JDialog ventana = new JDialog();
         ventana.setModal(true);
         ventana.setUndecorated(true);
@@ -1164,22 +1277,30 @@ public class RentView {
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
 		Object [] table_head = {"Nombre","Vehiculo","Feha Inicio","Fecha Fin","Estado"};
 		//Creacion de una matriz para los datos de una tabla 
-		Object [][] table_content = {
-				{"Diego Ramirez","Corolla", "01/03/2024", "05/03/2024", "Finalizado"},
-				{"Sofia Torres","CR-V", "04/05/2024", "18/05/2024", "Finalizado"},
-				{"Valeria Cruz","Sentra", "12/04/2024", "15/04/2024", "Finalizado"},
-		};
 		
-		DefaultTableModel modeloCliente = new DefaultTableModel(table_content,table_head){
+		DefaultTableModel modeloRentas= new DefaultTableModel(null,table_head){
 		    @Override
 		    public boolean isCellEditable(int row, int column) {
 		        return false; // Ninguna celda será editable
 		    }
 		};
+		ArrayList<RentModel> listaRentas = control.obtenerRentas();
+		//ArrayList<RentModel> listaRentas = control;
+		for (RentModel Renta : listaRentas) {
+		    Object[] fila = new Object[8];
+		    fila[0] = Renta.getIdLetra();
+		    fila[1] = Renta.getnameCliente();
+		    fila[2] = Renta.getId_vehiculo();
+		    fila[3] = Renta.getInicio_renta();
+		    fila[4] = Renta.getFin_renta();
+		    fila[5] = Renta.getEstado();  
+		    modeloRentas.addRow(fila);
+		}
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
-		JTable clientes_table = new JTable(modeloCliente);
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloCliente);
-		clientes_table.setRowSorter(sorter);
+		JTable Rentas_table = new JTable(modeloRentas);
+		
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloRentas);
+		Rentas_table.setRowSorter(sorter);
 		
 		busqueda.getDocument().addDocumentListener(new DocumentListener() {
 		    @Override
@@ -1222,26 +1343,26 @@ public class RentView {
 		});
 		
 		//creacion y customización del scroll pane
-		JScrollPane scrollPane = new JScrollPane(clientes_table);
+		JScrollPane scrollPane = new JScrollPane(Rentas_table);
 		scrollPane.getVerticalScrollBar().setUI(new ScrollBarCustom());
 		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		
-		clientes_table.setRowHeight(40);
-		clientes_table.setBackground(Color.decode("#D9D9D9"));
-		clientes_table.setShowVerticalLines(false);
-		clientes_table.setShowHorizontalLines(true);
+		Rentas_table.setRowHeight(40);
+		Rentas_table.setBackground(Color.decode("#D9D9D9"));
+		Rentas_table.setShowVerticalLines(false);
+		Rentas_table.setShowHorizontalLines(true);
 		panelTabla.add(scrollPane, BorderLayout.CENTER);
 		
 		//Personalizacion de la tabla
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();//Render para centrar el texto
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		for (int i = 0; i < 4; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
-			clientes_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+		for (int i = 0; i < 6; i++) {//Ciclo para aplicar el centrado solo a los campos de datos
+			Rentas_table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
 		
-		JTableHeader header = clientes_table.getTableHeader();
+		JTableHeader header = Rentas_table.getTableHeader();
 		header.setBackground(Color.decode("#AFAFAF"));
 		header.setFont(new Font("Poppins", Font.BOLD, 18));
 		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();
