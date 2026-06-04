@@ -50,4 +50,29 @@ public class HomeController {
 		 return hm.getCategoriaVehiculo(id_vehiculo);
 	 }
 	 
+	 //AGREGAR UN MODELO A UNA MARCA
+	 public void generarModelo(String marca, String modelo) {
+		 
+		 int idDeLaMarca = hm.obtenerIdMarca(marca);
+
+		 if (idDeLaMarca != -1) {
+		    boolean exito = hm.insertarModelo(modelo, idDeLaMarca);
+		    if(exito){
+		        System.out.println("Modelo: " + modelo + " guardado bajo la marca " + marca );
+		    }
+		} else {
+		    System.out.println("Error: La marca seleccionada no existe en la base de datos.");
+		}
+	 }
+	 
+	 //AGREGA UNA CATEGORIA AL SISTEMA
+	 public void generarCategoria(String nombre) {
+		 hm.insertarCategoria(nombre);
+	 }
+	 
+	 //AGREGA UNA MARCA AL SISTEMA
+	 public void generarMARCA(String marca) {
+		 hm.insertarMarca(marca);
+	 }
+	 
 }

@@ -113,5 +113,88 @@ public class HomeModel {
 		 return modelos;
 	 }
 	
+	 private boolean insertar(String query, String valor) {
+		 Properties propiedades = new Properties();
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query)) {
+	                 
+				 ps.setString(1, valor);
+				 int filasAfectadas = ps.executeUpdate();
+				 return filasAfectadas > 0;
+			 }
+		 } catch (Exception e) {
+			 System.out.println("Error al ejecutar insert: " + e.getMessage());
+			 return false;
+		 }
+	 }
+	 
+	 public boolean insertarCategoria(String nombreCategoria) {
+		 String query = "INSERT INTO Categorias (nombre) VALUES (?)";
+		 return insertar(query, nombreCategoria);
+	 }
+
+	 public boolean insertarMarca(String nombreMarca) {
+		 String query = "INSERT INTO Marcas (nombre) VALUES (?)";
+		 return insertar(query, nombreMarca);
+	 }
+	
+	 public int obtenerIdMarca(String nombreMarca) {
+		 int idMarca = -1;
+		 String query = "SELECT id_marca FROM Marcas WHERE nombre = ?";
+
+		 Properties propiedades = new Properties();
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query)) {
+	                 
+				 ps.setString(1, nombreMarca);
+				 try (ResultSet rs = ps.executeQuery()) {
+					 if (rs.next()) {
+						 idMarca = rs.getInt("id_marca");
+					 }
+				 }
+			 }
+		 } catch (Exception e) {
+			 System.out.println("Error al buscar el ID de la marca: " + e.getMessage());
+		 }
+		 return idMarca;
+	 }
+	 
+	 public boolean insertarModelo(String nombreModelo, int idMarca) {
+		 String query = "INSERT INTO Modelos (nombre, id_marca) VALUES (?, ?)";
+	        
+		 Properties propiedades = new Properties();
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query)) {
+				 
+				 ps.setString(1, nombreModelo);
+				 ps.setInt(2, idMarca);
+	                
+				 int filasAfectadas = ps.executeUpdate();
+				 return filasAfectadas > 0;
+			 }
+		 } catch (Exception e) {
+			 System.out.println("Error al insertar el modelo: " + e.getMessage());
+			 return false;
+		 }
+	 }
+	 
 	
 }
