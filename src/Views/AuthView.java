@@ -23,8 +23,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 
+import Controllers.ClientController;
 import Controllers.HomeController;
 import Models.AuthModel;
+import Models.HomeModel;
 import Utilities.Alerts;
 import Utilities.ButtonRounded;
 import Utilities.CheckBoxRounded;
@@ -35,9 +37,14 @@ import Utilities.TextFieldRounded;
 public class AuthView {
 
 	private AuthModel model;
+	HomeController control;
 
 	public AuthView() {
 		model = new AuthModel();
+	}
+	
+	public void setControlador(HomeController c) {
+	    this.control = c;
 	}
 
 	public void showLogin() {
@@ -278,7 +285,8 @@ public class AuthView {
 
 				if(flag1 && flag2) {
 					if(model.login(correoCampo.getText(), passText) ){ //verificaicon con BD temporal
-
+						
+						
 						ventana.dispose();//eliminar ventana
 						HomeController hm = new HomeController(); //llamar al homeController y la vista
 						hm.Home();

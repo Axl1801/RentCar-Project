@@ -2,10 +2,17 @@ package Controllers;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Map;
 
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import Models.ClientModel;
 import Models.RentModel;
+import Utilities.PDFGenerador;
+import Utilities.PrevisualizadorPDF;
 import Views.RentView;
 
 public class RentController {
@@ -30,31 +37,109 @@ public class RentController {
 		rv.historialRenta();
 	}
 	
-	public void registrarNuevaRenta(int ic, int id, int io, int ild, Date fi, Date ff, String e) {
+	//Genera el listado de RENTAS con su informacion
+	public ArrayList<RentModel> obtenerRentas(){
+		return rm.getinfo();
+	}
+	
+	//REGRESA TRUE SI SE REGISTRO NUEVA RENTA, VALIDA LA DISTANCIA DE SUCURSALES Y EL PRECIO TOTAL
+	public void registrarNuevaRenta(int ic, int iv, int io, int ild, Date fi, Date ff, String e) {
         
 		int idCliente = ic;
-		int idVehiculo = id;
+		int idVehiculo = iv;
 		int idOrigen = io;
         int idDestino = ild;
         Date fechaInicio = fi;
         Date fechaFin = ff;
         String estado = e;
 
-        BigDecimal costoFinal = rm.calcularCostoTotal(id, io, ild, fi, ff);
+        BigDecimal costoFinal = rm.calcularCostoTotal(iv, io, ild, fi, ff);
         double distanciaCalculada = rm.getDistancia_recorrida();
 
-        boolean exito = rm.make(
-            idCliente, 
-            idVehiculo, 
-            idOrigen, 
-            idDestino, 
-            fechaInicio, 
-            fechaFin, 
-            distanciaCalculada,
-            costoFinal, 
-            estado
-        );
-        }
-    
+        if (rm.DisponibilidadVehiculos(iv, fi, ff)) {
+           
+			boolean exito = rm.make(idCliente, idVehiculo, idOrigen, idDestino, fechaInicio, fechaFin, distanciaCalculada, costoFinal, estado);
+            if(exito) {
+            	System.out.println("Renta registrada exitosamente");
+            }
+            
+		} else {
+        	System.out.println("¡Error! Ese vehículo ya está rentado en esas fechas.");
 
+        }
+        
+	}
+	
+	//ACTUALIZA LA RENTA A CANCELADA
+	public void cancelarRenta(int id) {
+		rm.cancelarRenta(id);
+	}
+	
+	//ELIMINA LA RENTA DE LA BASE DE DATOS
+	public void eliminarRenta(int id) {
+		rm.delete(id);
+	}
+	
+	//REGRESA EL COSTO TOTAL CALCULANDO LA TARIFA DIARIA DEL VEHICULO Y UTILIZANDO LA DISTANCIA
+	public BigDecimal calcularCostoTotal(int iv, int io, int id, Date fi, Date ff) {
+		BigDecimal costoTotal = rm.calcularCostoTotal(iv, io, id, fi, ff);
+		return costoTotal;
+	}
+	
+	//GENERA UN JDIALOG CON LA INFORMACION DEL PDF DE LA RESERVA
+	public void visualizarDatosReserva(int id) {
+		
+		RentModel modeloDeRenta = new RentModel();
+		Map<String, String> datosDelTicket = modeloDeRenta.getDatosParaPDF(id);
+
+		if (datosDelTicket != null && !datosDelTicket.isEmpty()) {
+		    
+		    PDFGenerador creadorPdf = new PDFGenerador();
+		    String rutaDeMiPlantilla = "src/resources/PDFs/plantilla_reserva.html";
+		    
+		    byte[] pdfEnBytes = creadorPdf.PreVisualizarPDF(rutaDeMiPlantilla, datosDelTicket);
+		    
+		    if (pdfEnBytes != null) {
+		        PrevisualizadorPDF previsualizador = new PrevisualizadorPDF();
+		        JLabel labelConVistaPrevia = previsualizador.generarVistaPreviaDesdeMemoria(pdfEnBytes);
+		        
+		        JDialog dialogVistaPrevia = new JDialog();
+		        dialogVistaPrevia.setTitle("Vista Previa del Ticket");
+		        dialogVistaPrevia.add(labelConVistaPrevia);
+		        dialogVistaPrevia.pack();
+		        dialogVistaPrevia.setLocationRelativeTo(null);
+		        dialogVistaPrevia.setVisible(true);
+		        
+		    } else {
+		        System.out.println("No se pudo convertir el HTML a PDF.");
+		    }
+		} else {
+		    System.out.println("No se encontraron los datos de esa renta.");
+		}
+	}
+		
+	//Regresa la cantidad de Total de vehiculos
+	public int numeroVehiculos_total(){
+		int num_car_total = rm.numeroVehiculos_total();		
+		return num_car_total;		
+	}
+	
+	//Regresa la cantidad de vehiculos Rentados
+	public int numeroVehiculos_renta(){
+		int num_car_renta = rm.numeroVehiculos_renta();
+		return num_car_renta;
+	}
+	
+	//Regresa la cantidad de vehiculos Disponibles
+	public int numeroVehiculos_dispo(){
+		int num_car_disponibles = rm.numeroVehiculos_dispo();
+		return num_car_disponibles;
+	}
+	
+	//Regresa la cantidad de vehiculos en Mantenimiento
+	public int numeroVehiculos_manteni(){
+		int num_car_mantenimiento = rm.numeroVehiculos_manteni();
+		return num_car_mantenimiento;
+	}
+	
 }

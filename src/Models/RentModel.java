@@ -20,6 +20,8 @@ import java.util.Base64;
 public class RentModel {
 
     private int id_renta;
+    private String nameCliente;
+    private String nombreModelo;
     private int id_cliente;
     private int id_vehiculo;
     private int id_origen;
@@ -29,23 +31,23 @@ public class RentModel {
     private double distancia_recorrida;
     private BigDecimal costo_total;
     private String estado;
+	private byte[] foto;
+
 
     public RentModel() {
     	
     }
 
-    public RentModel(int id_renta, int id_cliente, int id_vehiculo, int id_origen, int id_destino, Date inicio_renta, Date fin_renta, double distancia_recorrida, BigDecimal costo_total, String estado){
+    public RentModel(int id_renta, String name, String nombre, int id_origen, int id_destino, Date inicio_renta, Date fin_renta, double distancia_recorrida, BigDecimal costo_total, String estado){
     	
-    	this. id_renta = id_renta;
-    	this. id_cliente = id_cliente;
-    	this. id_vehiculo = id_vehiculo;
-    	this. id_origen = id_origen;
-    	this. id_destino = id_destino;
-    	this. inicio_renta = inicio_renta;
-    	this. fin_renta = fin_renta;
-    	this. distancia_recorrida = distancia_recorrida;
-    	this. costo_total = costo_total;
-    	this. estado = estado;
+    	this.id_renta = id_renta;
+    	this.nameCliente = name;
+    	this.nombreModelo = nombre;
+    	this.id_origen = id_origen;
+    	this.id_destino = id_destino;
+    	this.inicio_renta = inicio_renta;
+    	this.fin_renta = fin_renta;
+    	this.estado = estado;
     }
     
     
@@ -53,11 +55,12 @@ public class RentModel {
     	
         ArrayList<RentModel> rentas = new ArrayList<>();
         
-        String query = "SELECT * FROM `Rentas`";
+        String query = "SELECT r.*, c.nombre AS name, v.modelo AS nombre, v.foto " +
+        				"FROM Rentas r " +
+        				"INNER JOIN Clientes c ON r.id_cliente = c.id_cliente " +
+        				"INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo";
         
-	   	Connection conn = null; 	 
-		System.out.println(query);
-		
+        System.out.println("Ejecutando: " + query);
         Properties propiedades = new Properties();
 
         try (InputStream entrada = new FileInputStream("Claves.txt")) {
@@ -66,12 +69,9 @@ public class RentModel {
             String user = propiedades.getProperty("db.user");
             String contra = propiedades.getProperty("db.password");
 
-            try {
-    			Class.forName("com.mysql.cj.jdbc.Driver");
-    			conn = DriverManager.getConnection(url, user, contra);
-
-    			PreparedStatement ps = conn.prepareStatement(query);
-    			ResultSet rs = ps.executeQuery();
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+                 PreparedStatement ps = conn.prepareStatement(query);
+                 ResultSet rs = ps.executeQuery()) {
 
                 while (rs.next()) {
                     RentModel tmp = new RentModel();
@@ -86,21 +86,22 @@ public class RentModel {
                     tmp.setDistancia_recorrida(rs.getDouble("distancia_recorrida"));
                     tmp.setCosto_total(rs.getBigDecimal("costo_total"));
                     tmp.setEstado(rs.getString("estado"));
+                    tmp.setnameCliente(rs.getString("name")); 
+                    tmp.setnombreModelo(rs.getString("nombre")); 
+                    tmp.setfoto(rs.getBytes("foto"));
 
                     rentas.add(tmp);
                 }
-                
-                rs.close();
-    			ps.close();
-    			conn.close();
     			
             } catch (Exception e) {
+                System.out.println("Error en BD al obtener rentas: " + e.getMessage());
                 e.printStackTrace();
             }
 
         } catch (IOException e) {
             System.out.println("Error al leer configuración: " + e.getMessage());
         }
+        
         return rentas;
     }
 
@@ -154,6 +155,7 @@ public class RentModel {
         }  		 
 		return false;	 
     }
+    
     public boolean update(int id_renta, int id_cliente, int id_vehiculo, int id_origen, int id_destino, Date inicio_renta, Date fin_renta, double distancia_recorrida, BigDecimal costo_total, String estado) {
 
         String query = "UPDATE `Rentas` SET `id_cliente` = ?, `id_vehiculo` = ?, `id_origen` = ?, `id_destino` = ?, `inicio_renta` = ?, `fin_renta` = ?, `distancia_recorrida` = ?, `costo_total` = ?, `estado` = ? WHERE `id_renta` = ?;";
@@ -345,86 +347,285 @@ public class RentModel {
         return datos;
     }
     
+    public boolean DisponibilidadVehiculos(int idVehiculo, Date fechaInicioPropuesta, Date fechaFinPropuesta) {
+        
+    	String query = "SELECT COUNT(*) AS rentas_empalmadas FROM Rentas " +
+                       "WHERE id_vehiculo = ? " +
+                       "AND inicio_renta <= ? " +
+                       "AND fin_renta >= ?" +
+                       "AND estado != 'Cancelada' OR != 'Finalizado'";
+        
+    	boolean estaDisponible = true;
+    	Properties propiedades = new Properties();
+
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+    		propiedades.load(entrada);
+    		String url = propiedades.getProperty("db.url");
+    		String user = propiedades.getProperty("db.user");
+    		String contra = propiedades.getProperty("db.password");
+
+    		try (Connection conn = DriverManager.getConnection(url, user, contra);
+    				PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+    			ps.setInt(1, idVehiculo);
+    			ps.setDate(2, fechaFinPropuesta);
+    			ps.setDate(3, fechaInicioPropuesta);
+
+    			try (ResultSet rs = ps.executeQuery()) {
+    				if (rs.next()) {
+    					int rentasQueChocan = rs.getInt("rentas_empalmadas");
+                        
+    					if (rentasQueChocan > 0) {
+    						estaDisponible = false;
+    					}
+    				}
+    			}
+    		}
+    	} catch (Exception e) {
+    		System.out.println("Error al validar disponibilidad del vehículo: " + e.getMessage());
+    		e.printStackTrace();
+    	}
+        
+    	return estaDisponible;
+    }
+    
+    public boolean cancelarRenta(int id_renta) {
+    	String query = "UPDATE Rentas SET estado = 'Cancelado' WHERE id_renta = ?";
+        
+    	Properties propiedades = new Properties();
+
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+    		propiedades.load(entrada);
+    		String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+            		PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+            	ps.setInt(1, id_renta);
+
+            	int rowsAffected = ps.executeUpdate();
+            	return rowsAffected > 0;
+                
+            } catch (Exception e) {
+            	System.out.println("Error en BD al cancelar la renta: " + e.getMessage());
+            	e.printStackTrace();
+            }
+
+    	} catch (IOException e) {
+    		System.out.println("Error al leer configuración: " + e.getMessage());
+    	}        
+    	return false;
+    }
+    
+    public boolean delete(int id_renta) {
+        String query = "DELETE FROM Rentas WHERE id_renta = ?";
+        
+        Properties propiedades = new Properties();
+
+        try (InputStream entrada = new FileInputStream("Claves.txt")) {
+        	propiedades.load(entrada);
+        	String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+            		PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+            	ps.setInt(1, id_renta);
+
+            	int rowsAffected = ps.executeUpdate();
+            	return rowsAffected > 0;
+                
+            } catch (Exception e) {
+            	System.out.println("Error en BD al eliminar la renta: " + e.getMessage());
+            	e.printStackTrace();
+            }
+            
+        } catch (IOException e) {
+        	System.out.println("Error al leer configuración: " + e.getMessage());
+        }      
+        return false;
+    }
+    
+    private int conteo(String query) {
+	
+    	int resultado = 0;
+		Connection conn = null; 	 
+		System.out.println(query);
+			
+		Properties propiedades = new Properties();
+		
+		try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			
+			propiedades.load(entrada);
+			
+			String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+            
+            try {
+            	Class.forName("com.mysql.cj.jdbc.Driver");
+    			conn = DriverManager.getConnection(url, user, contra);
+    			
+    			PreparedStatement ps = conn.prepareStatement(query);
+    			ResultSet rs = ps.executeQuery();
+
+    			if (rs.next()) {
+    		        resultado = rs.getInt(1);
+    		        System.out.println("Número total: " + resultado);
+    		    }
+    			rs.close();
+    			ps.close();
+    			conn.close();
+            }
+
+            catch (Exception e) {
+            	e.printStackTrace();
+            }
+            finally {
+            	try {
+				conn.close();
+			}catch(Exception e) {	
+			}
+            }
+		} catch (IOException e) {
+			System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
+		}  		 
+		return resultado;	 
+    }
+	
+    public int numeroVehiculos_total() {
+        int total = conteo("SELECT COUNT(*) FROM Vehiculos");
+        System.out.println("numeroVehiculos_total: " + total);
+        return total;
+    }
+
+    public int numeroVehiculos_renta() {
+        int renta = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Rentado'");
+        System.out.println("numeroVehiculos_renta: " +renta);
+        return renta;
+    }
+
+    public int numeroVehiculos_dispo() {
+        int dispo = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Disponible'");
+        System.out.println("numeroVehiculos_dispo: " + dispo);
+        return dispo;
+    }
+
+    public int numeroVehiculos_manteni() {
+        int manteni = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Mantenimiento'");
+        System.out.println("numeroVehiculos_manteni: " + manteni);
+        return manteni;
+    }
+    
     public int getId_renta() { 
     	return id_renta; 
-    	}
+    }
     
     public void setId_renta(int id_renta) {
     	this.id_renta = id_renta; 
-    	}
+    }
 
     public String getIdLetra() {
-        return String.format("R-%03d", this.id_renta);
-        }
+    	return String.format("R-%03d", this.id_renta);
+    }
 
     public int getId_cliente() {
     	return id_cliente; 
-    	}
+    }
     
     public void setId_cliente(int id_cliente) {
     	this.id_cliente = id_cliente; 
-    	}
-
+    }
+    
     public int getId_vehiculo() {
     	return id_vehiculo; 
-    	}
+    }
     
     public void setId_vehiculo(int id_vehiculo) {
     	this.id_vehiculo = id_vehiculo; 
-    	}
+    }
 
+    public String getnameCliente() {
+    	return nameCliente; 
+    }
+    
+    public void setnameCliente(String nameCliente) {
+    	this.nameCliente = nameCliente; 
+    }
+    
+    public String getnombreModelo() {
+    	return nombreModelo; 
+    }
+    
+    public void setnombreModelo(String nombreModelo) {
+    	this.nombreModelo = nombreModelo; 
+    }
+	 	
+    public byte[] getfoto(){
+    	return this.foto;
+    }
+	
+    public void setfoto(byte[] foto){
+    	this.foto = foto;
+    }
+    
     public int getId_origen() {
     	return id_origen; 
-    	}
+    }
     
     public void setId_origen(int id_origen) {
     	this.id_origen = id_origen; 
-    	}
+    }
 
     public int getId_destino() {
     	return id_destino; 
-    	}
+    }
     
     public void setId_destino(int id_destino) {
     	this.id_destino = id_destino; 
-    	}
+    }
 
     public Date getInicio_renta() {
     	return inicio_renta; 
-    	}
-    
+    }
+	
     public void setInicio_renta(Date inicio_renta) {
     	this.inicio_renta = inicio_renta; 
-    	}
-
+    }
+	
     public Date getFin_renta() {
     	return fin_renta; 
-    	}
+    }
+	
     public void setFin_renta(Date fin_renta) {
     	this.fin_renta = fin_renta; 
-    	}
-
+    }
+	
     public double getDistancia_recorrida() {
     	return distancia_recorrida; 
-    	}
-    
+    }
+	
     public void setDistancia_recorrida(double distancia_recorrida) {
     	this.distancia_recorrida = distancia_recorrida; 
-    	}
-
+    }
+	
     public BigDecimal getCosto_total() {
     	return costo_total; 
-    	}
-    
+    }
+	
     public void setCosto_total(BigDecimal costo_total) {
     	this.costo_total = costo_total; 
-    	}
-
+    }
+	
     public String getEstado() {
     	return estado; 
-    	}
-    
+    }
+	
     public void setEstado(String estado) {
     	this.estado = estado; 
-    	}
+    }
+
 }

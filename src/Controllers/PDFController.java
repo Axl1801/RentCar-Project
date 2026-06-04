@@ -32,10 +32,21 @@ public class PDFController {
 	    }
 
 	    String rutaPlantilla = "src/resources/PDFs/plantilla_reserva.html";
-	    String rutaSalidaPDF = "Tickets/Ticket_Reserva_R" + datosRenta.get("id_renta") + ".pdf";
+	    
+	    String nombreSugerido = "Ticket_Reserva_R" + datosRenta.get("id_renta") + ".pdf";
+	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
+	    
+	    if (rutaSalidaPDF == null) {
+	    	System.out.println("Operación de guardado cancelada por el usuario.");
+	    	return; 
+	    }
 
 	    PDFGenerador generador = new PDFGenerador();
 	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosRenta);
+	    
+	    if(exitoPdf) {
+	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
+	    }
 	
 	}
 	
@@ -57,11 +68,22 @@ public class PDFController {
 	    datosClientes.put("filas_clientes", filasHtml.toString());
 
 	    String rutaPlantilla = "src/resources/plantilla_clientes.html";
-	    String rutaSalidaPDF = "Reportes/Reporte_Clientes_General.pdf";
+	    String nombreSugerido = "Ticket_Clientes_C" + datosClientes.get("id_cliente") + ".pdf";
+	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
+	    
+	    if (rutaSalidaPDF == null) {
+	    	System.out.println("Operación de guardado cancelada por el usuario.");
+	    	return; 
+	    }
 
 	    PDFGenerador generador = new PDFGenerador();
-	    boolean exito = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosClientes);
+	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosClientes);
+	    
+	    if(exitoPdf) {
+	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
 	    }
+	
+	}
 	}
 	
 	public void generarPDFReporteVehiculos() {
@@ -110,10 +132,20 @@ public class PDFController {
 	    datosVehiculos.put("filas_vehiculos", filasHtml.toString());
 
 	    String rutaPlantilla = "src/resources/PDFs/plantilla_vehiculos.html";
-	    String rutaSalidaPDF = "Reportes/Reporte_Flotilla_Vehiculos.pdf";
+	    String nombreSugerido = "Ticket_Vehiculos_V" + datosVehiculos.get("id_vehiculo") + ".pdf";
+	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
+	    
+	    if (rutaSalidaPDF == null) {
+	    	System.out.println("Operación de guardado cancelada por el usuario.");
+	    	return; 
+	    }
 
 	    PDFGenerador generador = new PDFGenerador();
-	    boolean exito = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosVehiculos);
+	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosVehiculos);
+	    
+	    if(exitoPdf) {
+	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
+	    }
 	}
 		
 	public void imprimirFichaVehiculo(int idVehiculoReal) {
@@ -136,11 +168,20 @@ public class PDFController {
 	    }
 
 	    String rutaPlantilla = "src/resources/PDFs/plantilla_vehiculo_individual.html";
-	    String rutaSalida = "Reportes/Vehiculos/Ficha_V" + vehiculo.getId() + ".pdf";
+	    String nombreSugerido = "Ticket_Vehiculo_V" + datosPDF.get("id_vehiculo") + ".pdf";
+	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
+	    
+	    if (rutaSalidaPDF == null) {
+	    	System.out.println("Operación de guardado cancelada por el usuario.");
+	    	return; 
+	    }
 
 	    PDFGenerador generador = new PDFGenerador();
-	    generador.generarPdf(rutaPlantilla, rutaSalida, datosPDF);
-
+	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosPDF);
+	    
+	    if(exitoPdf) {
+	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
+	    }
 	}
 	
 	public void imprimirExpedienteCliente(int idClienteReal) {
@@ -154,13 +195,43 @@ public class PDFController {
 	    datosPDF.put("total_rentas", String.valueOf(cliente.getTotalRentas()));
 
 	    String rutaPlantilla = "src/resources/PDFs/plantilla_cliente_individual.html";
-	    String rutaSalida = "Reportes/Clientes/Expediente_" + cliente.getIdLetra() + ".pdf";
+	    String nombreSugerido = "Ticket_Cliente_C" + datosPDF.get("id_cliente") + ".pdf";
+	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
+	    
+	    if (rutaSalidaPDF == null) {
+	    	System.out.println("Operación de guardado cancelada por el usuario.");
+	    	return; 
+	    }
 
 	    PDFGenerador generador = new PDFGenerador();
-	    if (generador.generarPdf(rutaPlantilla, rutaSalida, datosPDF)) {
-	        System.out.println("Expediente del cliente generado: " + rutaSalida);
+	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosPDF);
+	    
+	    if(exitoPdf) {
+	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
 	    }
 	}
 	
+	private String pedirRutaAlUsuario(String nombreArchivoSugerido) {
+		javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+		fileChooser.setDialogTitle("Guardar PDF como...");
+		
+		fileChooser.setSelectedFile(new java.io.File(nombreArchivoSugerido));
+
+		javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Archivos PDF (*.pdf)", "pdf");
+		fileChooser.setFileFilter(filtro);
+
+		int userSelection = fileChooser.showSaveDialog(null);
+
+		if (userSelection == javax.swing.JFileChooser.APPROVE_OPTION) {
+			java.io.File archivoElegido = fileChooser.getSelectedFile();
+			String rutaAbsoluta = archivoElegido.getAbsolutePath();
+			
+			if (!rutaAbsoluta.toLowerCase().endsWith(".pdf")) {
+				rutaAbsoluta += ".pdf";
+			}
+			return rutaAbsoluta;
+		}		
+		return null; 
+	}
 	
 }

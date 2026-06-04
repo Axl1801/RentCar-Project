@@ -1,13 +1,11 @@
 package Controllers;
 
-import java.awt.CardLayout;
-
-import javax.swing.JPanel;
-
+import Views.AuthView;
 import Views.HomeView;
 
 public class HomeController {
 	private HomeView hv;
+	private AuthView av;
 	
 	public HomeController(){
 		hv = new HomeView();
