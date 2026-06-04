@@ -823,7 +823,7 @@ public class HomeView {
 		tituloModelos.setFont(new Font("Poppins",Font.BOLD,15));
 		contModelos.add(tituloModelos);
 
-		url = getClass().getResource("/iconos/adicionales/agregar_marca.png");
+		url = getClass().getResource("/iconos/adicionales/car.png");
 
 		ButtonRounded modelos = new ButtonRounded("",10,3);
 		modelos.setFocusPainted(false);

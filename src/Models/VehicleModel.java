@@ -514,6 +514,67 @@ public class VehicleModel implements FilaTabla{
 		 return modelos;
 	 }
 	 
+	 public ArrayList<String> getNombresModelos() {
+		 ArrayList<String> nombres = new ArrayList<>();
+	         
+		 String query = "SELECT nombre FROM Modelos ORDER BY nombre ASC";
+	         
+		 Properties propiedades = new Properties();
+
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query);
+					 ResultSet rs = ps.executeQuery()) {
+
+				 while (rs.next()) {
+					 nombres.add(rs.getString("nombre"));
+				 }
+				 
+			 } catch (Exception e) {
+				 System.out.println("Error al obtener nombres de los modelos: " + e.getMessage());
+			 }
+
+		 } catch (Exception e) {
+			 System.out.println("Error al leer Claves.txt: " + e.getMessage());
+		 }
+	         
+		 return nombres;
+	 }
+	 
+	 public int getIdPorNombreModelo(String nombreModelo) {
+		 int idModelo = -1; 
+	        
+		 String query = "SELECT id_modelo FROM Modelos WHERE nombre = ? LIMIT 1";
+
+		 Properties propiedades = new Properties();
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query)) {
+				 
+				 ps.setString(1, nombreModelo);
+	                
+				 try (ResultSet rs = ps.executeQuery()) {
+					 if (rs.next()) {
+						 idModelo = rs.getInt("id_modelo");
+					 }
+				 }
+			 }
+		 } catch (Exception e) {
+			 System.out.println("Error al buscar el ID del modelo: " + e.getMessage());
+		 }
+		 return idModelo;
+	 }
+	 
 	 public int getId(){
 		 return this.id; 
 	 }

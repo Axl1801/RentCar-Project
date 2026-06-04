@@ -55,7 +55,7 @@ public class VehicleController {
 	}
 	
 	//Agrega un nuevo Vehiculo a la base de datos *se tiene que mandar foto, modelo, categoria, año, precio y estado* EL ID SE ASIGNA SOLO
-	public boolean addClient(byte[] f, int im, int ic, int a, BigDecimal pd, String e)
+	public boolean addVehicle(byte[] f, int im, int ic, int a, BigDecimal pd, String e)
 	{
 		boolean flag = vm.make(f, im, ic, a, pd, e);
 		return flag;
@@ -92,17 +92,17 @@ public class VehicleController {
 	
 	//REGRESA LISTA DE ESTADOS
 	public ArrayList<String> getListaEstados() {
-		return new ArrayList<>(Arrays.asList("Rentado", "Disponible", "Mantenimiento", "Inactivo"));
+		return new ArrayList<>(Arrays.asList("Todos","Rentado", "Disponible", "Mantenimiento", "Inactivo"));
 	}
 	
 	//REGRESA LISTA DE PRECIOS
 	public ArrayList<Double> getListaPrecios() {
-		return new ArrayList<>(Arrays.asList(75.0, 100.0, 150.0, 175.0, 200.0, 250.0, 275.0, 300.0, 350.0, 375.0, 400.0));
+		return new ArrayList<>(Arrays.asList(00.00,75.0, 100.0, 150.0, 175.0, 200.0, 250.0, 275.0, 300.0, 350.0, 375.0, 400.0));
     }
 	
 	//REGRESA LISTA DE AÑOS 
 	public ArrayList<Integer> getListaAnios() {
-		return new ArrayList<>(Arrays.asList(2028, 2027, 2026, 2025, 2024, 2023, 2022, 2021, 2020));
+		return new ArrayList<>(Arrays.asList(0,2028, 2027, 2026, 2025, 2024, 2023, 2022, 2021, 2020));
     }
 	
 	//REGRESA LISTA DE MARCAS
@@ -111,8 +111,18 @@ public class VehicleController {
 	 }
 	 
 	 //REGRESA LISTA DE MODELOS DEPENDIENDO DE LA MARCA
-	 public ArrayList<String> getListaModelos(String nombreMarca) {
+	 public ArrayList<String> getListaModelosNombre(String nombreMarca) {
 		 return vm.getListaModelos(nombreMarca);
+	 }
+	 
+	 //REGRESA LISTA DE MODELOS
+	 public ArrayList<String> getListaModelos() {
+		 return vm.getNombresModelos();
+	 }
+	 
+	 //REGRESA ID del modelo dependiendo de la marca
+	 public int getListaIdModelo(String nombreMarca) {
+		 return vm.getIdPorNombreModelo(nombreMarca);
 	 }
 	 
 	 //REGRESA LA CATEGORIA DEL VEHICULO CON SU ID

@@ -26,6 +26,17 @@ public class ComboBoxRounded<E> extends JComboBox<E> {
         super(items);
         initialize();
     }
+    
+    //Constructor para arrays
+    public ComboBoxRounded(java.util.Collection<E> items) {
+        super();
+
+        for (E item : items) {
+            addItem(item);
+        }
+
+        initialize();
+    }
 
     private void initialize() {
 
