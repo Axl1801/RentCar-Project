@@ -495,6 +495,164 @@ public class RentModel {
 		}  		 
 		return resultado;	 
     }
+    
+    public ArrayList<String> getListaModelos(String nombreMarca) {
+    	ArrayList<String> modelos = new ArrayList<>();
+	        
+    	String query = "SELECT mo.nombre " +
+				 		"FROM Modelos mo " +
+				 		"INNER JOIN Marcas ma ON mo.id_marca = ma.id_marca " +
+				 		"WHERE ma.nombre = ? " +
+				 		"ORDER BY mo.nombre ASC";
+
+    	Properties propiedades = new Properties();
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+    		propiedades.load(entrada);
+    		String url = propiedades.getProperty("db.url");
+    		String user = propiedades.getProperty("db.user");
+    		String contra = propiedades.getProperty("db.password");
+
+    		try (Connection conn = DriverManager.getConnection(url, user, contra);
+    				PreparedStatement ps = conn.prepareStatement(query)) {
+	                 
+    			ps.setString(1, nombreMarca);
+	                
+    			try (ResultSet rs = ps.executeQuery()) {
+    				while (rs.next()) {
+    					modelos.add(rs.getString("nombre"));
+    				}
+					 
+    				rs.close();
+    				ps.close();
+    				conn.close();
+    			}
+    		}
+    	} catch (Exception e) {
+    		System.out.println("Error al obtener modelos filtrados: " + e.getMessage());
+    	}
+    	return modelos;
+    }
+    
+    public ArrayList<String> getNombresSucursales() {
+    	ArrayList<String> nombres = new ArrayList<>();
+        
+    	String query = "SELECT nombre_sucursal FROM Locacion ORDER BY nombre_sucursal ASC";
+        
+        Properties propiedades = new Properties();
+
+        try (InputStream entrada = new FileInputStream("Claves.txt")) {
+        	propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+                 PreparedStatement ps = conn.prepareStatement(query);
+                 ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    nombres.add(rs.getString("nombre_sucursal"));
+                }
+                
+            } catch (Exception e) {
+                System.out.println("Error al obtener nombres de locaciones: " + e.getMessage());
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al leer Claves.txt: " + e.getMessage());
+        }
+        
+        return nombres;
+    }
+    
+    public int getIdPorNombre(String nombreSucursal) {
+    	int idLocacion = -1;
+    	String query = "SELECT id_locacion FROM Locacion WHERE nombre_sucursal = ?";
+
+    	Properties propiedades = new Properties();
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+            propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+                 PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+                ps.setString(1, nombreSucursal);
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        idLocacion = rs.getInt("id_locacion");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al buscar el ID de la sucursal: " + e.getMessage());
+        }
+        return idLocacion;
+    }
+    
+    public ArrayList<String> getNombresClientes() {
+    	ArrayList<String> nombres = new ArrayList<>();
+        
+    	String query = "SELECT name FROM Clientes ORDER BY name ASC";
+        
+    	Properties propiedades = new Properties();
+
+    	try (InputStream entrada = new FileInputStream("Claves.txt")) {
+        	propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+                 PreparedStatement ps = conn.prepareStatement(query);
+                 ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    nombres.add(rs.getString("name"));
+                }
+                
+            } catch (Exception e) {
+                System.out.println("Error al obtener nombres de clientes: " + e.getMessage());
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al leer Claves.txt: " + e.getMessage());
+        }
+        
+        return nombres;
+    }
+    
+    public int getIdPorNombre_Clientes(String nombreCliente) {
+        int idCliente = -1; 
+
+        String query = "SELECT id_cliente FROM Clientes WHERE name = ? LIMIT 1";
+
+        Properties propiedades = new Properties();
+        try (InputStream entrada = new FileInputStream("Claves.txt")) {
+            propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+                 PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+                ps.setString(1, nombreCliente);
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        idCliente = rs.getInt("id_cliente");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al buscar el ID del cliente: " + e.getMessage());
+        }
+        return idCliente;
+    }
 	
     public int numeroVehiculos_total() {
         int total = conteo("SELECT COUNT(*) FROM Vehiculos");

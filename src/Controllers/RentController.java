@@ -3,6 +3,7 @@ package Controllers;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.swing.JDialog;
@@ -142,4 +143,43 @@ public class RentController {
 		return num_car_mantenimiento;
 	}
 	
+	//REGRESA LA LISTA DELOS ESTADOS DE RENTA
+	public ArrayList<String> getListaEstados() {
+        return new ArrayList<>(Arrays.asList("Pendiente", "Activo", "Finalizado", "Cancelado"));
+    }
+	
+	//REGRESA LISTA DE PRECIOS
+	public ArrayList<Double> getListaPrecios() {
+		return new ArrayList<>(Arrays.asList(75.0, 100.0, 150.0, 175.0, 200.0, 250.0, 275.0, 300.0, 350.0, 375.0, 400.0));
+	}
+		
+	//REGRESA LISTA DE AÑOS 
+	public ArrayList<Integer> getListaAnios() {
+		return new ArrayList<>(Arrays.asList(2028, 2027, 2026, 2025, 2024, 2023, 2022, 2021, 2020));
+	}
+	
+	//REGRESA LISTA DE MODELOS DEPENDIENDO DE LA MARCA
+	public ArrayList<String> getListaModelos(String nombreMarca) {
+		return rm.getListaModelos(nombreMarca);
+	}
+	
+	//REGRESA LA LISTA DE SUCURSALLES
+	public ArrayList<String> getNombresSucursales( ) {
+		return rm.getNombresSucursales();
+	}
+	 
+	//REGRESA EL ID DE LA SUCURSAL
+	public int sucursalID(String sucursal) {	
+		return rm.getIdPorNombre(sucursal);
+	}
+	
+	//REGRESA LA LISTA DE CLIENTES
+	public ArrayList<String> getNombresClientes( ) {
+		return rm.getNombresClientes();
+	}
+	 
+	//REGRESA EL ID DE EL CLIENTE
+	public int clientelID(String cliente) {	
+		return rm.getIdPorNombre_Clientes(cliente);
+	}
 }
