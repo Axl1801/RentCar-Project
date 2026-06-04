@@ -11,8 +11,11 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -24,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -54,6 +58,7 @@ import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
 
 public class VehicleView {
+	private byte[] fotoSeleccionada;
 	VehicleController control;
 	private JTable Vehicle_table;
 	private DefaultTableModel modeloVehiculos;
@@ -571,7 +576,7 @@ public class VehicleView {
 		
 		listMarcas.addActionListener(e->{
 			marcaSelect = listMarcas.getSelectedItem().toString();
-			
+			System.out.println(marcaSelect);
 		    ArrayList<String> modelos = control.getListaModelosNombre(marcaSelect);
 
 	        listModeloss.removeAllItems();
@@ -610,33 +615,39 @@ public class VehicleView {
 		añadirVehiculo.add(titulofoto);
 		
 		//Contorno redondeado
-		TextFieldRounded campoFoto = new TextFieldRounded(20,20,true);
-		campoFoto.setFont(new Font("Poppins", Font.BOLD, 15));
-		campoFoto.setForeground(Color.decode("#8B8B8B"));
-		campoFoto.setOpaque(false);
-		campoFoto.setText("URL foto del Automovil");
-		campoFoto.setSize(280,40);
-		campoFoto.setLocation(370,160);
-		campoFoto.addFocusListener(new FocusAdapter() {
-		    @Override
-		    public void focusGained(FocusEvent e) {
-		        // Cuando el usuario hace clic en la caja
-		        if (campoFoto.getText().equals("URL foto del Automovil")) {
-		        	campoFoto.setText(""); // Vaciar la caja
-		        	campoFoto.setForeground(Color.decode("#000000"));
-		        }
-		    }
+		ButtonRounded botonFoto = new ButtonRounded("Subir Foto",10,1);
+		botonFoto.setOpaque(false);
+		botonFoto.setForeground(Color.white);
+		botonFoto.setHorizontalAlignment(JLabel.CENTER);
+		botonFoto.setFont(new Font("Poppins",Font.BOLD,15));
+		botonFoto.setSize(280,40);
+		botonFoto.setLocation(370,160);
+		botonFoto.addActionListener(e->{
 
-		    @Override
-		    public void focusLost(FocusEvent e) {
-		        // Cuando el usuario hace clic en otro lado
-		        if (campoFoto.getText().isEmpty()) {
-		        	campoFoto.setForeground(Color.decode("#8B8B8B"));
-		        	campoFoto.setText("URL foto del Automovil"); // Restaurar el mensaje
+		    JFileChooser selector = new JFileChooser();
+		    
+		    selector.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes","jpg", "jpeg", "png", "webp"));
+		    
+		    int resultado = selector.showOpenDialog(null);
+		    
+		    if (resultado == JFileChooser.APPROVE_OPTION) {
+
+		        File archivo = selector.getSelectedFile();
+
+		        if (archivo != null) {
+
+		            try {
+
+		                fotoSeleccionada =
+		                    Files.readAllBytes(archivo.toPath());
+
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
 		        }
 		    }
 		});
-		añadirVehiculo.add(campoFoto);
+		añadirVehiculo.add(botonFoto);
 		
 		JLabel tituloAño = new JLabel("Año");
 		tituloAño.setOpaque(false);
@@ -665,8 +676,8 @@ public class VehicleView {
 		precio.setLocation(370,330);
 		añadirVehiculo.add(precio);
 		
-		ArrayList<Double> precios = control.getListaPrecios();
-		ComboBoxRounded<Double> listPrecios = new ComboBoxRounded<>(precios);
+		ArrayList<BigDecimal> precios = control.getListaPrecios();
+		ComboBoxRounded<BigDecimal> listPrecios = new ComboBoxRounded<>(precios);
 		listPrecios.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPrecios.setForeground(Color.black);
 		listPrecios.setOpaque(false);
@@ -693,10 +704,18 @@ public class VehicleView {
 		registrarVehiculo.setForeground(Color.white);
 		registrarVehiculo.setHorizontalAlignment(JLabel.CENTER);
 		registrarVehiculo.setFont(new Font("Poppins",Font.BOLD,15));
+		
 		registrarVehiculo.addActionListener(e->{
-			
-			//control.addVehicle(null, listModeloss.getSelectedItem(), 0, listAños.getSelectedItem(), listPrecios.getSelectedItem(), "Activo");
-        	ventana.dispose();
+			//Agregar Vehiculo
+			control.addVehicle(fotoSeleccionada,
+					control.obtenerIdModelo(listModeloss.getSelectedItem().toString()),
+					control.obtenerIdCategoria(listCategorias.getSelectedItem().toString()),
+					(int)listAños.getSelectedItem(),
+					(BigDecimal)listPrecios.getSelectedItem(),
+					"Disponible");
+
+			System.out.println(control.obtenerIdModelo(listModeloss.getSelectedItem().toString()));
+			ventana.dispose();
 		});
 		registrarVehiculo.setSize(200,60);
 		registrarVehiculo.setLocation(350,500);
@@ -820,8 +839,8 @@ public class VehicleView {
 		precio.setLocation(370,230);
 		filtrosAvanzados.add(precio);
 		
-		ArrayList<Double> preciosMin= control.getListaPrecios();
-		ComboBoxRounded<Double> listPreciosMin = new ComboBoxRounded<>(preciosMin);
+		ArrayList<BigDecimal> preciosMin= control.getListaPrecios();
+		ComboBoxRounded<BigDecimal> listPreciosMin = new ComboBoxRounded<>(preciosMin);
 		listPreciosMin.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPreciosMin.setForeground(Color.black);
 		listPreciosMin.setOpaque(false);
@@ -829,8 +848,8 @@ public class VehicleView {
 		listPreciosMin.setLocation(370,260);
 		filtrosAvanzados.add(listPreciosMin);
 		
-		ArrayList<Double> preciosMax = control.getListaPrecios();
-		ComboBoxRounded<Double> listPreciosMax = new ComboBoxRounded<>(preciosMax);
+		ArrayList<BigDecimal> preciosMax = control.getListaPrecios();
+		ComboBoxRounded<BigDecimal> listPreciosMax = new ComboBoxRounded<>(preciosMax);
 		listPreciosMax.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPreciosMax.setForeground(Color.black);
 		listPreciosMax.setOpaque(false);

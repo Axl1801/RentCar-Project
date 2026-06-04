@@ -100,9 +100,9 @@ public class VehicleModel implements FilaTabla{
 		return carros;  	
 	}
 
-	public boolean make(byte[] foto, int id_marca, int id_modelo, int id_categoria, int anio, BigDecimal precio_dia, String estado){
+	public boolean make(byte[] foto, int id_modelo, int id_categoria, int anio, BigDecimal precio_dia, String estado){
 		 
-		 String query = "INSERT INTO `Vehiculos` (`foto`, `id_marca`, `id_modelo`, `id_categoria`, `anio`, `precio_dia`, `estado`) VALUES (?, ?, ?, ?, ?, ?, ?);";
+		 String query = "INSERT INTO `Vehiculos` (`foto`,`id_modelo`, `id_categoria`, `anio`, `precio_dia`, `estado`) VALUES (?, ?, ?, ?, ?, ?);";
 			
 		 Connection conn = null;						
 		 Properties propiedades = new Properties();
@@ -119,12 +119,11 @@ public class VehicleModel implements FilaTabla{
 
 	    			PreparedStatement ps = conn.prepareStatement(query);
 	    			ps.setBytes(1, foto);
-	    			ps.setInt(2, id_marca);
-	    			ps.setInt(3, id_modelo);
-	    			ps.setInt(4, id_categoria);
-	    			ps.setInt(5, anio);
-	    			ps.setBigDecimal(6, precio_dia);
-	    			ps.setString(7, estado);
+	    			ps.setInt(2, id_modelo);
+	    			ps.setInt(3, id_categoria);
+	    			ps.setInt(4, anio);
+	    			ps.setBigDecimal(5, precio_dia);
+	    			ps.setString(6, estado);
 	    			
 	    			int rowsAffected = ps.executeUpdate();
 	    			if (rowsAffected > 0) { ps.close(); conn.close(); return true; }
@@ -416,7 +415,7 @@ public class VehicleModel implements FilaTabla{
 	 
 	 public ArrayList<String> getListaMarcas() {
 		 ArrayList<String> marcas = new ArrayList<>();
-		 String query = "SELECT nombre FROM Marcas ORDER BY nombre ASC";
+		 String query = "SELECT nombre FROM Marcas ORDER BY id_marca ASC";
 
 		 Properties propiedades = new Properties();
 		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
@@ -485,7 +484,7 @@ public class VehicleModel implements FilaTabla{
 				 		"FROM Modelos mo " +
 				 		"INNER JOIN Marcas ma ON mo.id_marca = ma.id_marca " +
 				 		"WHERE ma.nombre = ? " +
-				 		"ORDER BY mo.nombre ASC";
+				 		"ORDER BY id_modelo ASC";
 
 		 Properties propiedades = new Properties();
 		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
@@ -518,7 +517,7 @@ public class VehicleModel implements FilaTabla{
 	 public ArrayList<String> getNombresModelos() {
 		 ArrayList<String> nombres = new ArrayList<>();
 	         
-		 String query = "SELECT nombre FROM Modelos ORDER BY nombre ASC";
+		 String query = "SELECT nombre FROM Modelos ORDER BY id_modelo ASC";
 	         
 		 Properties propiedades = new Properties();
 
@@ -605,7 +604,7 @@ public class VehicleModel implements FilaTabla{
 	 
 	 public int obtenerIdCategoria(String nombreCategoria) {
 		 int idCategoria = -1;
-		 String query = "SELECT id_marca FROM Marcas WHERE nombre = ?";
+		 String query = "SELECT id_categoria FROM Categorias WHERE nombre = ?";
 
 		 Properties propiedades = new Properties();
 		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
@@ -620,19 +619,19 @@ public class VehicleModel implements FilaTabla{
 				 ps.setString(1, nombreCategoria);
 				 try (ResultSet rs = ps.executeQuery()) {
 					 if (rs.next()) {
-						 idCategoria = rs.getInt("id_marca");
+						 idCategoria = rs.getInt("id_categoria");
 					 }
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al buscar el ID de la marca: " + e.getMessage());
+			 System.out.println("Error al buscar el ID de la Categoria: " + e.getMessage());
 		 }
 		 return idCategoria;
 	 }
 	 
 	 public int obtenerIdModelo(String nombreModelo) {
 		 int idModelo = -1;
-		 String query = "SELECT id_marca FROM Marcas WHERE nombre = ?";
+		 String query = "SELECT id_modelo FROM Modelos WHERE nombre = ?";
 
 		 Properties propiedades = new Properties();
 		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
@@ -647,12 +646,12 @@ public class VehicleModel implements FilaTabla{
 				 ps.setString(1, nombreModelo);
 				 try (ResultSet rs = ps.executeQuery()) {
 					 if (rs.next()) {
-						 idModelo = rs.getInt("id_marca");
+						 idModelo = rs.getInt("id_modelo");
 					 }
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al buscar el ID de la marca: " + e.getMessage());
+			 System.out.println("Error al buscar el ID del modelo: " + e.getMessage());
 		 }
 		 return idModelo;
 	 }

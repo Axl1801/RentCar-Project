@@ -55,9 +55,9 @@ public class VehicleController {
 	}
 	
 	//Agrega un nuevo Vehiculo a la base de datos *se tiene que mandar foto, modelo, categoria, año, precio y estado* EL ID SE ASIGNA SOLO
-	public boolean addVehicle(byte[] f, int ima, int im, int ic, int a, BigDecimal pd, String e)
+	public boolean addVehicle(byte[] f, int im, int ic, int a, BigDecimal pd, String e)
 	{
-		boolean flag = vm.make(f, ima, im, ic, a, pd, e);
+		boolean flag = vm.make(f, im, ic, a, pd, e);
 		return flag;
 	}
 	
@@ -96,8 +96,20 @@ public class VehicleController {
 	}
 	
 	//REGRESA LISTA DE PRECIOS
-	public ArrayList<Double> getListaPrecios() {
-		return new ArrayList<>(Arrays.asList(00.00,75.0, 100.0, 150.0, 175.0, 200.0, 250.0, 275.0, 300.0, 350.0, 375.0, 400.0));
+	public ArrayList<BigDecimal> getListaPrecios() {
+		return new ArrayList<>(Arrays.asList(
+		        BigDecimal.valueOf(0.00),
+		        BigDecimal.valueOf(75.00),
+		        BigDecimal.valueOf(100.00),
+		        BigDecimal.valueOf(150.00),
+		        BigDecimal.valueOf(175.00),
+		        BigDecimal.valueOf(200.00),
+		        BigDecimal.valueOf(250.00),
+		        BigDecimal.valueOf(275.00),
+		        BigDecimal.valueOf(300.00),
+		        BigDecimal.valueOf(350.00),
+		        BigDecimal.valueOf(375.00),
+		        BigDecimal.valueOf(400.00)));
     }
 	
 	//REGRESA LISTA DE AÑOS 
@@ -138,14 +150,14 @@ public class VehicleController {
 	 
 	 //REGRESA EL ID MODELO
 	 public int obtenerIdModelo(String modelo) {
-		 int id_marca = vm.obtenerIdMarca(modelo);
-		 return id_marca;
+		 int id_modelo = vm.obtenerIdModelo(modelo);
+		 return id_modelo;
 	 }
 	
 	 //REGRESA EL ID CATEGORIA
 	 public int obtenerIdCategoria(String categoria) {
-		 int id_marca = vm.obtenerIdMarca(categoria);
-		 return id_marca;
+		 int id_Categoria = vm.obtenerIdCategoria(categoria);
+		 return id_Categoria;
 	 }
 	 
 }
