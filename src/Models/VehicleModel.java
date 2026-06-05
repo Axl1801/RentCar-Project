@@ -226,7 +226,13 @@ public class VehicleModel implements FilaTabla{
 	 public VehicleModel buscarVehiculoPorId(int id_vehiculo) {
 		    
 		 VehicleModel vehiculo_solo = null;
-		 String query = "SELECT * FROM Vehiculos WHERE id_vehiculo = ?";
+		 
+		 String query = "SELECT v.*, mo.nombre AS modelo_texto, ma.nombre AS marca_texto " +
+		                "FROM Vehiculos v " +
+		                "INNER JOIN Modelos mo ON v.id_modelo = mo.id_modelo " +
+		                "INNER JOIN Marcas ma ON mo.id_marca = ma.id_marca " +
+		                "WHERE v.id_vehiculo = ?";
+		                
 		 Connection conn = null;
 		 Properties propiedades = new Properties();
 
@@ -246,10 +252,12 @@ public class VehicleModel implements FilaTabla{
 
 				 if (rs.next()) {
 					 vehiculo_solo = new VehicleModel();
-                
+					 
 					 vehiculo_solo.setId(rs.getInt("id_vehiculo"));
-					 vehiculo_solo.setmarca(rs.getString("marca"));
-					 vehiculo_solo.setmodelo(rs.getString("modelo"));
+					 
+					 vehiculo_solo.setmarca(rs.getString("marca_texto")); 
+					 vehiculo_solo.setmodelo(rs.getString("modelo_texto")); 
+					 
 					 vehiculo_solo.setanio(rs.getInt("anio")); 
 					 vehiculo_solo.setprecio_dia(rs.getBigDecimal("precio_dia"));
 					 vehiculo_solo.setestado(rs.getString("estado"));                

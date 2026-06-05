@@ -25,13 +25,14 @@ public class PDFController {
 	private ClientModel cm;
 	private VehicleModel vm;
 
-	public void generarPDFReserva(int idRentaSeleccionada) {
+	public boolean generarPDFReserva(int idRentaSeleccionada) {
 	    
 	    Map<String, String> datosRenta = rm.getDatosParaPDF(idRentaSeleccionada);
+	    boolean exitoPdf = false;
 	    
 	    if (datosRenta.isEmpty()) {
 	        System.out.println("No se encontró la renta en la BD.");
-	        return; 
+	        return exitoPdf; 
 	    }
 
 	    String rutaPlantilla = "src/resources/PDFs/plantilla_reserva.html";
@@ -42,16 +43,18 @@ public class PDFController {
 	    if (rutaSalidaPDF == null) {
 	    	JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 	    	System.out.println("Operación de guardado cancelada por el usuario.");
-	    	return; 
+	    	return exitoPdf; 
 	    }
 
 	    PDFGenerador generador = new PDFGenerador();
-	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosRenta);
+	    exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosRenta);
 	    
 	    if(exitoPdf) {
 	    	JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: "+ rutaSalidaPDF);
 	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
+	    	return exitoPdf;
 	    }
+		return exitoPdf;
 	
 	}
 	
@@ -157,13 +160,16 @@ public class PDFController {
 	    }
 	}
 		
-	public void imprimirFichaVehiculo(int idVehiculoReal) {
+	public boolean imprimirFichaVehiculo(int idVehiculoReal) {
 		VehicleModel vehiculo = vm.buscarVehiculoPorId(idVehiculoReal);
+		boolean exitoPdf = false;
 	    
 	    Map<String, String> datosPDF = new HashMap<>();
-	    datosPDF.put("id_vehiculo", "V-" + vm.getId());
-	    datosPDF.put("marca", vm.getmarca());
-	    datosPDF.put("modelo", vm.getmodelo());
+	    
+	    datosPDF.put("id_vehiculo", String.valueOf(vehiculo.getId()));
+	    datosPDF.put("marca", vehiculo.getmarca());
+	    datosPDF.put("modelo", vehiculo.getmodelo());
+	    
 	    datosPDF.put("anio", String.valueOf(vehiculo.getanio()));
 	    datosPDF.put("precio", vehiculo.getprecio_dia().toString());
 	    datosPDF.put("estado", vehiculo.getestado() != null ? vehiculo.getestado() : "Disponible");
@@ -183,19 +189,22 @@ public class PDFController {
 	    if (rutaSalidaPDF == null) {
 	    	JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 	    	System.out.println("Operación de guardado cancelada por el usuario.");
-	    	return; 
+	    	return exitoPdf; 
 	    }
 
 	    PDFGenerador generador = new PDFGenerador();
-	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosPDF);
+	    exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosPDF);
 	    
 	    if(exitoPdf) {
 	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
+	    	return exitoPdf;
 	    }
+		return exitoPdf;
 	}
 	
-	public void imprimirExpedienteCliente(int idClienteReal) {
-	    ClientModel cliente = cm.buscarClientePorId(idClienteReal); 
+	public boolean imprimirExpedienteCliente(int idClienteReal) {
+	    ClientModel cliente = cm.buscarClientePorId(idClienteReal);
+	    boolean exitoPdf = false;
 	    
 	    Map<String, String> datosPDF = new HashMap<>();
 	    datosPDF.put("id_cliente", cliente.getIdLetra());
@@ -211,16 +220,18 @@ public class PDFController {
 	    if (rutaSalidaPDF == null) {
 	    	System.out.println("Operación de guardado cancelada por el usuario.");
 	    	JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
-	    	return; 
+	    	return exitoPdf; 
 	    }
 
 	    PDFGenerador generador = new PDFGenerador();
-	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosPDF);
+	    exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosPDF);
 	    
 	    if(exitoPdf) {
 	    	JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: "+ rutaSalidaPDF);
 	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
+	    	return exitoPdf; 
 	    }
+	    return exitoPdf; 
 	}
 	
 	private String pedirRutaAlUsuario(String nombreArchivoSugerido) {

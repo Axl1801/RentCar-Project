@@ -284,12 +284,14 @@ public class RentModel implements FilaTabla{
         
         Map<String, String> datos = new HashMap<>();
         
-        String query = "SELECT r.*, c.nombre, c.correo, c.telefono, " +
-                       "v.marca, v.modelo, v.anio, v.precio_dia, v.foto " +
-                       "FROM Rentas r " +
-                       "INNER JOIN Clientes c ON r.id_cliente = c.id_cliente " +
-                       "INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo " +
-                       "WHERE r.id_renta = ?";
+        String query = "SELECT r.*, c.name, c.email, c.phone, " +
+                "m.nombre AS marca_texto, mo.nombre AS modelo_texto, v.anio, v.precio_dia, v.foto " +
+                "FROM Rentas r " +
+                "INNER JOIN Clientes c ON r.id_cliente = c.id_cliente " +
+                "INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo " +
+                "INNER JOIN Modelos mo ON v.id_modelo = mo.id_modelo " +
+                "INNER JOIN Marcas m ON mo.id_marca = m.id_marca " +
+                "WHERE r.id_renta = ?";
 
         Connection conn = null;
         Properties propiedades = new Properties();
@@ -314,13 +316,13 @@ public class RentModel implements FilaTabla{
                 datos.put("estado", rs.getString("estado"));
                 
                 datos.put("id_cliente", String.format("%03d", rs.getInt("id_cliente")));
-                datos.put("name", rs.getString("nombre"));
-                datos.put("email", rs.getString("correo"));
-                datos.put("phone", rs.getString("telefono"));
+                datos.put("name", rs.getString("name"));
+                datos.put("email", rs.getString("email"));
+                datos.put("phone", rs.getString("phone"));
                 
                 datos.put("id_vehiculo", String.format("%03d", rs.getInt("id_vehiculo")));
-                datos.put("marca", rs.getString("marca"));
-                datos.put("modelo", rs.getString("modelo"));
+                datos.put("marca", rs.getString("marca_texto"));
+                datos.put("modelo", rs.getString("modelo_texto"));
                 datos.put("anio", rs.getString("anio"));
                 datos.put("precio_dia", rs.getBigDecimal("precio_dia").toString());
                 

@@ -105,7 +105,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 					int idVehiculo = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
 					String modelo = table.getModel().getValueAt(modelRow, 2).toString();
 					String marca = table.getModel().getValueAt(modelRow, 3).toString();	
-					String categoria = table.getModel().getValueAt(modelRow, 2).toString();
+					String categoria = vc.getCategoriaVehiculo(idRow);
 					String estado = table.getModel().getValueAt(modelRow, 6).toString();
 					String año = table.getModel().getValueAt(modelRow, 4).toString();
 					BigDecimal precio = (BigDecimal)table.getModel().getValueAt(modelRow, 5);
@@ -157,17 +157,25 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 			int idRow = Integer.parseInt(table.getModel().getValueAt(modelRow, 0).toString().replaceAll("[^0-9]", ""));
 
 			if(accion.equals("Clientes")) {
-				pc.imprimirExpedienteCliente(idRow);
+				if(pc.imprimirExpedienteCliente(idRow)) {
+			}else {				
+				JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
+			}
 			}
 			else if(accion.equals("Vehiculos")) {
-				pc.imprimirFichaVehiculo(idRow);
+				if(pc.imprimirFichaVehiculo(idRow)) {
+					JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: ");
+				}else {				
+					JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
+				}
 			}
 			else if(accion.equals("Rentas")) {
-				pc.generarPDFReserva(idRow);
+				if(pc.generarPDFReserva(idRow)) {
+			}else {				
+				JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
+			}
 			}
 			
-			JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: ");
-			JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 		});
 
 		// Agregamos los botones al panel redondeado, y el panel al popup

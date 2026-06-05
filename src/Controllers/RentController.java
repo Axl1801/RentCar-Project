@@ -107,6 +107,8 @@ public class RentController {
 		        
 		        JDialog dialogVistaPrevia = new JDialog();
 		        dialogVistaPrevia.setTitle("Vista Previa del Ticket");
+		        dialogVistaPrevia.setModal(true);
+		        dialogVistaPrevia.setAlwaysOnTop(true);
 		        dialogVistaPrevia.add(labelConVistaPrevia);
 		        dialogVistaPrevia.pack();
 		        dialogVistaPrevia.setLocationRelativeTo(null);
