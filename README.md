@@ -40,6 +40,16 @@ Vehiculos(Ver los vehiculos dentro del sistema, su disponibilidad, estado, infor
 Rentas (Permite agregar y crear rentas para clientes, buscar rentas, editarlas, eliminarlas, etc)
 Establecimiento (Permite verificar los distintos locales de la compañia, asi como crear puntos de establecimientos y seleccionarlos para el calculo de distancias entre los distintos)
 
+Para ejecutar el programa.
+Ir a las opciones de run.
+Seleccionar Run configurations.
+Seleccionar en el panel izq. Application.
+En el panel derecho seleccionar Arguments.
+En el apartado de VM arguments introducir:
+-Djava.library.path="Los dll".
+Darle apply.
+Darle Run.
+
 -- Drive de evidencias QA --
 
 https://drive.google.com/drive/folders/1gSRHaZNSADkDe-nbm2Ft_w9zcca828se?usp=sharing 
