@@ -739,15 +739,6 @@ public class RentView {
 		});
 		añadirRenta.add(cancelarCliente);
 		
-		int idCliente = control.clientelID(listClientes.getSelectedItem().toString());
-		int idVehiculo = control.obtenerIdModelo(listVehiculos.getSelectedItem().toString());
-		int idSucOrigen = control.sucursalID(listSucursalOrigen.getSelectedItem().toString());
-		int idSucEntrega = control.sucursalID(listSucuralEntrega.getSelectedItem().toString());
-		LocalDate fechaInicio = listFechasInicio.getDate();
-		LocalDate fechaEntrega = listFechasFinal.getDate();
-		
-		java.sql.Date fechaSqlInicio = java.sql.Date.valueOf(fechaInicio);
-		java.sql.Date fechaSqlEntrega = java.sql.Date.valueOf(fechaEntrega);
 		
 		ButtonRounded registrarRenta = new ButtonRounded("Registrar Renta",10,1);
 		registrarRenta.setOpaque(false);
@@ -755,19 +746,19 @@ public class RentView {
 		registrarRenta.setHorizontalAlignment(JLabel.CENTER);
 		registrarRenta.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarRenta.setHorizontalTextPosition(JLabel.RIGHT);
-		registrarRenta.addActionListener(e->{
-		/*control.registrarNuevaRenta(control.clientelID(listClientes.getSelectedItem().toString()),
-				control.obtenerIdModelo(listVehiculos.getSelectedItem().toString()),
-				0,
-				0,
-				(LocalDate)listFechasInicio.getDate(),
-				(LocalDate)listFechasFinal.getDate(),
-				"Activo");*/
-      	ventana.dispose();
-		});
+
 		registrarRenta.setSize(200,60);
 		registrarRenta.setLocation(350,750);
 		registrarRenta.addActionListener(e->{
+			int idCliente = control.clientelID(listClientes.getSelectedItem().toString());
+			int idVehiculo = control.obtenerIdModelo(listVehiculos.getSelectedItem().toString());
+			int idSucOrigen = control.sucursalID(listSucursalOrigen.getSelectedItem().toString());
+			int idSucEntrega = control.sucursalID(listSucuralEntrega.getSelectedItem().toString());
+			LocalDate fechaInicio = listFechasInicio.getDate();
+			LocalDate fechaEntrega = listFechasFinal.getDate();
+			
+			java.sql.Date fechaSqlInicio = java.sql.Date.valueOf(fechaInicio);
+			java.sql.Date fechaSqlEntrega = java.sql.Date.valueOf(fechaEntrega);
 			control.registrarNuevaRenta(idCliente, idVehiculo, idSucOrigen, idSucEntrega, fechaSqlInicio, fechaSqlEntrega, "Activo");
 		});
 	    añadirRenta.add(registrarRenta);
