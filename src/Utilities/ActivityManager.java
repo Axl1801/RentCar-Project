@@ -8,27 +8,48 @@ import javax.swing.JPanel;
 
 public class ActivityManager {
 	private static JPanel panel;
-
-    public static void setPanel(JPanel p) {
+	private static int lim;
+    private static boolean habilitado = true;
+    public static void setPanel(JPanel p, int limite) {
         panel = p;
+        lim = limite;
+    }
+    
+    public static void setHabilitado(boolean estado) {
+        habilitado = estado;
     }
 
-    public static void addActivity(String titulo,String subtitulo,LocalTime tiempo,Color color) {
+    public static boolean isHabilitado() {
+        return habilitado;
+    }
 
-    	DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
+    public static void addActivity( String titulo,String subtitulo,LocalTime tiempo,Color color) {
     	
-    	tiempo.format(formato);
-    	
-        if(panel == null) return;
+        if (!habilitado) {
+            return;
+        }
 
-        panel.add(new Activities(
-            titulo,
-            subtitulo,
-            tiempo,
-            color
-        ));
+        if (panel == null) {
+        	return;
+        }
+        
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
+        
+        tiempo.format(formato);
+
+        // Si ya hay 5 actividades, elimina la más antigua
+        if (panel.getComponentCount() >= lim) {
+            panel.remove(panel.getComponentCount() - 1);
+        }
+
+        panel.add(
+            new Activities(titulo, subtitulo, tiempo, color),
+            0
+        );
 
         panel.revalidate();
         panel.repaint();
     }
+
+    
 }

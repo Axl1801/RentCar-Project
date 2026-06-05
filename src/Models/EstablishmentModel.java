@@ -33,10 +33,10 @@ public class EstablishmentModel {
 	    }
 
 	 
-	public ArrayList<EstablishmentModel> get(){
-		ArrayList<EstablishmentModel> lugar = new ArrayList<>();
+	public ArrayList<String> get(){
+		ArrayList<String> lugar = new ArrayList<>();
 	    	
-		String query = "SELECT * FROM `Locacion`";
+		String query = "SELECT nombre_sucursal FROM `Locacion`";
 		
 		Connection conn = null; 	 
 		System.out.println(query);
@@ -60,13 +60,7 @@ public class EstablishmentModel {
 
     			while(rs.next())
     			{
-    				EstablishmentModel tmp = new EstablishmentModel();
-    				
-    				tmp.setId(rs.getInt("id_locacion"));
-    				tmp.setName(rs.getString("nombre_sucursal"));
-    				tmp.setEmail(rs.getString("direccion"));
-    				
-    				lugar.add(tmp);
+    				lugar.add(rs.getString("nombre_sucursal"));
     			}
 
     			rs.close();
@@ -239,6 +233,43 @@ public class EstablishmentModel {
 		return direccion;
 	}
 
+	public int getIdLocacion(String nombreSucursal) {
+	    int idLocacion = -1;
+
+	    String query = "SELECT id_locacion FROM Locacion WHERE nombre_sucursal = ?";
+
+	    Properties propiedades = new Properties();
+
+	    try (InputStream entrada = new FileInputStream("Claves.txt")) {
+
+	        propiedades.load(entrada);
+
+	        String url = propiedades.getProperty("db.url");
+	        String user = propiedades.getProperty("db.user");
+	        String contra = propiedades.getProperty("db.password");
+
+	        Class.forName("com.mysql.cj.jdbc.Driver");
+
+	        try (Connection conn = DriverManager.getConnection(url, user, contra);
+	             PreparedStatement ps = conn.prepareStatement(query)) {
+
+	            ps.setString(1, nombreSucursal);
+
+	            try (ResultSet rs = ps.executeQuery()) {
+
+	                if (rs.next()) {
+	                    idLocacion = rs.getInt("id_locacion");
+	                }
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return idLocacion;
+	}
+	
 	public void setEmail(String direccion) {
 		this.direccion = direccion;
 	}

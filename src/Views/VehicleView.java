@@ -753,7 +753,7 @@ public class VehicleView {
 					(BigDecimal)listPrecios.getSelectedItem(),
 					"Disponible");
 
-			ActivityManager.addActivity("Vehiculo Añadido", listModeloss.getSelectedItem().toString(), LocalTime.now(), Color.decode("idVehiculo"));
+			ActivityManager.addActivity("Vehiculo Añadido", listModeloss.getSelectedItem().toString(), LocalTime.now(), Color.decode("#4C75B7"));
 			LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
 			ventana.dispose();
 		});
@@ -1170,7 +1170,7 @@ public class VehicleView {
 			
 			String id = String.valueOf(idVehiculo);
 			control.update(idVehiculo,nuevoPrecio, nuevoEstado);
-			ActivityManager.addActivity("Edicion de Vehiculo", id, LocalTime.now(), Color.decode("idVehiculo"));
+			ActivityManager.addActivity("Edicion de Vehiculo", id, LocalTime.now(), Color.decode("#C79E59"));
 			LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
         	ventana.dispose();
 		});
@@ -1327,12 +1327,12 @@ public class VehicleView {
 		};
 		
 		// Pide la lista al controlador
-		System.out.println("aaaaaaaaaaaa " + idVehiculo + " aaaaaaaaa");
 		ArrayList<VehicleModel> listaVehiculos = control.obtenerRentasVehiculo(idVehiculo);
-		
+		System.out.println();
 		// La imprime por fila 
 		for (VehicleModel renta : listaVehiculos) {
 		    Object[] fila = new Object[5];
+		    System.out.println(renta.getName());
 		    fila[0] = renta.getId_renta(); 
 		    fila[1] = renta.getName();
 		    fila[2] = renta.getInicio_renta();
@@ -1348,40 +1348,6 @@ public class VehicleView {
 		Vehicle_table.setRowSorter(sorter);
 
 		Vehicle_table.setRowHeight(100);
-		
-		// 2. Le decimos a la Columna 1 (que es "Foto") cómo transformar los bytes en imagen
-		Vehicle_table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				
-				JLabel etiquetaCelda = new JLabel();
-				etiquetaCelda.setHorizontalAlignment(JLabel.CENTER);
-
-				// Si el usuario selecciona la fila, le respetamos su color azul de fondo
-				if (isSelected) {
-					etiquetaCelda.setBackground(table.getSelectionBackground());
-					etiquetaCelda.setOpaque(true);
-				}
-
-				// Verificamos si la celda tiene información y si esa info son bytes
-				if (value != null && value instanceof byte[]) {
-					byte[] bytesFoto = (byte[]) value;
-					
-					// Convertimos a imagen y la escalamos a 80x50 para que quede perfecta en la celda
-					ImageIcon iconoOriginal = new ImageIcon(bytesFoto);
-					Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(80, 50, Image.SCALE_SMOOTH);
-					
-					etiquetaCelda.setIcon(new ImageIcon(imagenEscalada));
-					etiquetaCelda.setText(""); // Borramos cualquier texto feo
-				} else {
-					// Si el carro no tiene foto, ponemos este texto
-					etiquetaCelda.setIcon(null);
-					etiquetaCelda.setText("Sin foto");
-				}
-
-				return etiquetaCelda;
-			}
-		});
 		
 		list.addActionListener(e -> {
 		    String seleccion = (String) list.getSelectedItem();

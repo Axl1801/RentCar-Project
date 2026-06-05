@@ -9,7 +9,6 @@ import Views.HomeView;
 
 public class HomeController {
 	private HomeView hv;
-	private AuthView av;
 	private HomeModel hm;
 	
 	public HomeController(){

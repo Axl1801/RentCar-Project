@@ -37,7 +37,5 @@ public class Usuario {
     
     public String getNivelAcceso() {
     	return nivelAcceso;
-    }
-
-    
+    }  
 }

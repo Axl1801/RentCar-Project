@@ -296,8 +296,7 @@ public class ClientView {
 		clientes_table = new JTable(modeloClientes);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloClientes);
 		clientes_table.setRowSorter(sorter);
-
-		/*Agregamos el metodo para que el campo de texto busqueda filtre en tiempo real la tabla 
+/*Agregamos el metodo para que el campo de texto busqueda filtre en tiempo real la tabla 
 		mediante un DocumentListener*/
 		busqueda.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
@@ -402,6 +401,7 @@ public class ClientView {
 		Alert.setOpaque(false);
 		Alert.setFont(new Font("Poppins",Font.BOLD,15));
 		Alert.setForeground(Color.decode("#FFFFFF"));
+		clientPanel.add(Alert);
 		
 		//Posicionamiento de la alerta
 		gbc.gridx = 1;
@@ -444,7 +444,16 @@ public class ClientView {
 		tituloAñadir.setSize(700,100);
 		tituloAñadir.setLocation(0, 0);
 		añadirCliente.add(tituloAñadir);
-
+		
+		//Creacion de Label de error en caso de que la verificacion sea incorrecta
+		LabelRounded errorAñadir = new LabelRounded("",10,Color.decode("#BD4747"));
+		errorAñadir.setVisible(false);
+		errorAñadir.setOpaque(false);
+		errorAñadir.setFont(new Font("Poppins",Font.BOLD,15));
+		errorAñadir.setForeground(Color.decode("#FFFFFF"));
+		errorAñadir.setBounds(225,450,200,30);
+		añadirCliente.add(errorAñadir);
+		
 		//Label nombre y su respectivo campo de texto
 		JLabel nombre = new JLabel("Nombre");
 		nombre.setOpaque(false);
@@ -587,7 +596,6 @@ public class ClientView {
 		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		cancelarCliente.addActionListener(e->{
 			ventana.dispose();
-
 		});
 		añadirCliente.add(cancelarCliente);
 
@@ -597,11 +605,24 @@ public class ClientView {
 		registrarCliente.setHorizontalAlignment(JLabel.CENTER);
 		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarCliente.addActionListener(e->{
-			
-			control.addClient(campoCorreo.getText(), campoNombre.getText(), campoTelefono.getText());
-			ActivityManager.addActivity("Cliente Registrado", campoNombre.getText(), LocalTime.now(), Color.decode("308C52"));
-			LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
-			ventana.dispose();
+			System.out.println(campoCorreo.getText());
+			System.out.println(campoNombre.getText());
+			System.out.println(campoTelefono.getText());
+			boolean flag = false;
+			if(campoCorreo.getText().equals(" ") ||campoCorreo.getText().equals("---") ||
+					campoNombre.getText().equals(" ")  || campoNombre.getText().equals("---")||
+					campoTelefono.getText().equals(" ")|| campoTelefono.getText().equals("---")) {
+				Alerts sh = new Alerts(); //metodo para mostrar alerta error
+				sh.show(errorAñadir,"Datos invalidos",1);
+			}else {
+				flag = true;
+			}
+			if(flag) {
+				control.addClient(campoCorreo.getText(), campoNombre.getText(), campoTelefono.getText());
+				ActivityManager.addActivity("Cliente Registrado", campoNombre.getText(), LocalTime.now(), Color.decode("#308C52"));
+				LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
+				ventana.dispose();				
+			}
 		});
 		registrarCliente.setSize(200,60);
 		registrarCliente.setLocation(350,500);
@@ -803,7 +824,7 @@ public class ClientView {
 	        String nuevoTelefono = campoTelefono.getText();
 	        
 	        control.update(idCliente, nuevoCorreo, nuevoNombre, nuevoTelefono);
-	        ActivityManager.addActivity("Edicion Cliente", campoNombre.getText(), LocalTime.now(), Color.decode("C79E59"));
+	        ActivityManager.addActivity("Edicion Cliente", campoNombre.getText(), LocalTime.now(), Color.decode("#C79E59"));
 	        LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
 			ventana.dispose();
 		});

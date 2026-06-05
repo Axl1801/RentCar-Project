@@ -12,6 +12,9 @@ public class EstablishmentController {
 	
 	public EstablishmentController(){
 		ev = new EstablishmentView();
+		ev.setControlador(this);
+		em = new EstablishmentModel();
+		
 	}
 	
 	public JPanel showEstablishment() {
@@ -19,7 +22,7 @@ public class EstablishmentController {
 	}
 	
 	//REGRESA LA LISTA DE LOCALES
-	public ArrayList<EstablishmentModel> obtenerLocales(){
+	public ArrayList<String> obtenerLocales(){
 		return em.get();
 	}
 	
@@ -33,6 +36,11 @@ public class EstablishmentController {
 	public double calcularPrecio(double d) {
 		double precio = distancia*3;
 		return precio;
+	}
+	
+	public int obtenerIDsuc(String nombreSuc) {
+		int id = em.getIdLocacion(nombreSuc);
+		return id;
 	}
 
 }

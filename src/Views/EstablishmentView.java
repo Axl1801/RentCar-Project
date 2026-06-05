@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -34,6 +35,8 @@ import javax.swing.table.TableRowSorter;
 
 import org.jfree.chart.ui.HorizontalAlignment;
 
+import Controllers.EstablishmentController;
+import Controllers.HomeController;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
@@ -46,8 +49,14 @@ import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
 
 public class EstablishmentView {
+	EstablishmentController control;
+	
 	public EstablishmentView(){
 
+	}
+	
+	public void setControlador(EstablishmentController c) {
+		this.control = c;
 	}
 
 	public JPanel showEstablishment() {
@@ -84,6 +93,7 @@ public class EstablishmentView {
 
 		ButtonRounded seleccionarUbi = new ButtonRounded("Seleccionar Ubicacion",10,1);
 		seleccionarUbi.setOpaque(false);
+		seleccionarUbi.setIcon(ubicacionEscalada);
 		seleccionarUbi.setBackground(Color.decode("#FFFFFF"));
 		seleccionarUbi.setForeground(Color.white);
 		seleccionarUbi.setFont(new Font("Poppins",Font.PLAIN,20));
@@ -102,30 +112,6 @@ public class EstablishmentView {
 		gbc.fill = GridBagConstraints.NONE;
 		EstablishmentPanel.add(seleccionarUbi,gbc);
 
-		ImageIcon añadirIcon = new ImageIcon(getClass().getResource("/Iconos/adicionales/agregar_white.png"));
-		Image añadirEscalar = añadirIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-		ImageIcon añadirEscalada = new ImageIcon(añadirEscalar);
-
-		ButtonRounded añadirUbi = new ButtonRounded("Añadir Locación",10,1);
-		añadirUbi.setOpaque(false);
-		añadirUbi.setBackground(Color.decode("#FFFFFF"));
-		añadirUbi.setForeground(Color.white);
-		añadirUbi.setFont(new Font("Poppins",Font.PLAIN,20));
-		añadirUbi.setHorizontalTextPosition(JLabel.LEFT);
-		añadirUbi.addActionListener(e->{
-			addLocacion();
-		});
-		añadirUbi.setIcon(añadirEscalada);
-
-		gbc.gridx = 3;
-		gbc.gridy = 3;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-		gbc.insets = new Insets(0, 0, 0, 0); // 
-		gbc.fill = GridBagConstraints.NONE;
-		EstablishmentPanel.add(añadirUbi,gbc);
 
 		return EstablishmentPanel;
 	}
@@ -141,28 +127,28 @@ public class EstablishmentView {
 		ventana.setLocationRelativeTo(null);
 		ventana.setLayout(null);
 
-		PanelRounded panelCat = new PanelRounded(10,true,true,true,true);
-		panelCat.setVisible(true);
-		panelCat.setLayout(new BorderLayout());
-		panelCat.setBackground(Color.decode("#FFFFFF"));
-		panelCat.setBounds(635,365,650,500);
-		ventana.add(panelCat);
+		PanelRounded panelUbi = new PanelRounded(10,true,true,true,true);
+		panelUbi.setVisible(true);
+		panelUbi.setLayout(new BorderLayout());
+		panelUbi.setBackground(Color.decode("#FFFFFF"));
+		panelUbi.setBounds(635,365,650,500);
+		ventana.add(panelUbi);
 
 		PanelRounded panelSupCat = new PanelRounded(10,true,true,false,false);
 		panelSupCat.setVisible(true);
 		panelSupCat.setLayout(new BorderLayout());
 		panelSupCat.setBackground(Color.decode("#000D56"));
 		panelSupCat.setPreferredSize(new Dimension(0,120));
-		panelCat.add(panelSupCat,BorderLayout.NORTH);
+		panelUbi.add(panelSupCat,BorderLayout.NORTH);
 
-		JLabel tituloCat = new JLabel("AGREGAR CATEGORIA");
-		tituloCat.setBorder(new EmptyBorder(0, 0, 0, 30));
-		tituloCat.setForeground(Color.white);
-		tituloCat.setOpaque(false);
-		tituloCat.setHorizontalAlignment(JLabel.CENTER);
-		tituloCat.setFont(new Font("Poppins",Font.BOLD,30));
-		tituloCat.setHorizontalTextPosition(JLabel.CENTER);
-		panelSupCat.add(tituloCat,BorderLayout.CENTER);
+		JLabel tituloUbi = new JLabel("Seleccionar Ubicacion");
+		tituloUbi.setBorder(new EmptyBorder(0, 0, 0, 30));
+		tituloUbi.setForeground(Color.white);
+		tituloUbi.setOpaque(false);
+		tituloUbi.setHorizontalAlignment(JLabel.CENTER);
+		tituloUbi.setFont(new Font("Poppins",Font.BOLD,30));
+		tituloUbi.setHorizontalTextPosition(JLabel.CENTER);
+		panelSupCat.add(tituloUbi,BorderLayout.CENTER);
 
 		JButton regresar = new JButton();
 		regresar.setContentAreaFilled(false); // Sin fondo
@@ -177,353 +163,79 @@ public class EstablishmentView {
 			ventana.dispose();
 		});
 
-		PanelRounded contCat = new PanelRounded(10,true,true,true,true);
-		contCat.setBackground(Color.white);
-		contCat.setLayout(new BorderLayout());
-		contCat.setVisible(true);
-		panelCat.add(contCat,BorderLayout.CENTER);
+		PanelRounded contUbi = new PanelRounded(10,true,true,true,true);
+		contUbi.setBackground(Color.white);
+		contUbi.setLayout(null);
+		contUbi.setVisible(true);
+		panelUbi.add(contUbi,BorderLayout.CENTER);
+		
+		ArrayList<String> localesOrigen = control.obtenerLocales();
+		ComboBoxRounded<String> listOrigenes = new ComboBoxRounded<>(localesOrigen);
+		listOrigenes.setFont(new Font("Poppins", Font.BOLD, 15));
+		listOrigenes.setForeground(Color.black);
+		listOrigenes.setOpaque(false);
+		listOrigenes.setSize(260,40);
+		listOrigenes.setLocation(40,10);
+		contUbi.add(listOrigenes);
+		
+		ComboBoxRounded<String> listDestinos = new ComboBoxRounded<>(localesOrigen);
+		listDestinos.setFont(new Font("Poppins", Font.BOLD, 15));
+		listDestinos.setForeground(Color.black);
+		listDestinos.setOpaque(false);
+		listDestinos.setSize(260,40);
+		listDestinos.setLocation(350,10);
+		contUbi.add(listDestinos);
 
-		PanelRounded barraBusqueda = new PanelRounded(10,true,true,true,true);
-		barraBusqueda.setBackground(Color.white);
-		barraBusqueda.setLayout(new BorderLayout());
-		barraBusqueda.setVisible(true);
-		contCat.add(barraBusqueda,BorderLayout.NORTH);
+		JLabel etiquetaDistancia= new JLabel("Distancia");
+		etiquetaDistancia.setOpaque(false);
+		etiquetaDistancia.setForeground(Color.black);
+		etiquetaDistancia.setHorizontalAlignment(JLabel.LEFT);
+		etiquetaDistancia.setFont(new Font("Poppins",Font.PLAIN,20));
+		etiquetaDistancia.setBounds(150,75,100,30);
+		contUbi.add(etiquetaDistancia);
+		
+		JLabel MostrarDistancia= new JLabel("");
+		MostrarDistancia.setOpaque(false);
+		MostrarDistancia.setForeground(Color.black);
+		MostrarDistancia.setHorizontalAlignment(JLabel.LEFT);
+		MostrarDistancia.setFont(new Font("Poppins",Font.PLAIN,20));
+		MostrarDistancia.setBounds(150,110,100,30);
+		contUbi.add(MostrarDistancia);
+		
+		JLabel etiquetaCosto = new JLabel("Costo total");
+		etiquetaCosto.setOpaque(false);
+		etiquetaCosto.setForeground(Color.black);
+		etiquetaCosto.setHorizontalAlignment(JLabel.LEFT);
+		etiquetaCosto.setFont(new Font("Poppins",Font.PLAIN,20));
+		etiquetaCosto.setBounds(150,150,100,30);
+		contUbi.add(etiquetaCosto);
+		
+		JLabel MostrarCosto= new JLabel("");
+		MostrarCosto.setOpaque(false);
+		MostrarCosto.setForeground(Color.black);
+		MostrarCosto.setHorizontalAlignment(JLabel.LEFT);
+		MostrarCosto.setFont(new Font("Poppins",Font.PLAIN,20));
+		MostrarCosto.setBounds(150,185,100,30);
+		contUbi.add(MostrarCosto);
 
-		//Icono de la barra de busqueda
-		ImageIcon busquedaIcon = new ImageIcon(getClass().getResource("/Iconos/adicionales/buscar.png"));
-		//Escalamos la imagen y la asignamos a un ImageIcon
-		Image imagenEscalada = busquedaIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-		ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
+		ButtonRounded Calcular = new ButtonRounded("Calcular",10,1);
+		Calcular.setBounds(150,250,350,50);
+		Calcular.setOpaque(false);
+		Calcular.setFont(new Font("Poppins",Font.BOLD,15));
+		Calcular.setForeground(Color.white);
+		Calcular.setHorizontalAlignment(JLabel.CENTER);
+		Calcular.addActionListener(e->{
+			int idOrigen = control.obtenerIDsuc(listOrigenes.getSelectedItem().toString());
+			int idDestino = control.obtenerIDsuc(listDestinos.getSelectedItem().toString());
+			double Distancia = control.calcularDistancia(idOrigen, idDestino);
+			double Costo = control.calcularPrecio(Distancia);
+			MostrarDistancia.setText(String.valueOf(Distancia));
+			MostrarCosto.setText(String.valueOf(Costo));
 
-		JLabel labelIcono = new JLabel(iconoEscalado);
-
-		barraBusqueda.add(labelIcono, BorderLayout.WEST);
-		//Creacion del campo de texto para la barra de busqueda de clientes
-		TextFieldRounded busqueda = new TextFieldRounded(10, 10,false);
-		busqueda.setFont(new Font("Poppins", Font.PLAIN, 15));
-		busqueda.setForeground(Color.decode("#8B8B8B"));
-		busqueda.setOpaque(false);
-		busqueda.setText("Buscar Cliente");
-		barraBusqueda.add(busqueda,BorderLayout.CENTER);
-
-		//Creacion de un arreglo de opciones  para los apartados de una tabla
-		Object [] table_head = {"Sucursal","Seleccionar","Eliminar"};
-		//Creacion de una matriz para los datos de una tabla 
-		Object [][] table_content = {
-				{"8 de octubre", null, null},
-				{"Camino Real", null,null},
-				{"Chametla", null, null},
-				{"Malecón", null, null},
-		};
-
-		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
-		DefaultTableModel modeloClientes = new DefaultTableModel(table_content,table_head) {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return column == 1 || column == 2; 
-			}
-		};
-		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
-		JTable clientes_table = new JTable(modeloClientes);
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloClientes);
-		clientes_table.setRowSorter(sorter);
-
-		/*Agregamos el metodo para que el campo de texto busqueda filtre en tiempo real la tabla 
-				mediante un DocumentListener*/
-		busqueda.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void insertUpdate(DocumentEvent e) { buscar(); }
-			@Override
-			public void removeUpdate(DocumentEvent e) { buscar(); }
-			@Override
-			public void changedUpdate(DocumentEvent e) { buscar(); }
-
-			private void buscar() {
-				String textoBusqueda = busqueda.getText();
-
-				// Si la barra está vacía o tiene el texto por defecto, mostramos toda la tabla
-				if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar Cliente")) {
-					sorter.setRowFilter(null);
-				} else {
-					// El "(?i)" sirve para que la búsqueda ignore mayúsculas y minúsculas
-					sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
-				}
-			}
 		});
-
-		//Agregamos un Focus listener para que al ingresar texto se desaparezca el texto por defecto como un placeHolder
-		busqueda.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				// Cuando el usuario hace clic en la caja
-				if (busqueda.getText().equals("Buscar Cliente")) {
-					busqueda.setText(""); // Vaciar la caja
-				}
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				// Cuando el usuario hace clic en otro lado
-				if (busqueda.getText().isEmpty()) {
-					busqueda.setText("Buscar Sucursal"); // Restaurar el mensaje
-				}
-			}
-		});
-
-		//creacion y customización del scroll pane
-		JScrollPane scrollPane = new JScrollPane(clientes_table);
-		scrollPane.getVerticalScrollBar().setUI(new ScrollBarCustom());
-		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
-		scrollPane.setBorder(BorderFactory.createEmptyBorder());
-
-		ImageIcon iconEliminar = new ImageIcon(
-				getClass().getResource("/iconos/acciones/eliminar.png"));
-
-		ImageIcon iconSeleccionar = new ImageIcon(
-				getClass().getResource("/iconos/acciones/seleccionar.png"));
-
-		clientes_table.getColumnModel().getColumn(2).setCellRenderer(new ButtonRoundedRenderer(iconEliminar));
-		clientes_table.getColumnModel().getColumn(2).setCellEditor(new ButtonSimpleEditor(new JCheckBox(),iconEliminar,clientes_table,"Eliminar"));
-
-		clientes_table.getColumnModel().getColumn(1).setCellRenderer( new ButtonRoundedRenderer(iconSeleccionar));
-
-		clientes_table.getColumnModel().getColumn(1).setCellEditor(new ButtonSimpleEditor(new JCheckBox(),iconSeleccionar,clientes_table,"Seleccionar"));
-
-		clientes_table.setRowHeight(40);
-		clientes_table.getColumnModel().getColumn(2).setPreferredWidth(60);
-		clientes_table.setBackground(Color.decode("#D9D9D9"));
-		clientes_table.setShowVerticalLines(false);
-		clientes_table.setShowHorizontalLines(true);
-		contCat.add(scrollPane, BorderLayout.CENTER);
-
-		//Personalizacion de la tabla
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();//Render para centrar el texto
-		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-		clientes_table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-
-		JTableHeader header = clientes_table.getTableHeader();
-		header.setBackground(Color.decode("#AFAFAF"));
-		header.setFont(new Font("Poppins", Font.BOLD, 18));
-		DefaultTableCellRenderer headerRenderer =(DefaultTableCellRenderer) header.getDefaultRenderer();
-		headerRenderer.setOpaque(true);
-		headerRenderer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		header.setOpaque(true);
+		contUbi.add(Calcular);
 
 		ventana.setVisible(true);
 	}
 
-	public void addLocacion() {
-		// Crear Ventana JDialog
-		JDialog ventana = new JDialog();
-		ventana.setModal(true);
-		ventana.setUndecorated(true);
-		ventana.setSize(1920, 1080);
-		ventana.setBackground(new Color(0, 0, 0, 120));
-		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		ventana.setLocationRelativeTo(null);
-		ventana.setLayout(null);
-		// Panel sobre el cual se trabajara
-		PanelRounded addLocation = new PanelRounded(20, true, true, true, true);
-		addLocation.setLayout(null);
-		addLocation.setSize(700, 750);
-		addLocation.setLocation(610, 140);
-		addLocation.setBackground(Color.white);
-		addLocation.setOpaque(false);
-		ventana.add(addLocation);
-		// Label superior con nombre de pestaña
-		LabelRounded tituloAñadirLoc = new LabelRounded("Añadir Locacion", 20, Color.decode("#000D56"));
-		tituloAñadirLoc.setOpaque(false);
-		tituloAñadirLoc.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-		tituloAñadirLoc.setForeground(Color.WHITE);
-		tituloAñadirLoc.setHorizontalAlignment(JLabel.LEFT);
-		tituloAñadirLoc.setFont(new Font("Poppins", Font.BOLD, 25));
-		tituloAñadirLoc.setSize(700, 100);
-		tituloAñadirLoc.setLocation(0, 0);
-		addLocation.add(tituloAñadirLoc);
-
-		// Label nombre y su respectivo campo de texto
-		JLabel colonia = new JLabel("Colonia");
-		colonia.setOpaque(false);
-		colonia.setForeground(Color.black);
-		colonia.setHorizontalAlignment(JLabel.LEFT);
-		colonia.setFont(new Font("Poppins", Font.PLAIN, 15));
-		colonia.setSize(70, 25);
-		colonia.setLocation(210, 130);
-		addLocation.add(colonia);
-
-		TextFieldRounded campoCol = new TextFieldRounded(20, 10, true);
-		campoCol.setFont(new Font("Poppins", Font.BOLD, 15));
-		campoCol.setForeground(Color.black);
-		campoCol.setOpaque(false);
-		campoCol.setSize(280, 40);
-		campoCol.setLocation(210, 160);
-		campoCol.setText("---");
-		campoCol.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				// Cuando el usuario hace clic en la caja
-				if (campoCol.getText().equals("---")) {
-					campoCol.setText(""); // Vaciar la caja
-					campoCol.setForeground(Color.decode("#000000"));
-				}
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				// Cuando el usuario hace clic en otro lado
-				if (campoCol.getText().isEmpty()) {
-					campoCol.setText("---");// Restaurar el mensaje
-					campoCol.setForeground(Color.decode("#8B8B8B"));
-				}
-			}
-		});
-		addLocation.add(campoCol);
-
-		// Label telefono y su respectivo campo de texto
-		JLabel calles = new JLabel("Calles");
-		calles.setOpaque(false);
-		calles.setForeground(Color.black);
-		calles.setHorizontalAlignment(JLabel.LEFT);
-		calles.setFont(new Font("Poppins", Font.PLAIN, 15));
-		calles.setSize(70, 25);
-		calles.setLocation(210, 230);
-		addLocation.add(calles);
-
-		TextFieldRounded campoCalle = new TextFieldRounded(20, 10, true);
-		campoCalle.setFont(new Font("Poppins", Font.BOLD, 15));
-		campoCalle.setForeground(Color.black);
-		campoCalle.setOpaque(false);
-		campoCalle.setSize(280, 40);
-		campoCalle.setLocation(210, 260);
-		campoCalle.setText("---");
-		campoCalle.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				// Cuando el usuario hace clic en la caja
-				if (campoCol.getText().equals("---")) {
-					campoCol.setText(""); // Vaciar la caja
-					campoCol.setForeground(Color.decode("#000000"));
-				}
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				// Cuando el usuario hace clic en otro lado
-				if (campoCol.getText().isEmpty()) {
-					campoCol.setText("---");// Restaurar el mensaje
-					campoCol.setForeground(Color.decode("#8B8B8B"));
-				}
-			}
-		});
-		addLocation.add(campoCalle);
-
-		// Label telefono y su respectivo campo de texto
-		JLabel codigoPostal = new JLabel("Codigo Postal");
-		codigoPostal.setOpaque(false);
-		codigoPostal.setForeground(Color.black);
-		codigoPostal.setHorizontalAlignment(JLabel.LEFT);
-		codigoPostal.setFont(new Font("Poppins", Font.PLAIN, 15));
-		codigoPostal.setSize(70, 25);
-		codigoPostal.setLocation(210, 330);
-		addLocation.add(codigoPostal);
-
-		TextFieldRounded campoCP = new TextFieldRounded(20, 10, true);
-		campoCP.setFont(new Font("Poppins", Font.BOLD, 15));
-		campoCP.setForeground(Color.black);
-		campoCP.setOpaque(false);
-		campoCP.setSize(280, 40);
-		campoCP.setLocation(210, 360);
-		campoCP.setText("---");
-		campoCP.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				// Cuando el usuario hace clic en la caja
-				if (campoCP.getText().equals("---")) {
-					campoCP.setText(""); // Vaciar la caja
-					campoCP.setForeground(Color.decode("#000000"));
-				}
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				// Cuando el usuario hace clic en otro lado
-				if (campoCP.getText().isEmpty()) {
-					campoCP.setText("---");// Restaurar el mensaje
-					campoCP.setForeground(Color.decode("#8B8B8B"));
-				}
-			}
-		});
-		addLocation.add(campoCP);
-
-		JLabel tituloSuc = new JLabel("Nombre de Sucursal");
-		tituloSuc.setOpaque(false);
-		tituloSuc.setForeground(Color.black);
-		tituloSuc.setHorizontalAlignment(JLabel.LEFT);
-		tituloSuc.setFont(new Font("Poppins", Font.PLAIN, 15));
-		tituloSuc.setSize(70, 25);
-		tituloSuc.setLocation(210, 430);
-		addLocation.add(tituloSuc);
-
-		TextFieldRounded campoSuc = new TextFieldRounded(20, 10, true);
-		campoSuc.setFont(new Font("Poppins", Font.BOLD, 15));
-		campoSuc.setForeground(Color.black);
-		campoSuc.setOpaque(false);
-		campoSuc.setSize(280, 40);
-		campoSuc.setLocation(210, 460);
-		campoSuc.setText("---");
-		campoSuc.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				// Cuando el usuario hace clic en la caja
-				if (campoSuc.getText().equals("---")) {
-					campoSuc.setText(""); // Vaciar la caja
-					campoSuc.setForeground(Color.decode("#000000"));
-				}
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				// Cuando el usuario hace clic en otro lado
-				if (campoSuc.getText().isEmpty()) {
-					campoSuc.setText("---");// Restaurar el mensaje
-					campoSuc.setForeground(Color.decode("#8B8B8B"));
-				}
-			}
-		});
-		addLocation.add(campoSuc);
-
-		// Botones
-		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar", 10, 5);
-		cancelarCliente.setSize(150, 60);
-		cancelarCliente.setLocation(150, 600);
-		cancelarCliente.setOpaque(false);
-		cancelarCliente.setForeground(Color.white);
-		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
-		cancelarCliente.setFont(new Font("Poppins", Font.BOLD, 20));
-		cancelarCliente.addActionListener(e -> {
-			ventana.dispose();
-
-		});
-		addLocation.add(cancelarCliente);
-
-		ButtonRounded crear = new ButtonRounded("Crear", 10, 1);
-		crear.setOpaque(false);
-		crear.setForeground(Color.white);
-		crear.setHorizontalAlignment(JLabel.CENTER);
-		crear.setFont(new Font("Poppins", Font.BOLD, 20));
-		crear.setHorizontalTextPosition(JLabel.RIGHT);
-		crear.addActionListener(e -> {
-			ventana.dispose();
-		});
-		crear.setSize(150, 60);
-		crear.setLocation(400, 600);
-
-		addLocation.add(crear);
-
-		ventana.revalidate();
-		ventana.repaint();
-		ventana.setVisible(true);
-
-	}
 }

@@ -386,10 +386,18 @@ public class DashView {
 		panelPer.setLayout(new BorderLayout());
 		panelContPer.add(panelPer,BorderLayout.CENTER);
 		
-		int porcentajeRend = (int) control.get_totalMes();
-		int porcentajeRendAnt;
+		double porcentajeRend = control.get_totalMes();
+		double porcentajeRendAnt =  control.get_ganancia_mes_anterior();
+		int porcentaje;
+		
+		if(porcentajeRendAnt != 0) {
+			 porcentaje = (int) ((porcentajeRend * 100) / porcentajeRendAnt);			
+		}else {
+			 porcentaje = 100;
+		}
+		
 
-		JLabel percentage = new JLabel("94%");
+		JLabel percentage = new JLabel(String.valueOf(porcentaje) + " %");
 		percentage.setFont(new Font("Poppins",Font.BOLD,50));
 		percentage.setHorizontalAlignment(JLabel.CENTER);
 		percentage.setForeground(Color.white);
@@ -397,9 +405,23 @@ public class DashView {
 		percentage.setOpaque(false);
 		panelPer.add(percentage,BorderLayout.CENTER);
 		
+		double gananciaMesAntepasado = control.ganancia_mes_anterior_anterior();
+		double porcentajeAnterior = (porcentajeRendAnt * 100) / gananciaMesAntepasado;
+		int mejora = (int)(porcentaje - porcentajeAnterior);
+		
 		
 
-		JLabel cambioRend = new JLabel("+2.4% vs mes anterior");
+		JLabel cambioRend = new JLabel();
+		if(mejora < 0) {
+			cambioRend.setForeground(Color.red);
+			cambioRend.setText("- " + mejora + " vs mes anterior");
+		}else if(mejora > 0){
+			cambioRend.setForeground(Color.decode("#308C52"));
+			cambioRend.setText("+ " + mejora + " vs mes anterior");
+		}
+		else {
+			cambioRend.setText(" ");
+		}
 		cambioRend.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 80));
 		cambioRend.setForeground(Color.decode("#308C52"));
 		cambioRend.setFont(new Font("Poppins",Font.BOLD,12));
@@ -441,7 +463,7 @@ public class DashView {
 		
 		
 		barra.setPreferredSize(new Dimension(300, 10)); // tamaño exacto de la barra para que se vea estetica
-		barra.setValue((int) control.get_totalMes()); // porcentaje (0–100)
+		barra.setValue(porcentaje); // porcentaje (0–100)
 		barra.setStringPainted(false);
 		barra.setBackground(Color.decode("#000D56")); // fondo
 		barra.setBorderPainted(false);
@@ -493,7 +515,7 @@ public class DashView {
 		panelActividades.setOpaque(false);
 
 		
-		ActivityManager.setPanel(panelActividades);
+		ActivityManager.setPanel(panelActividades, 5);
 
 		PanelActReciente.add(panelActividades,BorderLayout.CENTER);
 

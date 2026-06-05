@@ -50,8 +50,10 @@ import Utilities.PanelRounded;
 import Utilities.ResponsiveImageLabel;
 import Utilities.TextFieldRounded;
 import Utilities.ToggleButtonRounded;
+import Utilities.Usuario;
 
 public class HomeView {
+	Usuario user = Usuario.getInstance();
 	
 	HomeController control;
 	public HomeView(){
@@ -61,12 +63,24 @@ public class HomeView {
 	public void setControlador(HomeController c) {
 		this.control = c;
 	}
+	
+	
 
 	public void showHome() {
+		//Imagen del logotipo de la ventana
+		ImageIcon logoVentana = new ImageIcon(
+				getClass().getResource("/Imagenes-sprites/paz_drive_logo_2.png")
+				);
+		Image icono = logoVentana.getImage().getScaledInstance(
+			    32, 32,
+			    Image.SCALE_SMOOTH
+			);
+		
 		JFrame ventana = new JFrame("Paz Drive");
 		ventana.setSize(1920, 1080);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ventana.setLocationRelativeTo(null);
+		ventana.setIconImage(icono);
 		ventana.setLayout(new BorderLayout());
 		ventana.setVisible(true);
 
@@ -406,30 +420,35 @@ public class HomeView {
 
 		//Mostrar vista de clientes
 		clientes.addActionListener(e->{
+			clientes.setFont(new Font("Poppins",Font.BOLD,20));
 			botonOpciones.setVisible(false);
 			tituloPanel.setText("Clientes");
 			cl.show(panelContenido,"vistaCliente");
 		});
 		//Mostrar vista de Dashboard
 		dashboard.addActionListener(e->{
+			dashboard.setFont(new Font("Poppins",Font.BOLD,20));
 			botonOpciones.setVisible(false);
 			tituloPanel.setText("Dashboard");
 			cl.show(panelContenido,"vistaDashboard");
 		});
 		//Mostrar vista de Establecimientos
 		Locales.addActionListener(e->{
+			Locales.setFont(new Font("Poppins",Font.BOLD,20));
 			botonOpciones.setVisible(false);
 			tituloPanel.setText("Establecimientos");
 			cl.show(panelContenido,"vistaEstablecimiento");
 		});
 		//Mostrar vista de Rentas
 		rentas.addActionListener(e->{
+			rentas.setFont(new Font("Poppins",Font.BOLD,20));
 			botonOpciones.setVisible(false);
 			tituloPanel.setText("Rentas");
 			cl.show(panelContenido,"vistaRentas");
 		});
 		//Mostrar vista de Vehiculos
 		vehiculos.addActionListener(e->{
+			vehiculos.setFont(new Font("Poppins",Font.BOLD,20));
 			tituloPanel.setText("Vehiculos");
 			botonOpciones.setVisible(true);
 			cl.show(panelContenido,"vistaVehiculos");
@@ -509,7 +528,7 @@ public class HomeView {
 		panelActividades.setBounds(0, 75, 300, 325);
 		panelActividades.setOpaque(false);
 
-		ActivityManager.setPanel(panelActividades);
+		ActivityManager.setPanel(panelActividades, 4);
 		
 		Notificaciones.add(panelActividades,BorderLayout.CENTER);
 
@@ -593,6 +612,11 @@ public class HomeView {
 		if(toggleNoti.isSelected()) {
 		}
 		toggleNoti.setOpaque(false);
+		toggleNoti.setSelected(true);
+		toggleNoti.addActionListener(e -> {
+			ActivityManager.setHabilitado(toggleNoti.isSelected());
+
+		});
 		panelCentral.add(toggleNoti);
 
 		ButtonRounded apliCambios = new ButtonRounded("Aplicar Cambios", 10, 1);
@@ -669,8 +693,9 @@ public class HomeView {
 		panelCentral.setOpaque(false);
 		perfil.add(panelCentral,BorderLayout.CENTER);
 
-		JLabel usuario = new JLabel("Jonathan Soto");
-		usuario.setBounds(80,50,150,30);
+		JLabel usuario = new JLabel(user.getUsuario());
+		user.getUsuario();
+		usuario.setBounds(60,50,200,30);
 		usuario.setOpaque(false);
 		usuario.setForeground(Color.BLACK);
 		usuario.setHorizontalAlignment(JLabel.LEFT);
@@ -680,8 +705,8 @@ public class HomeView {
 		usuario.setIcon(new ImageIcon(url));
 		panelCentral.add(usuario);
 
-		JLabel correo = new JLabel("jsoto@uabcs.mx");
-		correo.setBounds(80,90,150,30);
+		JLabel correo = new JLabel(user.getCorreo());
+		correo.setBounds(60,90,200,30);
 		correo.setOpaque(false);
 		correo.setForeground(Color.BLACK);
 		correo.setHorizontalAlignment(JLabel.LEFT);
@@ -691,8 +716,8 @@ public class HomeView {
 		correo.setIcon(new ImageIcon(url));
 		panelCentral.add(correo);
 
-		JLabel rol = new JLabel("Admin");
-		rol.setBounds(80,130,150,30);
+		JLabel rol = new JLabel(user.getNivelAcceso());
+		rol.setBounds(60,130,200,30);
 		rol.setOpaque(false);
 		rol.setForeground(Color.BLACK);
 		rol.setHorizontalAlignment(JLabel.LEFT);
@@ -703,28 +728,14 @@ public class HomeView {
 		panelCentral.add(rol);
 
 		ButtonRounded salir = new ButtonRounded("Salir", 10, 5);
-		salir.setBounds(50, 200, 70, 40);
+		salir.setBounds(150, 200, 100, 40);
 		salir.setOpaque(false);
 		salir.setBackground(Color.decode("#000D56"));
 		salir.setFont(new Font("Poppins",Font.BOLD,15));
-
 		salir.addActionListener(e->{
 			System.exit(0);
 		});
 		panelCentral.add(salir);
-
-		ButtonRounded editarPerfil = new ButtonRounded("Editar Perfil", 10, 3);
-		editarPerfil.setBounds(130, 200, 130, 40);
-		editarPerfil.setOpaque(false);
-		editarPerfil.setBackground(Color.decode("#000D56"));
-		editarPerfil.setFont(new Font("Poppins",Font.BOLD,15));
-
-		editarPerfil.addActionListener(e->{
-			ventana.dispose();
-		});
-
-		panelCentral.add(editarPerfil);
-		ventana.setVisible(true);
 
 	}
 

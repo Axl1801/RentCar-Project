@@ -19,6 +19,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -49,6 +50,7 @@ import Controllers.RentController;
 import Controllers.VehicleController;
 import Models.RentModel;
 import Models.VehicleModel;
+import Utilities.ActivityManager;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
@@ -225,7 +227,7 @@ public class RentView {
 		busqueda.setFont(new Font("Poppins", Font.PLAIN, 15));
 		busqueda.setForeground(Color.decode("#8B8B8B"));
 		busqueda.setOpaque(false);
-		busqueda.setText("Buscar Cliente");
+		busqueda.setText("Buscar Renta");
 		barraBusqueda.add(busqueda,BorderLayout.CENTER);
 		
 		gbc.gridx = 1;
@@ -447,7 +449,7 @@ public class RentView {
 		        String textoBusqueda = busqueda.getText();
 
 		        // Si la barra está vacía o tiene el texto por defecto, mostramos toda la tabla
-		        if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar Cliente")) {
+		        if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar Renta")) {
 		            sorter.setRowFilter(null);
 		        } else {
 		            // El "(?i)" sirve para que la búsqueda ignore mayúsculas y minúsculas
@@ -466,7 +468,7 @@ public class RentView {
 		    @Override
 		    public void focusGained(FocusEvent e) {
 		        // Cuando el usuario hace clic en la caja
-		        if (busqueda.getText().equals("Buscar Cliente")) {
+		        if (busqueda.getText().equals("Buscar Renta")) {
 		            busqueda.setText(""); // Vaciamos la caja
 		        }
 		    }
@@ -475,7 +477,7 @@ public class RentView {
 		    public void focusLost(FocusEvent e) {
 		        // Cuando el usuario hace clic en otro lado
 		        if (busqueda.getText().isEmpty()) {
-		            busqueda.setText("Buscar Cliente"); // Restauramos el mensaje
+		            busqueda.setText("Buscar Renta"); // Restauramos el mensaje
 		        }
 		    }
 		});
@@ -764,14 +766,12 @@ public class RentView {
 		
 		java.sql.Date fechaSqlInicio = java.sql.Date.valueOf(fechaInicio);
 		java.sql.Date fechaSqlEntrega = java.sql.Date.valueOf(fechaEntrega);
-		System.out.println("Antes: "
-		        + control.obtenerRentas().size());
 		registrarRenta.setSize(200,60);
 		registrarRenta.setLocation(350,750);
 		control.registrarNuevaRenta(idCliente, idVehiculo, idSucOrigen,
 				idSucEntrega, fechaSqlInicio, fechaSqlEntrega, "Pendiente");
-		System.out.println("Antes: "
-		        + control.obtenerRentas().size());
+		
+		ActivityManager.addActivity("Renta Añadida", listClientes.getSelectedItem().toString(), LocalTime.now(), Color.decode("#4C75B7"));
 		LoadData.refreshTable(Rent_table, modeloRentas, control.obtenerRentas());
 		ventana.dispose();
 		
@@ -945,11 +945,12 @@ public class RentView {
 		añadirRenta.add(fotoVehiculo);
 		
 		ButtonRounded LabelFotografiaVehiculo = new ButtonRounded("",15,6);
+		LabelFotografiaVehiculo.setText(" ");
 		LabelFotografiaVehiculo.setBounds(370,460,280,250);
 		LabelFotografiaVehiculo.setOpaque(false);
 		ImageIcon icon = new ImageIcon(f);
 		Image imagenEscalada = icon.getImage().getScaledInstance(
-			        250,    // ancho
+			        280,    // ancho
 			        250,    // alto
 			        Image.SCALE_SMOOTH);
 		LabelFotografiaVehiculo.setIcon(new ImageIcon(imagenEscalada));
@@ -978,6 +979,8 @@ public class RentView {
 		editarRenta.setFont(new Font("Poppins",Font.BOLD,20));
 		editarRenta.setHorizontalTextPosition(JLabel.RIGHT);
 		editarRenta.addActionListener(e->{
+			String id = String.valueOf(IDrenta);
+			ActivityManager.addActivity("Renta Editada", id, LocalTime.now(), Color.decode("#C79E59"));
 			control.editRent(IDrenta, Cliente, modelo, listFechasInicio.getDate(), listFechasFinal.getDate(), f);
       	ventana.dispose();
 		});

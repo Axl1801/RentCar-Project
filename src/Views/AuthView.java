@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,10 @@ import java.awt.event.FocusEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -38,7 +43,9 @@ public class AuthView {
 
 	private AuthModel model;
 	HomeController control;
-
+	CheckBoxRounded recordar;
+	TextFieldRounded correoCampo;
+	
 	public AuthView() {
 		model = new AuthModel();
 	}
@@ -49,11 +56,22 @@ public class AuthView {
 
 	public void showLogin() {
 
+		//Imagen del logotipo de la ventana
+		ImageIcon logoVentana = new ImageIcon(
+				getClass().getResource("/Imagenes-sprites/paz_drive_logo_2.png")
+				);
+		Image icono = logoVentana.getImage().getScaledInstance(
+			    32, 32,
+			    Image.SCALE_SMOOTH
+			);
+		
 		// Creada Ventana
 		JFrame ventana = new JFrame("Paz Drive");
 		ventana.setSize(1920, 1080);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		ventana.setIconImage(icono);
 		ventana.setLocationRelativeTo(null);
+		
 		ventana.setLayout(new BorderLayout(0,0));
 
 		//Contenedor para colocar los componentes desde el fondo hasta el Login
@@ -162,11 +180,11 @@ public class AuthView {
 		titulo_correo.setForeground(Color.black);
 		loginElementos.add(titulo_correo);
 
-		TextFieldRounded correoCampo = new TextFieldRounded(20,20,true);//Campo de texto para el correo
+		correoCampo = new TextFieldRounded(20,20,true);//Campo de texto para el correo
 		correoCampo.setBounds(75,195,400,40);
 		correoCampo.setOpaque(false);
 		correoCampo.setFont(new Font("Poppins",Font.BOLD,12));
-		correoCampo.setForeground(Color.decode("#8B8B8B"));
+		correoCampo.setForeground(Color.decode("#000000"));
 		correoCampo.setHorizontalAlignment(JLabel.LEFT);
 		correoCampo.setText("admin@PazDrive.com");
 		correoCampo.addFocusListener(new FocusAdapter() {
@@ -206,7 +224,7 @@ public class AuthView {
 		contraseñaCampo.setHorizontalAlignment(JLabel.LEFT);
 		loginElementos.add(contraseñaCampo);
 
-		CheckBoxRounded recordar = new CheckBoxRounded("Recordarme");//CheckBox de recordar usuario
+		recordar = new CheckBoxRounded("Recordarme");//CheckBox de recordar usuario
 		recordar.setBounds(75,360,20,20);
 		recordar.setOpaque(false);
 		recordar.setForeground(Color.BLACK);
@@ -222,6 +240,8 @@ public class AuthView {
 		recordarme.setForeground(Color.decode("#99A1AF"));  
 		loginElementos.add(recordarme); 
 
+		cargarConfiguracion();
+		
 		//Creacion de Label de error en caso de que la verificacion sea incorrecta
 		LabelRounded errorAuth = new LabelRounded("",10,Color.decode("#BD4747"));
 		errorAuth.setVisible(false);
@@ -245,22 +265,9 @@ public class AuthView {
 
 				String passText = new String(contraseñaCampo.getPassword());
 				Boolean flag1 = false, flag2 = false;
-				String recordar_correo = "";
-				String recordar_contraseña = "";
 
-				if(recordar.isSelected()) {//verificar si recordar esta marcado y guardar datos en caso de que lo este
-					recordar_correo = correoCampo.getText();
-					recordar_contraseña = passText;
-					if(model.login(recordar_correo, recordar_contraseña)){ //verificaicon con BD temporal
-
-						ventana.dispose();//eliminar ventana
-						HomeController hm = new HomeController(); //llamar al homeController y la vista
-						hm.Home();
-					}
-				}else {
-					recordar_correo = "";
-					recordar_contraseña = "";
-				}
+				guardarConfiguracion();
+				
 
 				if(passText.equals("")) {//verificacion vacia y mostrar etiqueta error
 					contraseñaCampo.setBorder(BorderFactory.createLineBorder(Color.red,2,true));
@@ -357,4 +364,53 @@ public class AuthView {
 				);
 	}
 
+	private void cargarConfiguracion() {
+
+	    Properties props = new Properties();
+
+	    try (FileInputStream in =
+	            new FileInputStream("config.properties")) {
+
+	        props.load(in);
+
+	        correoCampo.setText(
+	                props.getProperty("usuario", "")
+	        );
+
+	        recordar.setSelected(
+	                Boolean.parseBoolean(
+	                        props.getProperty("recordar", "false")
+	                )
+	        );
+
+	    } catch (IOException e) {
+	        System.out.println("Primera ejecución");
+	    }
+	}
+	
+	private void guardarConfiguracion() {
+
+	    Properties props = new Properties();
+
+	    if (recordar.isSelected()) {
+
+	    	correoCampo.setForeground(Color.black);
+	        props.setProperty("usuario",correoCampo.getText());
+
+	        props.setProperty("recordar","true");
+
+	    } else {
+
+	        props.setProperty("usuario","");
+
+	        props.setProperty("recordar","false");
+	    }
+
+	    try (FileOutputStream out = new FileOutputStream("config.properties")) {
+	        props.store(out, "Configuracion");
+
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
 }
