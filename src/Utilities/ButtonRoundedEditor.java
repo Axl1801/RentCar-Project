@@ -82,7 +82,7 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 					vc.showHistorial(idRow);
 				}
 				else if(accion.equals("Rentas")) {
-					rc.showHistorial(idRow);
+					rc.visualizarDatosReserva(idRow);
 				}
 
 			});

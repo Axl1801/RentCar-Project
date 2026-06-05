@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JOptionPane;
+
 import Utilities.PDFGenerador;
 import Models.RentModel;
 import Models.VehicleModel;
@@ -37,6 +40,7 @@ public class PDFController {
 	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
 	    
 	    if (rutaSalidaPDF == null) {
+	    	JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 	    	System.out.println("Operación de guardado cancelada por el usuario.");
 	    	return; 
 	    }
@@ -45,6 +49,7 @@ public class PDFController {
 	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosRenta);
 	    
 	    if(exitoPdf) {
+	    	JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: "+ rutaSalidaPDF);
 	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
 	    }
 	
@@ -72,6 +77,7 @@ public class PDFController {
 	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
 	    
 	    if (rutaSalidaPDF == null) {
+	    	JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 	    	System.out.println("Operación de guardado cancelada por el usuario.");
 	    	return; 
 	    }
@@ -80,6 +86,7 @@ public class PDFController {
 	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosClientes);
 	    
 	    if(exitoPdf) {
+	    	JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: "+ rutaSalidaPDF);
 	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
 	    }
 	
@@ -136,6 +143,7 @@ public class PDFController {
 	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
 	    
 	    if (rutaSalidaPDF == null) {
+	    	JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 	    	System.out.println("Operación de guardado cancelada por el usuario.");
 	    	return; 
 	    }
@@ -144,6 +152,7 @@ public class PDFController {
 	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosVehiculos);
 	    
 	    if(exitoPdf) {
+	    	JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: "+ rutaSalidaPDF);
 	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
 	    }
 	}
@@ -172,6 +181,7 @@ public class PDFController {
 	    String rutaSalidaPDF = pedirRutaAlUsuario(nombreSugerido);
 	    
 	    if (rutaSalidaPDF == null) {
+	    	JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 	    	System.out.println("Operación de guardado cancelada por el usuario.");
 	    	return; 
 	    }
@@ -200,6 +210,7 @@ public class PDFController {
 	    
 	    if (rutaSalidaPDF == null) {
 	    	System.out.println("Operación de guardado cancelada por el usuario.");
+	    	JOptionPane.showMessageDialog(null, "No se pudo descargar el PDF");
 	    	return; 
 	    }
 
@@ -207,6 +218,7 @@ public class PDFController {
 	    boolean exitoPdf = generador.generarPdf(rutaPlantilla, rutaSalidaPDF, datosPDF);
 	    
 	    if(exitoPdf) {
+	    	JOptionPane.showMessageDialog(null, "PDF descargado Exitosamente: "+ rutaSalidaPDF);
 	    	System.out.println("PDF Guardado exitosamente en: " + rutaSalidaPDF);
 	    }
 	}
