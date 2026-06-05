@@ -1302,7 +1302,7 @@ public class VehicleView {
 		detallesCliente.add(panelTabla);
 		
 		//Creacion de un arreglo de opciones  para los apartados de una tabla
-		Object [] table_head = {"ID","Foto","Modelo","Marca","Año","Precio (Dia)", "Estado","Acciones"};
+		Object [] table_head = {"ID","Nombre","Fecha Inicio","Fecha Entrega", "Estado"};
 		
 		//Creacion de modelo de tabla para poder filtrar y evitar que el usuario edite las columnas diferentes del boton
 		modeloVehiculos = new DefaultTableModel(null,table_head) {
@@ -1331,16 +1331,14 @@ public class VehicleView {
 		ArrayList<VehicleModel> listaVehiculos = control.obtenerRentasVehiculo(idVehiculo);
 		
 		// La imprime por fila 
-		for (VehicleModel Vehiculo : listaVehiculos) {
-		    Object[] fila = new Object[8];
-		    fila[0] = Vehiculo.getIdLetra();
-		    fila[1] = Vehiculo.getfoto(); // Aquí van los bytes puros
-		    fila[2] = Vehiculo.getmodelo();
-		    fila[3] = Vehiculo.getmarca();
-		    fila[4] = Vehiculo.getanio();
-		    fila[5] = Vehiculo.getprecio_dia();
-		    fila[6] = Vehiculo.getestado();
-		    fila[7] = "";	    
+		for (VehicleModel renta : listaVehiculos) {
+		    Object[] fila = new Object[5];
+		    fila[0] = renta.getId_renta(); 
+		    fila[1] = renta.getName();
+		    fila[2] = renta.getInicio_renta();
+		    fila[3] = renta.getFin_renta();
+		    fila[4] = renta.getestado();
+		    
 		    modeloVehiculos.addRow(fila);
 		}
 		

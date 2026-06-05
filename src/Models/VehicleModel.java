@@ -375,7 +375,7 @@ public class VehicleModel implements FilaTabla{
 				 		"WHERE r.id_vehiculo = ?";
 	        
 		 Connection conn = null; 	 
-		 System.out.println(query);
+		 System.out.println("Ejecutando query: " + query);
 		   	
 		 Properties propiedades = new Properties();
 		   	
@@ -384,7 +384,11 @@ public class VehicleModel implements FilaTabla{
 			 String url = propiedades.getProperty("db.url");
 			 String user = propiedades.getProperty("db.user");
 			 String contra = propiedades.getProperty("db.password");
+			 
+			 System.out.println("ANSDJFOKBNADSBFNIJAHKSB");
+			 
 			 try {
+				 System.out.println("561968416548948948");
 				 Class.forName("com.mysql.cj.jdbc.Driver");
 				 conn = DriverManager.getConnection(url, user, contra);
 
@@ -393,6 +397,8 @@ public class VehicleModel implements FilaTabla{
 				 ResultSet rs = ps.executeQuery();
 	    			
 				 while (rs.next()) {
+					 System.out.println("HUEVOS ARIAN - Registro encontrado");
+					 
 					 VehicleModel tmp = new VehicleModel();
 
 					 tmp.setId_renta(rs.getInt("id_renta"));
@@ -400,23 +406,31 @@ public class VehicleModel implements FilaTabla{
 					 tmp.setInicio_renta(rs.getDate("inicio_renta"));
 					 tmp.setFin_renta(rs.getDate("fin_renta"));
 					 tmp.setestado(rs.getString("estado"));
-					 System.out.println("dfadsfsadfs");
+					 
+					 System.out.println("dfadsfsadfs - Agregando a la lista");
 					 rentas.add(tmp);
 				 }
 	                
 				 rs.close();
 				 ps.close();
-				 conn.close();
-	    			
+
 			 } catch (Exception e) {
+				 System.out.println("Error en la consulta: " + e.getMessage());
 				 e.printStackTrace();
+			 } finally {
+				 try {
+					 if (conn != null && !conn.isClosed()) {
+						 conn.close();
+					 }
+				 } catch (Exception ex) {}
 			 }
 
-		 } catch (IOException e) {
+		 } catch (Exception e) {
 			 System.out.println("Error al leer configuración: " + e.getMessage());
 		 }
+		 
 		 return rentas;
-	 }	 
+	 }
 	 
 	 public ArrayList<String> getListaMarcas() {
 		 ArrayList<String> marcas = new ArrayList<>();
