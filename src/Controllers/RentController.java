@@ -20,7 +20,6 @@ import Views.RentView;
 public class RentController {
 	private RentView rv;
 	private RentModel rm;
-	private VehicleController vc;
 	
 	public RentController() {
 		rv = new RentView();
@@ -46,31 +45,31 @@ public class RentController {
 	}
 	
 	//REGRESA TRUE SI SE REGISTRO NUEVA RENTA, VALIDA LA DISTANCIA DE SUCURSALES Y EL PRECIO TOTAL
-	public void registrarNuevaRenta(int ic, int iv, int io, int ild, Date fi, Date ff, String e) {
+	public void registrarNuevaRenta(int ic, int idModelo, int io, int ild, Date fi, Date ff, String e) {
         
 		int idCliente = ic;
-		int idVehiculo = iv;
 		int idOrigen = io;
         int idDestino = ild;
         Date fechaInicio = fi;
         Date fechaFin = ff;
         String estado = e;
 
-        BigDecimal costoFinal = rm.calcularCostoTotal(iv, io, ild, fi, ff);
-        double distanciaCalculada = rm.getDistancia_recorrida();
+        int idVehiculo = rm.getVehiculoFisicoDisponible(idModelo, fechaInicio, fechaFin);
+        
+        if (idVehiculo != -1) {
+            
+            BigDecimal costoFinal = rm.calcularCostoTotal(idVehiculo, idOrigen, idDestino, fechaInicio, fechaFin);
+            double distanciaCalculada = rm.getDistancia_recorrida();
 
-        if (rm.DisponibilidadVehiculos(iv, fi, ff)) {
-           
-			boolean exito = rm.make(idCliente, idVehiculo, idOrigen, idDestino, fechaInicio, fechaFin, distanciaCalculada, costoFinal, estado);
+            boolean exito = rm.make(idCliente, idVehiculo, idOrigen, idDestino, fechaInicio, fechaFin, distanciaCalculada, costoFinal, estado);
+            
             if(exito) {
-            	System.out.println("Renta registrada exitosamente");
+                System.out.println("Renta registrada exitosamente con el Vehículo " + idVehiculo );
             }
             
-		} else {
-        	System.out.println("¡Error! Ese vehículo ya está rentado en esas fechas.");
-
+        } else {
+            System.out.println("¡Lo sentimos! No hay ningún vehículo de este modelo disponible en esas fechas.");
         }
-        
 	}
 	
 	//ACTUALIZA LA RENTA A CANCELADA
@@ -199,12 +198,12 @@ public class RentController {
 	
 	 //REGRESA LISTA DE MODELOS
 	 public ArrayList<String> getListaModelos() {
-		 return vc.getListaModelos();
+		 return rm.getNombresModelos();
 	 }
 	 
 	 //REGRESA EL ID DEL MODELO DEL NBOMBRE
 	 public int obtenerIdModelo(String modelo) {
-		 int id_modelo = vc.obtenerIdModelo(modelo);
+		 int id_modelo = rm.obtenerIdModelo(modelo);
 		 return id_modelo;
 	 }
 	 

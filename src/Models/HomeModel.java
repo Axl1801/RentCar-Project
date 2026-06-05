@@ -14,7 +14,7 @@ public class HomeModel {
 	
 	 public ArrayList<String> getListaMarcas() {
 		 ArrayList<String> marcas = new ArrayList<>();
-		 String query = "SELECT nombre FROM Marcas ORDER BY nombre ASC";
+		 String query = "SELECT nombre FROM Marcas ORDER BY id_marca ASC";
 
 		 Properties propiedades = new Properties();
 		 try (InputStream entrada = new FileInputStream("Claves.txt")) {

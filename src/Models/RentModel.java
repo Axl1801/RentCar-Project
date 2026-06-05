@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.sql.Date;
 import java.util.concurrent.TimeUnit;
+
+import Utilities.FilaTabla;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Base64;
 
-public class RentModel {
+public class RentModel implements FilaTabla{
 
     private int id_renta;
     private String nameCliente;
@@ -355,10 +358,10 @@ public class RentModel {
     public boolean DisponibilidadVehiculos(int idVehiculo, Date fechaInicioPropuesta, Date fechaFinPropuesta) {
         
     	String query = "SELECT COUNT(*) AS rentas_empalmadas FROM Rentas " +
-                       "WHERE id_vehiculo = ? " +
-                       "AND inicio_renta <= ? " +
-                       "AND fin_renta >= ?" +
-                       "AND estado != 'Cancelada' OR != 'Finalizado'";
+	               "WHERE id_vehiculo = ? " +
+	               "AND inicio_renta <= ? " +
+	               "AND fin_renta >= ? " + 
+	               "AND estado NOT IN ('Cancelado', 'Finalizado')";
         
     	boolean estaDisponible = true;
     	Properties propiedades = new Properties();
@@ -392,6 +395,46 @@ public class RentModel {
     	}
         
     	return estaDisponible;
+    }
+    
+    public int getVehiculoFisicoDisponible(int id_modelo, Date fechaInicio, Date fechaFin) {
+        int idVehiculo = -1;
+        
+        String query = "SELECT id_vehiculo FROM Vehiculos " +
+                       "WHERE id_modelo = ? " +
+                       "AND id_vehiculo NOT IN (" +
+                       "    SELECT id_vehiculo FROM Rentas " +
+                       "    WHERE estado NOT IN ('Cancelado', 'Finalizado') " +
+                       "    AND inicio_renta <= ? " +
+                       "    AND fin_renta >= ?" +
+                       ") LIMIT 1";
+
+        Properties propiedades = new Properties();
+        try (InputStream entrada = new FileInputStream("Claves.txt")) {
+            propiedades.load(entrada);
+            String url = propiedades.getProperty("db.url");
+            String user = propiedades.getProperty("db.user");
+            String contra = propiedades.getProperty("db.password");
+
+            try (Connection conn = DriverManager.getConnection(url, user, contra);
+                 PreparedStatement ps = conn.prepareStatement(query)) {
+                 
+                ps.setInt(1, id_modelo);
+                ps.setDate(2, fechaFin);     
+                ps.setDate(3, fechaInicio);     
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        // ¡Encontramos uno libre! Atrapamos su ID físico real
+                    	idVehiculo = rs.getInt("id_vehiculo");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al buscar un vehículo libre: " + e.getMessage());
+        }
+        
+        return idVehiculo;
     }
     
     public boolean cancelarRenta(int id_renta) {
@@ -537,6 +580,38 @@ public class RentModel {
     	}
     	return modelos;
     }
+ 
+	 public ArrayList<String> getNombresModelos() {
+		 ArrayList<String> nombres = new ArrayList<>();
+	         
+		 String query = "SELECT nombre FROM Modelos ORDER BY id_modelo ASC";
+	         
+		 Properties propiedades = new Properties();
+
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query);
+					 ResultSet rs = ps.executeQuery()) {
+
+				 while (rs.next()) {
+					 nombres.add(rs.getString("nombre"));
+				 }
+				 
+			 } catch (Exception e) {
+				 System.out.println("Error al obtener nombres de los modelos: " + e.getMessage());
+			 }
+
+		 } catch (Exception e) {
+			 System.out.println("Error al leer Claves.txt: " + e.getMessage());
+		 }
+	         
+		 return nombres;
+	 }
     
     public ArrayList<String> getNombresSucursales() {
     	ArrayList<String> nombres = new ArrayList<>();
@@ -601,7 +676,7 @@ public class RentModel {
     public ArrayList<String> getNombresClientes() {
     	ArrayList<String> nombres = new ArrayList<>();
         
-    	String query = "SELECT name FROM Clientes ORDER BY name ASC";
+    	String query = "SELECT name FROM Clientes ORDER BY id_cliente ASC";
         
     	Properties propiedades = new Properties();
 
@@ -629,6 +704,33 @@ public class RentModel {
         
         return nombres;
     }
+   
+	 public int obtenerIdModelo(String nombreModelo) {
+		 int idModelo = -1;
+		 String query = "SELECT id_modelo FROM Modelos WHERE nombre = ?";
+
+		 Properties propiedades = new Properties();
+		 try (InputStream entrada = new FileInputStream("Claves.txt")) {
+			 propiedades.load(entrada);
+			 String url = propiedades.getProperty("db.url");
+			 String user = propiedades.getProperty("db.user");
+			 String contra = propiedades.getProperty("db.password");
+
+			 try (Connection conn = DriverManager.getConnection(url, user, contra);
+					 PreparedStatement ps = conn.prepareStatement(query)) {
+	                 
+				 ps.setString(1, nombreModelo);
+				 try (ResultSet rs = ps.executeQuery()) {
+					 if (rs.next()) {
+						 idModelo = rs.getInt("id_modelo");
+					 }
+				 }
+			 }
+		 } catch (Exception e) {
+			 System.out.println("Error al buscar el ID del modelo: " + e.getMessage());
+		 }
+		 return idModelo;
+	 }
     
     public int getIdPorNombre_Clientes(String nombreCliente) {
         int idCliente = -1; 
@@ -932,4 +1034,8 @@ public class RentModel {
     	this.estado = estado; 
     }
 
+    @Override
+    public Object[] toFila() {
+        return new Object[]{getIdLetra(), getnameCliente(), getId_vehiculo(), getfoto(), getInicio_renta(),getFin_renta(),getEstado(), ""};
+    }
 }

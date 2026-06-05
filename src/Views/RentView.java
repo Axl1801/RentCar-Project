@@ -95,7 +95,7 @@ public class RentView {
 		total_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalVehiculos.add(total_titulo, BorderLayout.NORTH);
 
-		JLabel total = new JLabel("50");//Etitqueta de total vehiculos num
+		JLabel total = new JLabel(Integer.toString(control.numeroVehiculos_total()));//Etitqueta de total vehiculos num
 		total.setBackground(Color.white);
 		total.setForeground(Color.BLACK);
 		total.setHorizontalAlignment(JLabel.CENTER);
@@ -126,7 +126,7 @@ public class RentView {
 		disp_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalDisponibles.add(disp_titulo, BorderLayout.NORTH);
 
-		JLabel disp = new JLabel("20");//Etitqueta de total disponibles num
+		JLabel disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de total disponibles num
 		disp.setBackground(Color.white);
 		disp.setForeground(Color.BLACK);
 		disp.setHorizontalAlignment(JLabel.CENTER);
@@ -156,7 +156,7 @@ public class RentView {
 		rentado_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalRentados.add(rentado_titulo, BorderLayout.NORTH);
 
-		JLabel rent = new JLabel("25");//Etitqueta de totalrentados  num
+		JLabel rent = new JLabel(Integer.toString(control.numeroVehiculos_renta()));//Etitqueta de totalrentados  num
 		rent.setBackground(Color.white);
 		rent.setForeground(Color.BLACK);
 		rent.setHorizontalAlignment(JLabel.CENTER);
@@ -185,8 +185,8 @@ public class RentView {
 		mantenimiento_titulo.setHorizontalAlignment(JLabel.CENTER);
 		mantenimiento_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalMantenimiento.add(mantenimiento_titulo, BorderLayout.NORTH);
-
-		JLabel mant = new JLabel("5");//Etitqueta de mantenimiento num
+		
+		JLabel mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));//Etitqueta de mantenimiento num
 		mant.setBackground(Color.white);
 		mant.setForeground(Color.BLACK);
 		mant.setHorizontalAlignment(JLabel.CENTER);
@@ -410,10 +410,10 @@ public class RentView {
 		            sorter.setSortKeys(null);
 		            break;
 		        case "Cliente":
-		        	sorter.setSortKeys(List.of(new RowSorter.SortKey(2, SortOrder.DESCENDING)));
+		        	sorter.setSortKeys(List.of(new RowSorter.SortKey(1, SortOrder.DESCENDING)));
 		        	break;
 		        case "Vehiculo":
-		            sorter.setSortKeys(List.of(new RowSorter.SortKey(3, SortOrder.ASCENDING)));
+		            sorter.setSortKeys(List.of(new RowSorter.SortKey(2, SortOrder.ASCENDING)));
 		            break;
 		        case "Inicio(DSC)":
 		            sorter.setSortKeys(List.of(new RowSorter.SortKey(4, SortOrder.DESCENDING)));
@@ -537,14 +537,14 @@ public class RentView {
 
 	public void addRent() {
 		// Crear Ventana JDialog
-		  JDialog ventana = new JDialog();
-		  ventana.setModal(true);
-		  ventana.setUndecorated(true);
-		  ventana.setSize(1920, 1080);
-		  ventana.setBackground(new Color(0, 0, 0, 120)); 
-		  ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		  ventana.setLocationRelativeTo(null);
-		  ventana.setLayout(null);
+		JDialog ventana = new JDialog();
+		ventana.setModal(true);
+		ventana.setUndecorated(true);
+		ventana.setSize(1920, 1080);
+		ventana.setBackground(new Color(0, 0, 0, 120)); 
+		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		ventana.setLocationRelativeTo(null);
+		ventana.setLayout(null);
 		//Panel sobre el cual se trabajara
 		PanelRounded añadirRenta = new PanelRounded(20,true,true,true,true);
 		añadirRenta.setLayout(null);
@@ -616,7 +616,7 @@ public class RentView {
 		listFechasInicio.setFont(new Font("Poppins", Font.BOLD, 15));
 		listFechasInicio.setForeground(Color.black);
 		listFechasInicio.setOpaque(false);
-		listFechasInicio.setSize(280,40);
+		listFechasInicio.setSize(450,40);
 		listFechasInicio.setLocation(50,360);
 		añadirRenta.add(listFechasInicio);
 		
@@ -633,45 +633,45 @@ public class RentView {
 		listFechasFinal.setFont(new Font("Poppins", Font.BOLD, 15));
 		listFechasFinal.setForeground(Color.black);
 		listFechasFinal.setOpaque(false);
-		listFechasFinal.setSize(280,40);
+		listFechasFinal.setSize(450,40);
 		listFechasFinal.setLocation(50,460);
 		añadirRenta.add(listFechasFinal);
 		
-		JLabel precio = new JLabel("Precio Por Dia");
-		precio.setOpaque(false);
-		precio.setForeground(Color.black);
-		precio.setHorizontalAlignment(JLabel.LEFT);
-		precio.setFont(new Font("Poppins",Font.PLAIN,15));
-		precio.setSize(150,25);
-		precio.setLocation(50,530);
-		añadirRenta.add(precio);
-		
-		ArrayList<BigDecimal> precios = control.getListaPrecios();
-		ComboBoxRounded<BigDecimal> listPreciosMax = new ComboBoxRounded<>(precios);
-		listPreciosMax.setFont(new Font("Poppins", Font.BOLD, 15));
-		listPreciosMax.setForeground(Color.black);
-		listPreciosMax.setOpaque(false);
-		listPreciosMax.setSize(280,40);
-		listPreciosMax.setLocation(50,560);
-		añadirRenta.add(listPreciosMax);
-		
-		JLabel sucursal = new JLabel("Sucursal de Recoleccion");
-		sucursal.setOpaque(false);
-		sucursal.setForeground(Color.black);
-		sucursal.setHorizontalAlignment(JLabel.LEFT);
-		sucursal.setFont(new Font("Poppins",Font.PLAIN,15));
-		sucursal.setSize(200,25);
-		sucursal.setLocation(50,630);
-		añadirRenta.add(sucursal);
+		JLabel SucOrigen = new JLabel("Sucursal de Recoleccion");
+		SucOrigen.setOpaque(false);
+		SucOrigen.setForeground(Color.black);
+		SucOrigen.setHorizontalAlignment(JLabel.LEFT);
+		SucOrigen.setFont(new Font("Poppins",Font.PLAIN,15));
+		SucOrigen.setSize(150,25);
+		SucOrigen.setLocation(50,530);
+		añadirRenta.add(SucOrigen);
 		
 		ArrayList<String> sucursales = control.getNombresSucursales();
-		ComboBoxRounded<String> listSucursales = new ComboBoxRounded<>(sucursales);
-		listSucursales.setFont(new Font("Poppins", Font.BOLD, 15));
-		listSucursales.setForeground(Color.black);
-		listSucursales.setOpaque(false);
-		listSucursales.setSize(280,40);
-		listSucursales.setLocation(50,660);
-		añadirRenta.add(listSucursales);
+		ComboBoxRounded<String> listSucursalOrigen = new ComboBoxRounded<>(sucursales);
+		listSucursalOrigen.setFont(new Font("Poppins", Font.BOLD, 15));
+		listSucursalOrigen.setForeground(Color.black);
+		listSucursalOrigen.setOpaque(false);
+		listSucursalOrigen.setSize(280,40);
+		listSucursalOrigen.setLocation(50,560);
+		añadirRenta.add(listSucursalOrigen);
+		
+		JLabel sucursalEntrega = new JLabel("Sucursal de Entrega");
+		sucursalEntrega.setOpaque(false);
+		sucursalEntrega.setForeground(Color.black);
+		sucursalEntrega.setHorizontalAlignment(JLabel.LEFT);
+		sucursalEntrega.setFont(new Font("Poppins",Font.PLAIN,15));
+		sucursalEntrega.setSize(200,25);
+		sucursalEntrega.setLocation(50,630);
+		añadirRenta.add(sucursalEntrega);
+		
+		
+		ComboBoxRounded<String> listSucuralEntrega = new ComboBoxRounded<>(sucursales);
+		listSucuralEntrega.setFont(new Font("Poppins", Font.BOLD, 15));
+		listSucuralEntrega.setForeground(Color.black);
+		listSucuralEntrega.setOpaque(false);
+		listSucuralEntrega.setSize(280,40);
+		listSucuralEntrega.setLocation(50,660);
+		añadirRenta.add(listSucuralEntrega);
 		
 		JLabel fotoCliente = new JLabel("Foto Del Cliente");
 		fotoCliente.setOpaque(false);
@@ -739,6 +739,16 @@ public class RentView {
 		});
 		añadirRenta.add(cancelarCliente);
 		
+		int idCliente = control.clientelID(listClientes.getSelectedItem().toString());
+		int idVehiculo = control.obtenerIdModelo(listVehiculos.getSelectedItem().toString());
+		int idSucOrigen = control.sucursalID(listSucursalOrigen.getSelectedItem().toString());
+		int idSucEntrega = control.sucursalID(listSucuralEntrega.getSelectedItem().toString());
+		LocalDate fechaInicio = listFechasInicio.getDate();
+		LocalDate fechaEntrega = listFechasFinal.getDate();
+		
+		java.sql.Date fechaSqlInicio = java.sql.Date.valueOf(fechaInicio);
+		java.sql.Date fechaSqlEntrega = java.sql.Date.valueOf(fechaEntrega);
+		
 		ButtonRounded registrarRenta = new ButtonRounded("Registrar Renta",10,1);
 		registrarRenta.setOpaque(false);
 		registrarRenta.setForeground(Color.white);
@@ -757,7 +767,9 @@ public class RentView {
 		});
 		registrarRenta.setSize(200,60);
 		registrarRenta.setLocation(350,750);
-
+		registrarRenta.addActionListener(e->{
+			control.registrarNuevaRenta(idCliente, idVehiculo, idSucOrigen, idSucEntrega, fechaSqlInicio, fechaSqlEntrega, "Activo");
+		});
 	    añadirRenta.add(registrarRenta);
 		
 		
@@ -1045,12 +1057,31 @@ public class RentView {
 		listEstados.setLocation(50,260);
 		filtrosAvanzados.add(listEstados);
 		
+		//Label telefono y su respectivo campo de texto
+		JLabel Precio = new JLabel("Precio");
+		Precio.setOpaque(false);
+		Precio.setForeground(Color.black);
+		Precio.setHorizontalAlignment(JLabel.LEFT);
+		Precio.setFont(new Font("Poppins",Font.PLAIN,15));
+		Precio.setSize(70,25);
+		Precio.setLocation(50,330);
+		filtrosAvanzados.add(Precio);
+		
+		ArrayList<BigDecimal> precios = control.getListaPrecios();
+		ComboBoxRounded<BigDecimal> listPreciosMin = new ComboBoxRounded<>(precios);
+		listPreciosMin.setFont(new Font("Poppins", Font.BOLD, 15));
+		listPreciosMin.setForeground(Color.black);
+		listPreciosMin.setOpaque(false);
+		listPreciosMin.setSize(120,40);
+		listPreciosMin.setLocation(50,360);
+		filtrosAvanzados.add(listPreciosMin);
+		
 		JLabel tituloFechaInicio = new JLabel("Fecha de Inicio");
 		tituloFechaInicio.setOpaque(false);
 		tituloFechaInicio.setForeground(Color.black);
 		tituloFechaInicio.setHorizontalAlignment(JLabel.LEFT);
 		tituloFechaInicio.setFont(new Font("Poppins",Font.PLAIN,15));
-		tituloFechaInicio.setSize(70,25);
+		tituloFechaInicio.setSize(150,25);
 		tituloFechaInicio.setLocation(370,130);
 		filtrosAvanzados.add(tituloFechaInicio);
 		
@@ -1058,7 +1089,7 @@ public class RentView {
 		selectorFechaInicio.setFont(new Font("Poppins", Font.BOLD, 15));
 		selectorFechaInicio.setForeground(Color.black);
 		selectorFechaInicio.setOpaque(false);
-		selectorFechaInicio.setSize(280,40);
+		selectorFechaInicio.setSize(450,40);
 		selectorFechaInicio.setLocation(370,160);
 		filtrosAvanzados.add(selectorFechaInicio);
 		
@@ -1067,26 +1098,17 @@ public class RentView {
 		tituloFechaFin.setForeground(Color.black);
 		tituloFechaFin.setHorizontalAlignment(JLabel.LEFT);
 		tituloFechaFin.setFont(new Font("Poppins",Font.PLAIN,15));
-		tituloFechaFin.setSize(70,25);
-		tituloFechaFin.setLocation(370,330);
+		tituloFechaFin.setSize(150,25);
+		tituloFechaFin.setLocation(370,230);
 		filtrosAvanzados.add(tituloFechaFin);
 		
 		DatePickerRounded selectorFechaFin = new DatePickerRounded();
 		selectorFechaFin.setFont(new Font("Poppins", Font.BOLD, 15));
 		selectorFechaFin.setForeground(Color.black);
 		selectorFechaFin.setOpaque(false);
-		selectorFechaFin.setSize(280,40);
-		selectorFechaFin.setLocation(370,360);
+		selectorFechaFin.setSize(450,40);
+		selectorFechaFin.setLocation(370,260);
 		filtrosAvanzados.add(selectorFechaFin);
-		
-		ArrayList<BigDecimal> precios = control.getListaPrecios();
-		ComboBoxRounded<BigDecimal> listPreciosMin = new ComboBoxRounded<>(precios);
-		listPreciosMin.setFont(new Font("Poppins", Font.BOLD, 15));
-		listPreciosMin.setForeground(Color.black);
-		listPreciosMin.setOpaque(false);
-		listPreciosMin.setSize(120,40);
-		listPreciosMin.setLocation(370,260);
-		filtrosAvanzados.add(listPreciosMin);
 		
 		//Botones
 		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);

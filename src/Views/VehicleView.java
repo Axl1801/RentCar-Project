@@ -104,7 +104,7 @@ public class VehicleView {
 		total_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalVehiculos.add(total_titulo, BorderLayout.NORTH);
 
-		JLabel total = new JLabel("50");//Etitqueta de total vehiculos num
+		JLabel total = new JLabel(Integer.toString(control.numeroVehiculos_total()));//Etitqueta de total vehiculos num
 		total.setBackground(Color.white);
 		total.setForeground(Color.BLACK);
 		total.setHorizontalAlignment(JLabel.CENTER);
@@ -135,7 +135,7 @@ public class VehicleView {
 		disp_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalDisponibles.add(disp_titulo, BorderLayout.NORTH);
 
-		JLabel disp = new JLabel("20");//Etitqueta de total disponibles num
+		JLabel disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de total disponibles num
 		disp.setBackground(Color.white);
 		disp.setForeground(Color.BLACK);
 		disp.setHorizontalAlignment(JLabel.CENTER);
@@ -165,7 +165,7 @@ public class VehicleView {
 		rentado_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalRentados.add(rentado_titulo, BorderLayout.NORTH);
 
-		JLabel rent = new JLabel("25");//Etitqueta de totalrentados  num
+		JLabel rent = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de totalrentados  num
 		rent.setBackground(Color.white);
 		rent.setForeground(Color.BLACK);
 		rent.setHorizontalAlignment(JLabel.CENTER);
@@ -195,7 +195,7 @@ public class VehicleView {
 		mantenimiento_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalMantenimiento.add(mantenimiento_titulo, BorderLayout.NORTH);
 
-		JLabel mant = new JLabel("5");//Etitqueta de mantenimiento num
+		JLabel mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));//Etitqueta de mantenimiento num
 		mant.setBackground(Color.white);
 		mant.setForeground(Color.BLACK);
 		mant.setHorizontalAlignment(JLabel.CENTER);
@@ -231,7 +231,7 @@ public class VehicleView {
 		busqueda.setFont(new Font("Poppins", Font.PLAIN, 15));
 		busqueda.setForeground(Color.decode("#8B8B8B"));
 		busqueda.setOpaque(false);
-		busqueda.setText("Buscar Cliente");
+		busqueda.setText("Buscar Vehiculo");
 		barraBusqueda.add(busqueda,BorderLayout.CENTER);
 		
 		gbc.gridx = 1;
@@ -451,7 +451,7 @@ public class VehicleView {
 		        String textoBusqueda = busqueda.getText();
 
 		        // Si la barra está vacía o tiene el texto por defecto, mostramos toda la tabla
-		        if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar Cliente")) {
+		        if (textoBusqueda.trim().length() == 0 || textoBusqueda.equals("Buscar Vehiculo")) {
 		            sorter.setRowFilter(null);
 		        } else {
 		            // El "(?i)" sirve para que la búsqueda ignore mayúsculas y minúsculas
@@ -742,7 +742,6 @@ public class VehicleView {
 		registrarVehiculo.setForeground(Color.white);
 		registrarVehiculo.setHorizontalAlignment(JLabel.CENTER);
 		registrarVehiculo.setFont(new Font("Poppins",Font.BOLD,15));
-		
 		registrarVehiculo.addActionListener(e->{
 			//Agregar Vehiculo
 			control.addVehicle(fotoSeleccionada,

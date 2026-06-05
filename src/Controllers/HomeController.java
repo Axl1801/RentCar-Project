@@ -14,6 +14,8 @@ public class HomeController {
 	
 	public HomeController(){
 		hv = new HomeView();
+		hv.setControlador(this);
+		hm = new HomeModel();
 	}
 	
 	public void Home() {

@@ -18,6 +18,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -1009,7 +1010,7 @@ public class HomeView {
 		tituloMarca.setHorizontalAlignment(JLabel.CENTER);
 		tituloMarca.setFont(new Font("Poppins",Font.BOLD,30));
 		tituloMarca.setHorizontalTextPosition(JLabel.CENTER);
-		panelMarca.add(tituloMarca,BorderLayout.CENTER);
+		panelSupMarca.add(tituloMarca,BorderLayout.CENTER);
 
 		JButton regresar = new JButton();
 		regresar.setContentAreaFilled(false); // Sin fondo
@@ -1019,10 +1020,10 @@ public class HomeView {
 		if (url != null) {
 			regresar.setIcon(new ImageIcon(url));
 		}
-		panelMarca.add(regresar,BorderLayout.WEST);
 		regresar.addActionListener(e->{
 			ventana.dispose();
 		});
+		panelSupMarca.add(regresar,BorderLayout.WEST);
 
 		PanelRounded contMarca = new PanelRounded(10,true,true,true,true);
 		contMarca.setBackground(Color.white);
@@ -1073,6 +1074,7 @@ public class HomeView {
 		regMarca.setForeground(Color.white);
 		regMarca.setHorizontalAlignment(JLabel.CENTER);
 		regMarca.addActionListener(e->{
+			System.out.println("marca a guardar"+campoMarca.getText());
 			control.generarMarca(campoMarca.getText());
 		});
 		contMarca.add(regMarca);
@@ -1133,8 +1135,7 @@ public class HomeView {
 		contMod.setVisible(true);
 		panelMod.add(contMod,BorderLayout.CENTER);
 		
-		String[] marcas = {"Elegir Marca", "Chevrolet", "Ford", "Honda", "Hyundai","Jeep","Kia","Land Rover", "Mazda", "Mercedes-Benz", "BMW",
-				"Nissan", "Subaru", "Suzuki","Toyota","Volkswagen"};
+		ArrayList<String> marcas = control.getListaMarcas();
 		ComboBoxRounded<String> listMarcas = new ComboBoxRounded<>(marcas);
 		listMarcas.setFont(new Font("Poppins", Font.BOLD, 15));
 		listMarcas.setForeground(Color.black);
@@ -1185,6 +1186,9 @@ public class HomeView {
 		regMod.setFont(new Font("Poppins",Font.BOLD,15));
 		regMod.setForeground(Color.white);
 		regMod.setHorizontalAlignment(JLabel.CENTER);
+		regMod.addActionListener(e->{
+			control.generarModelo(listMarcas.getSelectedItem().toString(), campoMod.getText());
+		});
 		contMod.add(regMod);
 
 		ventana.setVisible(true);
