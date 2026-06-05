@@ -13,6 +13,7 @@ import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -40,6 +41,7 @@ import java.util.List;
 
 import Controllers.ClientController;
 import Models.ClientModel;
+import Utilities.ActivityManager;
 import Utilities.Alerts;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
@@ -595,7 +597,9 @@ public class ClientView {
 		registrarCliente.setHorizontalAlignment(JLabel.CENTER);
 		registrarCliente.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarCliente.addActionListener(e->{
+			
 			control.addClient(campoCorreo.getText(), campoNombre.getText(), campoTelefono.getText());
+			ActivityManager.addActivity("Cliente Registrado", campoNombre.getText(), LocalTime.now(), Color.decode("308C52"));
 			LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
 			ventana.dispose();
 		});
@@ -765,8 +769,7 @@ public class ClientView {
 		foto.setLocation(400,160);
 		foto.setPreferredSize(new Dimension(500,500));
 		foto.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createLineBorder(
-						Color.black,3,true),
+				BorderFactory.createLineBorder(Color.black,3,true),
 				BorderFactory.createEmptyBorder(10,20,10,00)
 				));
 		editarCliente.add(foto);
@@ -800,141 +803,13 @@ public class ClientView {
 	        String nuevoTelefono = campoTelefono.getText();
 	        
 	        control.update(idCliente, nuevoCorreo, nuevoNombre, nuevoTelefono);
+	        ActivityManager.addActivity("Edicion Cliente", campoNombre.getText(), LocalTime.now(), Color.decode("C79E59"));
 	        LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
 			ventana.dispose();
 		});
 		registrarCambios.setSize(200,60);
 		registrarCambios.setLocation(350,500);
 		editarCliente.add(registrarCambios);
-
-		ventana.revalidate();
-		ventana.repaint();
-		ventana.setVisible(true);
-	}
-
-	public void detailClient() {
-		// Crear Ventana JDialog
-		JDialog ventana = new JDialog();
-		ventana.setModal(true);
-		ventana.setUndecorated(true);
-		ventana.setSize(1920, 1080);
-		ventana.setBackground(new Color(0, 0, 0, 120)); 
-		ventana.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		ventana.setLocationRelativeTo(null);
-		ventana.setLayout(null);
-		//Panel sobre el cual se trabajara
-		PanelRounded detallesCliente = new PanelRounded(20,true,true,true,true);
-		detallesCliente.setLayout(null);
-		detallesCliente.setSize(700,600);
-		detallesCliente.setLocation(610,240);
-		detallesCliente.setBackground(Color.white);
-		detallesCliente.setOpaque(false);
-		ventana.add(detallesCliente);
-		//Label superior con nombre de pestaña
-		LabelRounded tituloDetalles = new LabelRounded("DETALLES DE CLIENTE",20,Color.decode("#000D56"));
-		tituloDetalles.setOpaque(false);
-		tituloDetalles.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-		tituloDetalles.setForeground(Color.WHITE);
-		tituloDetalles.setHorizontalAlignment(JLabel.LEFT);
-		tituloDetalles.setFont(new Font("Poppins",Font.BOLD,25));
-		tituloDetalles.setSize(700,100);
-		tituloDetalles.setLocation(0, 0);
-		detallesCliente.add(tituloDetalles);
-
-		//Label nombre y su respectivo campo de texto
-		JLabel nombre = new JLabel("Nombre");
-		nombre.setOpaque(false);
-		nombre.setForeground(Color.black);
-		nombre.setHorizontalAlignment(JLabel.LEFT);
-		nombre.setFont(new Font("Poppins",Font.PLAIN,15));
-		nombre.setSize(70,25);
-		nombre.setLocation(80,130);
-		detallesCliente.add(nombre);
-
-		TextFieldRounded campoNombre = new TextFieldRounded(20,20,true);
-		campoNombre.setFont(new Font("Poppins", Font.PLAIN, 15));
-		campoNombre.setForeground(Color.black);
-		campoNombre.setOpaque(false);
-		campoNombre.setText("Jonathan Soto");
-		campoNombre.setEditable(false);
-		campoNombre.setSize(280,40);
-		campoNombre.setLocation(80,160);
-		detallesCliente.add(campoNombre);
-
-		//Label correo y su respectivo campo de texto
-		JLabel correo = new JLabel("Correo");
-		correo.setOpaque(false);
-		correo.setForeground(Color.black);
-		correo.setHorizontalAlignment(JLabel.LEFT);
-		correo.setFont(new Font("Poppins",Font.PLAIN,15));
-		correo.setSize(70,25);
-		correo.setLocation(80,230);
-		detallesCliente.add(correo);
-
-		TextFieldRounded campoCorreo = new TextFieldRounded(20,20,true);
-		campoCorreo.setFont(new Font("Poppins", Font.PLAIN, 15));
-		campoCorreo.setForeground(Color.black);
-		campoCorreo.setOpaque(false);
-		campoCorreo.setEditable(false);
-		campoCorreo.setText("jsoto@uabcs.mx");
-		campoCorreo.setSize(280,40);
-		campoCorreo.setLocation(80,260);
-		detallesCliente.add(campoCorreo);
-
-		//Label telefono y su respectivo campo de texto
-		JLabel telefono = new JLabel("Teléfono");
-		telefono.setOpaque(false);
-		telefono.setForeground(Color.black);
-		telefono.setHorizontalAlignment(JLabel.LEFT);
-		telefono.setFont(new Font("Poppins",Font.PLAIN,15));
-		telefono.setSize(70,25);
-		telefono.setLocation(80,330);
-		detallesCliente.add(telefono);
-
-		TextFieldRounded campoTelefono = new TextFieldRounded(20,20,true);
-		campoTelefono.setFont(new Font("Poppins", Font.PLAIN, 15));
-		campoTelefono.setForeground(Color.black);
-		campoTelefono.setOpaque(false);
-		campoTelefono.setEditable(false);
-		campoTelefono.setText("6123480678");
-		campoTelefono.setSize(280,40);
-		campoTelefono.setLocation(80,360);
-		detallesCliente.add(campoTelefono);
-
-		JLabel titulofoto = new JLabel("foto");
-		titulofoto.setOpaque(false);
-		titulofoto.setForeground(Color.black);
-		titulofoto.setHorizontalAlignment(JLabel.LEFT);
-		titulofoto.setFont(new Font("Poppins",Font.PLAIN,15));
-		titulofoto.setSize(70,25);
-		titulofoto.setLocation(400,130);
-		detallesCliente.add(titulofoto);
-
-		//Contorno redondeado
-		LabelRounded foto = new LabelRounded("",20,Color.decode("#FFFFFF"));
-		foto.setOpaque(false);
-		foto.setSize(255,255);
-		foto.setLocation(400,160);
-		foto.setPreferredSize(new Dimension(500,500));
-		foto.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createLineBorder(
-						Color.black,3,true),
-				BorderFactory.createEmptyBorder(10,20,10,00)
-				));
-		detallesCliente.add(foto);
-
-		ButtonRounded volver = new ButtonRounded("Volver",10,5);
-		volver.setSize(150,60);
-		volver.setLocation(275,500);
-		volver.setOpaque(false);
-		volver.setForeground(Color.white);
-		volver.setHorizontalAlignment(JLabel.CENTER);
-		volver.setFont(new Font("Poppins",Font.BOLD,20));
-		volver.addActionListener(e->{
-			ventana.dispose();
-
-		});
-		detallesCliente.add(volver);
 
 		ventana.revalidate();
 		ventana.repaint();

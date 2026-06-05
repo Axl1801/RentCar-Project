@@ -40,6 +40,7 @@ import Controllers.HomeController;
 import Controllers.RentController;
 import Controllers.VehicleController;
 import Utilities.Activities;
+import Utilities.ActivityManager;
 import Utilities.Alerts;
 import Utilities.ButtonRounded;
 import Utilities.ComboBoxRounded;
@@ -508,10 +509,8 @@ public class HomeView {
 		panelActividades.setBounds(0, 75, 300, 325);
 		panelActividades.setOpaque(false);
 
-		panelActividades.add(new Activities( "Vehiculo Entregado","V-001 Corolla","Hace 1 Hora",Color.decode("#308C52")),0);
-		panelActividades.add(new Activities( "Nueva renta creada","Cliente: Esau Garcia","Hace 3 Horas",Color.decode("#4C75B7")),0);
-		panelActividades.add(new Activities( "Vehiculo en Mantenimiento","V-007 Versa ","Hace 7 Horas",Color.decode("#C79E59")),0);
-
+		ActivityManager.setPanel(panelActividades);
+		
 		Notificaciones.add(panelActividades,BorderLayout.CENTER);
 
 		regresar.addActionListener(e->{

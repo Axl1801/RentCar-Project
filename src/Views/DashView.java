@@ -262,7 +262,10 @@ public class DashView {
 		plot.setBackgroundPaint(new Color(0,0,0,0));//Eliminar color del Background para que sea transparente
 		graficaBarras.setOpaque(false);// ELiminar el opaque para que se pueda ver el panel redondeado
 		graficaBarras.setBackground(new Color(0,0,0,0));//cambiar color del Background para que sea transparente
-
+		graficaBarras.setMouseWheelEnabled(false);
+		graficaBarras.setMouseZoomable(false);
+		graficaBarras.setDomainZoomable(false);
+		graficaBarras.setRangeZoomable(false);
 		//Agregamos la grafica de barras al panel
 		panelStatsMens.add(graficaBarras, BorderLayout.CENTER);
 
@@ -491,13 +494,6 @@ public class DashView {
 
 		
 		ActivityManager.setPanel(panelActividades);
-		
-		ActivityManager.addActivity("Nueva renta creada","Cliente: Esau Garcia","Hace 3 Horas",Color.decode("#4C75B7"));
-		ActivityManager.addActivity("Nueva renta creada","Cliente: Ana Lopez","Hace 5 min",Color.decode("#4C75B7"));
-		ActivityManager.addActivity("Vehiculo en Mantenimiento","V-003 Sentra","Hace 5 min",Color.decode("#C79E59"));
-		ActivityManager.addActivity("Vehiculo Entregado","V-001 Corolla","Hace 1 Hora",Color.decode("#308C52"));
-		ActivityManager.addActivity("Nueva renta creada","Cliente: Esau Garcia","Hace 3 Horas",Color.decode("#4C75B7"));
-
 
 		PanelActReciente.add(panelActividades,BorderLayout.CENTER);
 

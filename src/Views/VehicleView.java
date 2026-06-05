@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.Files;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -47,6 +48,7 @@ import Controllers.ClientController;
 import Controllers.VehicleController;
 import Models.ClientModel;
 import Models.VehicleModel;
+import Utilities.ActivityManager;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
@@ -751,7 +753,8 @@ public class VehicleView {
 					(BigDecimal)listPrecios.getSelectedItem(),
 					"Disponible");
 
-			System.out.println(control.obtenerIdModelo(listModeloss.getSelectedItem().toString()));
+			ActivityManager.addActivity("Vehiculo Añadido", listModeloss.getSelectedItem().toString(), LocalTime.now(), Color.decode("idVehiculo"));
+			LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
 			ventana.dispose();
 		});
 		registrarVehiculo.setSize(200,60);
@@ -1084,8 +1087,9 @@ public class VehicleView {
 		tituloEstado.setLocation(370,130);
 		añadirVehiculo.add(tituloEstado);
 		
-		//Contorno redondeado 280 40 400 160
-		ComboBoxRounded<String> listEstado = new ComboBoxRounded<>();
+		//Contorno redondeado
+		ArrayList<String> listaEstados = control.getListaEstados();
+		ComboBoxRounded<String> listEstado = new ComboBoxRounded<>(listaEstados);
 		listEstado.setFont(new Font("Poppins", Font.BOLD, 15));
 		listEstado.setForeground(Color.decode("#000000"));
 		listEstado.setOpaque(false);
@@ -1119,7 +1123,8 @@ public class VehicleView {
 		precio.setLocation(370,330);
 		añadirVehiculo.add(precio);
 		
-		ComboBoxRounded<BigDecimal> listPrecios = new ComboBoxRounded<>();
+		ArrayList<BigDecimal> precios = control.getListaPrecios();
+		ComboBoxRounded<BigDecimal> listPrecios = new ComboBoxRounded<>(precios);
 		listPrecios.setFont(new Font("Poppins", Font.BOLD, 15));
 		listPrecios.setForeground(Color.black);
 		listPrecios.setOpaque(false);
@@ -1150,8 +1155,8 @@ public class VehicleView {
 		listCategorias.setBloqueado(true);
 		listAños.addItem(añoActual);
 		listAños.setBloqueado(true);
-		listEstado.addItem(estadoActual);
-		listPrecios.addItem(precioActual);
+		listEstado.setSelectedItem(estadoActual);
+		listPrecios.setSelectedItem(precioActual);
 		
 		ButtonRounded registrarVehiculo = new ButtonRounded("Aplicar Cambios",10,1);
 		registrarVehiculo.setOpaque(false);
@@ -1159,10 +1164,13 @@ public class VehicleView {
 		registrarVehiculo.setHorizontalAlignment(JLabel.CENTER);
 		registrarVehiculo.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarVehiculo.addActionListener(e->{
+			
 			String nuevoEstado = listEstado.getSelectedItem().toString();
 			BigDecimal nuevoPrecio = (BigDecimal)listPrecios.getSelectedItem();
 			
+			String id = String.valueOf(idVehiculo);
 			control.update(idVehiculo,nuevoPrecio, nuevoEstado);
+			ActivityManager.addActivity("Edicion de Vehiculo", id, LocalTime.now(), Color.decode("idVehiculo"));
 			LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
         	ventana.dispose();
 		});
@@ -1319,7 +1327,8 @@ public class VehicleView {
 		};
 		
 		// Pide la lista al controlador
-		ArrayList<VehicleModel> listaVehiculos = control.obtenerVehiculos();
+		System.out.println("aaaaaaaaaaaa " + idVehiculo + " aaaaaaaaa");
+		ArrayList<VehicleModel> listaVehiculos = control.obtenerRentasVehiculo(idVehiculo);
 		
 		// La imprime por fila 
 		for (VehicleModel Vehiculo : listaVehiculos) {

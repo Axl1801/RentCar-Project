@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.time.LocalTime;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -16,7 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Activities extends JPanel {
-	public Activities(String titulo, String subtitulo, String tiempo, Color color) {
+	public Activities(String titulo, String subtitulo, LocalTime tiempo, Color color) {
 
 		setLayout(new BorderLayout());
 		setOpaque(false);
@@ -55,7 +56,7 @@ public class Activities extends JPanel {
 		lblSub.setFont(new Font("Poppins", Font.PLAIN, 12));
 		lblSub.setForeground(new Color(120,120,120));
 
-		JLabel lblTiempo = new JLabel(tiempo);
+		JLabel lblTiempo = new JLabel(tiempo.toString());
 		lblTiempo.setFont(new Font("Poppins", Font.PLAIN, 12));
 		lblTiempo.setForeground(new Color(150,150,150));
 

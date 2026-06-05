@@ -384,9 +384,7 @@ public class VehicleModel implements FilaTabla{
 			 String url = propiedades.getProperty("db.url");
 			 String user = propiedades.getProperty("db.user");
 			 String contra = propiedades.getProperty("db.password");
-			 System.out.println("ANSDJFOKBNADSBFNIJAHKSB");
 			 try {
-				 System.out.println("561968416548948948");
 				 Class.forName("com.mysql.cj.jdbc.Driver");
 				 conn = DriverManager.getConnection(url, user, contra);
 
@@ -395,7 +393,6 @@ public class VehicleModel implements FilaTabla{
 				 ResultSet rs = ps.executeQuery();
 	    			
 				 while (rs.next()) {
-					 System.out.println("HUEVOS ARIAN");
 					 VehicleModel tmp = new VehicleModel();
 
 					 tmp.setId_renta(rs.getInt("id_renta"));

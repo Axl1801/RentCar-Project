@@ -1,6 +1,8 @@
 package Utilities;
 
 import java.awt.Color;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.JPanel;
 
@@ -11,12 +13,12 @@ public class ActivityManager {
         panel = p;
     }
 
-    public static void addActivity(
-            String titulo,
-            String subtitulo,
-            String tiempo,
-            Color color) {
+    public static void addActivity(String titulo,String subtitulo,LocalTime tiempo,Color color) {
 
+    	DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm:ss");
+    	
+    	tiempo.format(formato);
+    	
         if(panel == null) return;
 
         panel.add(new Activities(
