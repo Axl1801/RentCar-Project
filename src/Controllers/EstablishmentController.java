@@ -31,7 +31,7 @@ public class EstablishmentController {
 	
 	//REGRESA EL COSTO POR LA DISTANCIA 
 	public double calcularPrecio(double d) {
-		double precio = distancia*5;
+		double precio = distancia*3;
 		return precio;
 	}
 
