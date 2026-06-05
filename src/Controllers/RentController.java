@@ -146,7 +146,7 @@ public class RentController {
 	
 	//REGRESA LA LISTA DELOS ESTADOS DE RENTA
 	public ArrayList<String> getListaEstados() {
-        return new ArrayList<>(Arrays.asList("Pendiente", "Activo", "Finalizado", "Cancelado"));
+        return new ArrayList<>(Arrays.asList("Todos","Pendiente", "Activo", "Finalizado", "Cancelado"));
     }
 	
 	//REGRESA LISTA DE PRECIOS

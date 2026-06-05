@@ -571,8 +571,7 @@ public class ClientView {
 		foto.setLocation(400,160);
 		foto.setPreferredSize(new Dimension(500,500));
 		foto.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createLineBorder(
-						Color.black,3,true),
+				BorderFactory.createLineBorder(Color.black,3,true),
 				BorderFactory.createEmptyBorder(10,20,10,00)
 				));
 		añadirCliente.add(foto);

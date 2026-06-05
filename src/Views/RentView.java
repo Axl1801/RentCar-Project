@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.Files;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +52,11 @@ import Models.VehicleModel;
 import Utilities.ButtonRounded;
 import Utilities.ButtonRoundedEditor;
 import Utilities.ButtonRoundedRenderer;
+import Utilities.CheckBoxRounded;
 import Utilities.ComboBoxRounded;
 import Utilities.DatePickerRounded;
 import Utilities.LabelRounded;
+import Utilities.LoadData;
 import Utilities.PanelRounded;
 import Utilities.ScrollBarCustom;
 import Utilities.TextFieldRounded;
@@ -359,16 +362,20 @@ public class RentView {
 		//ArrayList<RentModel> listaRentas = control;
 		for (RentModel Renta : listaRentas) {
 		    Object[] fila = new Object[8];
-		    fila[0] = Renta.getIdLetra();
-		    fila[1] = Renta.getnameCliente();
-		    fila[2] = Renta.getId_vehiculo();
-		    fila[3] = Renta.getfoto();
-		    fila[4] = Renta.getInicio_renta();
-		    fila[5] = Renta.getFin_renta();
-		    fila[6] = Renta.getEstado();
+		    fila[0] = Renta.getIdLetra(); //Int
+		    fila[1] = Renta.getnameCliente(); //String
+		    fila[2] = Renta.getnombreModelo(); //String
+		    fila[3] = Renta.getfoto(); //[]Byte
+		    fila[4] = Renta.getInicio_renta(); //DATE
+		    fila[5] = Renta.getFin_renta(); //DATE
+		    fila[6] = Renta.getEstado(); //String
 		    fila[7] = "";	    
 		    modeloRentas.addRow(fila);
 		}
+		
+		System.out.println(
+			    "AQUIIIIIIIIIIIII" + modeloRentas.getValueAt(0, 4).getClass()
+			);
 		//Creacion de la tabla para usuario con el modelo y agregamos el filtrador
 		Rent_table = new JTable(modeloRentas);
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloRentas);
@@ -739,35 +746,40 @@ public class RentView {
 		});
 		añadirRenta.add(cancelarCliente);
 		
-		
 		ButtonRounded registrarRenta = new ButtonRounded("Registrar Renta",10,1);
 		registrarRenta.setOpaque(false);
 		registrarRenta.setForeground(Color.white);
 		registrarRenta.setHorizontalAlignment(JLabel.CENTER);
 		registrarRenta.setFont(new Font("Poppins",Font.BOLD,20));
 		registrarRenta.setHorizontalTextPosition(JLabel.RIGHT);
-
 		registrarRenta.setSize(200,60);
 		registrarRenta.setLocation(350,750);
 		registrarRenta.addActionListener(e->{
-			int idCliente = control.clientelID(listClientes.getSelectedItem().toString());
-			int idVehiculo = control.obtenerIdModelo(listVehiculos.getSelectedItem().toString());
-			int idSucOrigen = control.sucursalID(listSucursalOrigen.getSelectedItem().toString());
-			int idSucEntrega = control.sucursalID(listSucuralEntrega.getSelectedItem().toString());
-			LocalDate fechaInicio = listFechasInicio.getDate();
-			LocalDate fechaEntrega = listFechasFinal.getDate();
-			
-			java.sql.Date fechaSqlInicio = java.sql.Date.valueOf(fechaInicio);
-			java.sql.Date fechaSqlEntrega = java.sql.Date.valueOf(fechaEntrega);
-			control.registrarNuevaRenta(idCliente, idVehiculo, idSucOrigen, idSucEntrega, fechaSqlInicio, fechaSqlEntrega, "Activo");
+		int idCliente = control.clientelID(listClientes.getSelectedItem().toString());
+		int idVehiculo = control.obtenerIdModelo(listVehiculos.getSelectedItem().toString());
+		int idSucOrigen = control.sucursalID(listSucursalOrigen.getSelectedItem().toString());
+		int idSucEntrega = control.sucursalID(listSucuralEntrega.getSelectedItem().toString());
+		LocalDate fechaInicio = listFechasInicio.getDate();
+		LocalDate fechaEntrega = listFechasFinal.getDate();
+		
+		java.sql.Date fechaSqlInicio = java.sql.Date.valueOf(fechaInicio);
+		java.sql.Date fechaSqlEntrega = java.sql.Date.valueOf(fechaEntrega);
+		System.out.println("Antes: "
+		        + control.obtenerRentas().size());
+		registrarRenta.setSize(200,60);
+		registrarRenta.setLocation(350,750);
+		control.registrarNuevaRenta(idCliente, idVehiculo, idSucOrigen,
+				idSucEntrega, fechaSqlInicio, fechaSqlEntrega, "Pendiente");
+		System.out.println("Antes: "
+		        + control.obtenerRentas().size());
+		LoadData.refreshTable(Rent_table, modeloRentas, control.obtenerRentas());
+		ventana.dispose();
+		
 		});
-	    añadirRenta.add(registrarRenta);
-		
-		
+		añadirRenta.add(registrarRenta);
 		ventana.revalidate();
 		ventana.repaint();
 		ventana.setVisible(true);
-	
 	}
 
 	public void editRent(int IDrenta, String Cliente, String modelo, LocalDate fehcaInicio, LocalDate fechaFinal, byte[] f) {
@@ -848,7 +860,7 @@ public class RentView {
 		listFechasInicio.setFont(new Font("Poppins", Font.BOLD, 15));
 		listFechasInicio.setForeground(Color.black);
 		listFechasInicio.setOpaque(false);
-		listFechasInicio.setSize(280,40);
+		listFechasInicio.setSize(400,40);
 		listFechasInicio.setLocation(50,360);
 		listFechasInicio.setDate(fehcaInicio);
 		añadirRenta.add(listFechasInicio);
@@ -866,7 +878,7 @@ public class RentView {
 		listFechasFinal.setFont(new Font("Poppins", Font.BOLD, 15));
 		listFechasFinal.setForeground(Color.black);
 		listFechasFinal.setOpaque(false);
-		listFechasFinal.setSize(280,40);
+		listFechasFinal.setSize(400,40);
 		listFechasFinal.setLocation(50,460);
 		listFechasFinal.setDate(fechaFinal);
 		añadirRenta.add(listFechasFinal);
@@ -919,13 +931,7 @@ public class RentView {
 		ButtonRounded LabelFotografia = new ButtonRounded("",15,6);
 		LabelFotografia.setBounds(370,160,280,250);
 		LabelFotografia.setOpaque(false);
-		ImageIcon icon = new ImageIcon(f);
-		Image imagenEscalada = icon.getImage().getScaledInstance(
-			        280,    // ancho
-			        250,    // alto
-			        Image.SCALE_SMOOTH);
-
-				LabelFotografia.setIcon(new ImageIcon(imagenEscalada));
+		
 				
 		añadirRenta.add(LabelFotografia);
 		
@@ -941,24 +947,30 @@ public class RentView {
 		ButtonRounded LabelFotografiaVehiculo = new ButtonRounded("",15,6);
 		LabelFotografiaVehiculo.setBounds(370,460,280,250);
 		LabelFotografiaVehiculo.setOpaque(false);
+		ImageIcon icon = new ImageIcon(f);
+		Image imagenEscalada = icon.getImage().getScaledInstance(
+			        250,    // ancho
+			        250,    // alto
+			        Image.SCALE_SMOOTH);
+		LabelFotografiaVehiculo.setIcon(new ImageIcon(imagenEscalada));
 		añadirRenta.add(LabelFotografiaVehiculo);
 		
 		//Botones
-		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
-		cancelarCliente.setSize(150,60);
-		cancelarCliente.setLocation(150,750);
-		cancelarCliente.setOpaque(false);
-		cancelarCliente.setForeground(Color.white);
-		cancelarCliente.setHorizontalAlignment(JLabel.CENTER);
-		cancelarCliente.setFont(new Font("Poppins",Font.BOLD,20));
-		cancelarCliente.addActionListener(e->{
+		ButtonRounded cancelar = new ButtonRounded("Cancelar",10,5);
+		cancelar.setSize(150,60);
+		cancelar.setLocation(150,750);
+		cancelar.setOpaque(false);
+		cancelar.setForeground(Color.white);
+		cancelar.setHorizontalAlignment(JLabel.CENTER);
+		cancelar.setFont(new Font("Poppins",Font.BOLD,20));
+		cancelar.addActionListener(e->{
       	ventana.dispose();
-   
 		});
-		añadirRenta.add(cancelarCliente);
+		añadirRenta.add(cancelar);
 		
 		listClientes.addItem(Cliente);
 		listVehiculos.addItem(modelo);
+		
 		ButtonRounded editarRenta = new ButtonRounded("Editar Renta",10,1);
 		editarRenta.setOpaque(false);
 		editarRenta.setForeground(Color.white);
@@ -966,6 +978,7 @@ public class RentView {
 		editarRenta.setFont(new Font("Poppins",Font.BOLD,20));
 		editarRenta.setHorizontalTextPosition(JLabel.RIGHT);
 		editarRenta.addActionListener(e->{
+			control.editRent(IDrenta, Cliente, modelo, listFechasInicio.getDate(), listFechasFinal.getDate(), f);
       	ventana.dispose();
 		});
 		editarRenta.setSize(200,60);
@@ -1049,23 +1062,23 @@ public class RentView {
 		filtrosAvanzados.add(listEstados);
 		
 		//Label telefono y su respectivo campo de texto
-		JLabel Precio = new JLabel("Precio");
-		Precio.setOpaque(false);
-		Precio.setForeground(Color.black);
-		Precio.setHorizontalAlignment(JLabel.LEFT);
-		Precio.setFont(new Font("Poppins",Font.PLAIN,15));
-		Precio.setSize(70,25);
-		Precio.setLocation(50,330);
-		filtrosAvanzados.add(Precio);
+		JLabel vehiculo = new JLabel("Vehiculo");
+		vehiculo.setOpaque(false);
+		vehiculo.setForeground(Color.black);
+		vehiculo.setHorizontalAlignment(JLabel.LEFT);
+		vehiculo.setFont(new Font("Poppins",Font.PLAIN,15));
+		vehiculo.setSize(70,25);
+		vehiculo.setLocation(50,330);
+		filtrosAvanzados.add(vehiculo);
 		
-		ArrayList<BigDecimal> precios = control.getListaPrecios();
-		ComboBoxRounded<BigDecimal> listPreciosMin = new ComboBoxRounded<>(precios);
-		listPreciosMin.setFont(new Font("Poppins", Font.BOLD, 15));
-		listPreciosMin.setForeground(Color.black);
-		listPreciosMin.setOpaque(false);
-		listPreciosMin.setSize(120,40);
-		listPreciosMin.setLocation(50,360);
-		filtrosAvanzados.add(listPreciosMin);
+		ArrayList<String> vehiculos = control.getListaModelos();
+		ComboBoxRounded<String> listVehiculos = new ComboBoxRounded<>(vehiculos);
+		listVehiculos.setFont(new Font("Poppins", Font.BOLD, 15));
+		listVehiculos.setForeground(Color.black);
+		listVehiculos.setOpaque(false);
+		listVehiculos.setSize(280,40);
+		listVehiculos.setLocation(50,360);
+		filtrosAvanzados.add(listVehiculos);
 		
 		JLabel tituloFechaInicio = new JLabel("Fecha de Inicio");
 		tituloFechaInicio.setOpaque(false);
@@ -1084,7 +1097,7 @@ public class RentView {
 		selectorFechaInicio.setLocation(370,160);
 		filtrosAvanzados.add(selectorFechaInicio);
 		
-		JLabel tituloFechaFin = new JLabel("Fecha de Inicio");
+		JLabel tituloFechaFin = new JLabel("Fecha de entrega");
 		tituloFechaFin.setOpaque(false);
 		tituloFechaFin.setForeground(Color.black);
 		tituloFechaFin.setHorizontalAlignment(JLabel.LEFT);
@@ -1100,6 +1113,13 @@ public class RentView {
 		selectorFechaFin.setSize(450,40);
 		selectorFechaFin.setLocation(370,260);
 		filtrosAvanzados.add(selectorFechaFin);
+		
+		CheckBoxRounded usarFecha = new CheckBoxRounded("Usar fechas");
+		usarFecha.setBounds(370,320,100,20);
+		usarFecha.setOpaque(false);
+		usarFecha.setForeground(Color.BLACK);
+		usarFecha.setFont(new Font("Poppins",Font.BOLD,15));
+		filtrosAvanzados.add(usarFecha);
 		
 		//Botones
 		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);
@@ -1121,67 +1141,108 @@ public class RentView {
 		aplicarFiltros.setHorizontalAlignment(JLabel.CENTER);
 		aplicarFiltros.setFont(new Font("Poppins",Font.BOLD,20));
 		aplicarFiltros.setHorizontalTextPosition(JLabel.RIGHT);
-		aplicarFiltros.addActionListener(e->{
-       	
-		List<RowFilter<Object, Object>> filtros = new ArrayList<>();
-		String Fclientes = listClientes.getSelectedItem().toString();
-		String Festados = listEstados.getSelectedItem().toString();
-		LocalDate FfechaInicio = selectorFechaInicio.getDate();
-		LocalDate FfechaFinal = selectorFechaFin.getDate();
-		
-		if (!Fclientes.equals("Todos")) {
-		    filtros.add(
-		        RowFilter.regexFilter(
-		            "^" + Pattern.quote(Fclientes) + "$",
-		            2
-		        )
-		    );
-		}
-		if (!Festados.equals("Todos")) {
-		    filtros.add(
-		        RowFilter.regexFilter(
-		            "^" + Pattern.quote(Festados) + "$",
-		            6
-		        )
-		    );
-		}
-		
-		if (FfechaInicio != null) {
+		aplicarFiltros.addActionListener(e -> {
 
-		    filtros.add(new RowFilter<Object, Object>() {
+		    List<RowFilter<Object, Object>> filtros =
+		            new ArrayList<>();
 
-		        @Override
-		        public boolean include(
-		                Entry<? extends Object,
-		                ? extends Object> entry) {
+		    String Fclientes = listClientes.getSelectedItem().toString();
 
-		            LocalDate fechaTabla =
-		                (LocalDate) entry.getValue(4);
+		    String Festados = listEstados.getSelectedItem().toString();
 
-		            return fechaTabla.equals(FfechaInicio);
-		        }
-		    });
-		}
-		
-		if (FfechaFinal != null) {
+		    String Fvehiculo = listVehiculos.getSelectedItem().toString();
 
-		    filtros.add(new RowFilter<Object, Object>() {
+		    LocalDate FfechaInicio = selectorFechaInicio.getDate();
 
-		        @Override
-		        public boolean include(
-		                Entry<? extends Object,
-		                ? extends Object> entry) {
+		    LocalDate FfechaFinal = selectorFechaFin.getDate();
 
-		            LocalDate fechaTabla =
-		                (LocalDate) entry.getValue(5);
+		    // Cliente
+		    if (!Fclientes.equals("Todos")) {
 
-		            return fechaTabla.equals(FfechaFinal);
-		        }
-		    });
-		}
+		        filtros.add(
+		            RowFilter.regexFilter(
+		                "^" + Pattern.quote(Fclientes) + "$",
+		                1
+		            )
+		        );
+		    }
 
-		sorter.setRowFilter(RowFilter.andFilter(filtros));
-    	ventana.dispose();
+		    // Vehículo
+		    if (!Fvehiculo.equals("Todos")) {
+
+		        filtros.add(
+		            RowFilter.regexFilter(
+		                "^" + Pattern.quote(Fvehiculo) + "$",
+		                2
+		            )
+		        );
+		    }
+
+		    // Estado
+		    if (!Festados.equals("Todos")) {
+
+		        filtros.add(
+		            RowFilter.regexFilter(
+		                "^" + Pattern.quote(Festados) + "$",
+		                6
+		            )
+		        );
+		    }
+
+		    // Fechas
+		    if (usarFecha.isSelected() || usarFecha.isSelected()) {
+
+		        filtros.add(new RowFilter<Object, Object>() {
+
+		            @Override
+		            public boolean include(
+		                    Entry<? extends Object,
+		                    ? extends Object> entry) {
+
+		                java.sql.Date fechaInicioSql =
+		                        (java.sql.Date) entry.getValue(4);
+
+		                java.sql.Date fechaFinSql =
+		                        (java.sql.Date) entry.getValue(5);
+
+		                LocalDate fechaInicioTabla =
+		                        fechaInicioSql.toLocalDate();
+
+		                LocalDate fechaFinTabla =
+		                        fechaFinSql.toLocalDate();
+
+		                boolean cumpleInicio = true;
+		                boolean cumpleFin = true;
+
+		                if (usarFecha.isSelected()
+		                        && FfechaInicio != null) {
+
+		                    cumpleInicio =
+		                            !fechaInicioTabla.isBefore(
+		                                    FfechaInicio);
+		                }
+
+		                if (usarFecha.isSelected()
+		                        && FfechaFinal != null) {
+
+		                    cumpleFin =
+		                            !fechaFinTabla.isAfter(
+		                                    FfechaFinal);
+		                }
+
+		                return cumpleInicio && cumpleFin;
+		            }
+		        });
+		    }
+
+		    if (filtros.isEmpty()) {
+		        sorter.setRowFilter(null);
+		    } else {
+		        sorter.setRowFilter(
+		                RowFilter.andFilter(filtros));
+		    }
+
+		    ventana.dispose();
 		});
 		
 		aplicarFiltros.setSize(200,60);

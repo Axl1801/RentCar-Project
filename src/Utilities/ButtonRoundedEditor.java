@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.LocalDate;
 
 import javax.swing.BorderFactory;
@@ -114,9 +115,13 @@ public class ButtonRoundedEditor extends DefaultCellEditor {
 					String cliente = table.getModel().getValueAt(modelRow, 1).toString();
 					String modelo = table.getModel().getValueAt(modelRow, 2).toString();
 					byte[] foto = (byte[])table.getModel().getValueAt(modelRow, 3);
-					LocalDate fechaInicio = (LocalDate)table.getModel().getValueAt(modelRow, 4);
-					LocalDate fechaFin = (LocalDate)table.getModel().getValueAt(modelRow, 5);
-					rc.editRent(idRow,cliente,modelo,fechaInicio,fechaFin,foto);
+					Date fechaInicio = (Date)table.getModel().getValueAt(modelRow, 4);
+					Date fechaFin = (Date)table.getModel().getValueAt(modelRow, 5);
+					
+					LocalDate fechaI = fechaInicio.toLocalDate();
+					LocalDate fechaF = fechaFin.toLocalDate();
+					
+					rc.editRent(idRow,cliente,modelo,fechaI,fechaF,foto);
 				}
 
 			});
