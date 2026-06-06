@@ -1064,4 +1064,7 @@ public class ClientView {
 		ventana.setVisible(true);
 	}
 
+	public void recargarInfo() {
+		LoadData.refreshTable(clientes_table, modeloClientes, control.obtenerClientes());
+	}
 }

@@ -64,8 +64,6 @@ public class HomeView {
 		this.control = c;
 	}
 	
-	
-
 	public void showHome() {
 		//Imagen del logotipo de la ventana
 		ImageIcon logoVentana = new ImageIcon(
@@ -109,7 +107,7 @@ public class HomeView {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				g.drawImage(logoMenu.getImage(), 10,0, getWidth(), getHeight(), this);
+				g.drawImage(logoMenu.getImage(), 0,0, getWidth(), getHeight(), this);
 			}
 		};
 
@@ -146,7 +144,7 @@ public class HomeView {
 			dashboard.setIcon(new ImageIcon(url));
 		}
 
-		dashboard.setFont(new Font("Poppins",Font.BOLD,20));
+		dashboard.setFont(new Font("Poppins",Font.PLAIN,20));
 		dashboard.setBorderPainted(false);
 		dashboard.setBorder(null);
 		dashboard.setContentAreaFilled(false);
@@ -170,7 +168,7 @@ public class HomeView {
 			clientes.setIcon(new ImageIcon(url));
 		}
 
-		clientes.setFont(new Font("Poppins",Font.BOLD,20));
+		clientes.setFont(new Font("Poppins",Font.PLAIN,20));
 		clientes.setBorderPainted(false);
 		clientes.setBorder(null);
 		clientes.setContentAreaFilled(false);
@@ -193,7 +191,7 @@ public class HomeView {
 			vehiculos.setIcon(new ImageIcon(url));
 		}
 
-		vehiculos.setFont(new Font("Poppins",Font.BOLD,20));
+		vehiculos.setFont(new Font("Poppins",Font.PLAIN,20));
 		vehiculos.setBorderPainted(false);
 		vehiculos.setBorder(null);
 		vehiculos.setContentAreaFilled(false);
@@ -216,7 +214,7 @@ public class HomeView {
 			rentas.setIcon(new ImageIcon(url));
 		}
 
-		rentas.setFont(new Font("Poppins",Font.BOLD,20));
+		rentas.setFont(new Font("Poppins",Font.PLAIN,20));
 		rentas.setBorderPainted(false);
 		rentas.setBorder(null);
 		rentas.setContentAreaFilled(false);
@@ -239,7 +237,7 @@ public class HomeView {
 			Locales.setIcon(new ImageIcon(url));
 		}
 
-		Locales.setFont(new Font("Poppins",Font.BOLD,20));
+		Locales.setFont(new Font("Poppins",Font.PLAIN,20));
 		Locales.setBorderPainted(false);
 		Locales.setBorder(null);
 		Locales.setContentAreaFilled(false);
@@ -386,11 +384,10 @@ public class HomeView {
 		gbc2.gridy = 2;
 		hv.add(Box.createRigidArea(new Dimension(0, 10)), gbc2);
 
-		JLabel tituloHome = new JLabel("PAZ DRIVE");
+		JLabel tituloHome = new JLabel("     PAZ DRIVE");
 		tituloHome.setForeground(Color.decode("#000D56"));
 		tituloHome.setHorizontalAlignment(JLabel.CENTER);
 		tituloHome.setFont(new Font("Poppins", Font.BOLD, 30));
-
 		gbc2.gridy = 3;
 		hv.add(tituloHome, gbc2);
 
@@ -417,38 +414,67 @@ public class HomeView {
 		panelContenido.add(ec.showEstablishment(),"vistaEstablecimiento");
 		panelContenido.add(rc.showRent(),"vistaRentas");
 		panelContenido.add(vc.showVehicle(),"vistaVehiculos");
-
 		//Mostrar vista de clientes
 		clientes.addActionListener(e->{
-			clientes.setFont(new Font("Poppins",Font.BOLD,20));
+			clientes.setFont(new Font("Poppins",Font.BOLD,25));
+			dashboard.setFont(new Font("Poppins",Font.PLAIN,20));
+			Locales.setFont(new Font("Poppins",Font.PLAIN,20));
+			rentas.setFont(new Font("Poppins",Font.PLAIN,20));
+			vehiculos.setFont(new Font("Poppins",Font.PLAIN,20));
+			
+			cc.recargarInfo();
 			botonOpciones.setVisible(false);
 			tituloPanel.setText("Clientes");
 			cl.show(panelContenido,"vistaCliente");
 		});
 		//Mostrar vista de Dashboard
 		dashboard.addActionListener(e->{
-			dashboard.setFont(new Font("Poppins",Font.BOLD,20));
+			clientes.setFont(new Font("Poppins",Font.PLAIN,20));
+			dashboard.setFont(new Font("Poppins",Font.BOLD,25));
+			Locales.setFont(new Font("Poppins",Font.PLAIN,20));
+			rentas.setFont(new Font("Poppins",Font.PLAIN,20));
+			vehiculos.setFont(new Font("Poppins",Font.PLAIN,20));
+			
+			
 			botonOpciones.setVisible(false);
 			tituloPanel.setText("Dashboard");
 			cl.show(panelContenido,"vistaDashboard");
 		});
 		//Mostrar vista de Establecimientos
 		Locales.addActionListener(e->{
-			Locales.setFont(new Font("Poppins",Font.BOLD,20));
+			clientes.setFont(new Font("Poppins",Font.PLAIN,20));
+			dashboard.setFont(new Font("Poppins",Font.PLAIN,20));
+			Locales.setFont(new Font("Poppins",Font.BOLD,25));
+			rentas.setFont(new Font("Poppins",Font.PLAIN,20));
+			vehiculos.setFont(new Font("Poppins",Font.PLAIN,20));
+			
+			
 			botonOpciones.setVisible(false);
 			tituloPanel.setText("Establecimientos");
 			cl.show(panelContenido,"vistaEstablecimiento");
 		});
 		//Mostrar vista de Rentas
 		rentas.addActionListener(e->{
-			rentas.setFont(new Font("Poppins",Font.BOLD,20));
+			clientes.setFont(new Font("Poppins",Font.PLAIN,20));
+			dashboard.setFont(new Font("Poppins",Font.PLAIN,20));
+			Locales.setFont(new Font("Poppins",Font.PLAIN,20));
+			rentas.setFont(new Font("Poppins",Font.BOLD,25));
+			vehiculos.setFont(new Font("Poppins",Font.PLAIN,20));
+			
+			rc.recargarInfo();
 			botonOpciones.setVisible(false);
 			tituloPanel.setText("Rentas");
 			cl.show(panelContenido,"vistaRentas");
 		});
 		//Mostrar vista de Vehiculos
 		vehiculos.addActionListener(e->{
-			vehiculos.setFont(new Font("Poppins",Font.BOLD,20));
+			clientes.setFont(new Font("Poppins",Font.PLAIN,20));
+			dashboard.setFont(new Font("Poppins",Font.PLAIN,20));
+			Locales.setFont(new Font("Poppins",Font.PLAIN,20));
+			rentas.setFont(new Font("Poppins",Font.PLAIN,20));
+			vehiculos.setFont(new Font("Poppins",Font.BOLD,25));
+			
+			vc.cargarInfo();
 			tituloPanel.setText("Vehiculos");
 			botonOpciones.setVisible(true);
 			cl.show(panelContenido,"vistaVehiculos");
@@ -528,7 +554,7 @@ public class HomeView {
 		panelActividades.setBounds(0, 75, 300, 325);
 		panelActividades.setOpaque(false);
 
-		ActivityManager.setPanel(panelActividades, 4);
+		ActivityManager.addPanel(panelActividades, 4);
 		
 		Notificaciones.add(panelActividades,BorderLayout.CENTER);
 
@@ -653,7 +679,7 @@ public class HomeView {
 		perfil.setOpaque(false);
 		ventana.add(perfil);
 
-		PanelRounded panelSup = new PanelRounded(20,true,true,false,false);
+		PanelRounded panelSup = new PanelRounded(15,true,true,false,false);
 		panelSup.setOpaque(false);
 		panelSup.setLayout(new BorderLayout());
 		panelSup.setBackground(Color.decode("#000D56"));
@@ -700,7 +726,7 @@ public class HomeView {
 		usuario.setForeground(Color.BLACK);
 		usuario.setHorizontalAlignment(JLabel.LEFT);
 		usuario.setHorizontalTextPosition(JLabel.RIGHT);
-		usuario.setFont(new Font("Poppins",Font.BOLD,15));
+		usuario.setFont(new Font("Poppins",Font.BOLD,20));
 		url = getClass().getResource("/iconos/barra_superior/iconos_del_perfil/usuario_negro.png");
 		usuario.setIcon(new ImageIcon(url));
 		panelCentral.add(usuario);
@@ -711,7 +737,7 @@ public class HomeView {
 		correo.setForeground(Color.BLACK);
 		correo.setHorizontalAlignment(JLabel.LEFT);
 		correo.setHorizontalTextPosition(JLabel.RIGHT);
-		correo.setFont(new Font("Poppins",Font.BOLD,14));
+		correo.setFont(new Font("Poppins",Font.BOLD,20));
 		url = getClass().getResource("/iconos/barra_superior/iconos_del_perfil/correo_negro.png");
 		correo.setIcon(new ImageIcon(url));
 		panelCentral.add(correo);
@@ -722,7 +748,7 @@ public class HomeView {
 		rol.setForeground(Color.BLACK);
 		rol.setHorizontalAlignment(JLabel.LEFT);
 		rol.setHorizontalTextPosition(JLabel.RIGHT);
-		rol.setFont(new Font("Poppins",Font.BOLD,14));
+		rol.setFont(new Font("Poppins",Font.BOLD,20));
 		url = getClass().getResource("/iconos/barra_superior/iconos_del_perfil/puesto_negro.png");
 		rol.setIcon(new ImageIcon(url));
 		panelCentral.add(rol);
@@ -736,6 +762,9 @@ public class HomeView {
 			System.exit(0);
 		});
 		panelCentral.add(salir);
+		ventana.revalidate();
+		ventana.repaint();
+		ventana.setVisible(true);
 
 	}
 

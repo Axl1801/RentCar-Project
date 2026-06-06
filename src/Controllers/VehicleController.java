@@ -160,5 +160,8 @@ public class VehicleController {
 		 return id_Categoria;
 	 }
 
+	 public void cargarInfo() {
+		 vv.recargarInfo();
+	 }
 	 
 }

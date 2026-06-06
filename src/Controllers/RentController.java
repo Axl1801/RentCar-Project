@@ -239,4 +239,7 @@ public class RentController {
 		 return Fecha;
 	 }
 	 
+	 public void recargarInfo() {
+		 rv.recargarInfo();
+	 }
 }

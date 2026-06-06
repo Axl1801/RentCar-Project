@@ -1184,6 +1184,7 @@ public class VehicleView {
 	}
 
 	public void historialVehiculos(int idVehiculo) {
+
         JDialog ventana = new JDialog();
         ventana.setModal(true);
         ventana.setUndecorated(true);
@@ -1456,5 +1457,9 @@ public class VehicleView {
 		detallesCliente.add(volver);
 		
 		ventana.setVisible(true);
+	}
+
+	public void recargarInfo() {
+		LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
 	}
 }

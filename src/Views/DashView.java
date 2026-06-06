@@ -515,7 +515,7 @@ public class DashView {
 		panelActividades.setOpaque(false);
 
 		
-		ActivityManager.setPanel(panelActividades, 5);
+		ActivityManager.addPanel(panelActividades, 5);
 
 		PanelActReciente.add(panelActividades,BorderLayout.CENTER);
 

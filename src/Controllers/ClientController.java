@@ -104,6 +104,9 @@ public class ClientController {
 		return cm.getinfo(id_cliente);
 	}
 	
+	public void recargarInfo() {
+		cv.recargarInfo();
+	}
 }
 
 

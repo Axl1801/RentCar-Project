@@ -1491,4 +1491,8 @@ public class RentView {
 		
 		ventana.setVisible(true);
 	}
+
+	public void recargarInfo() {
+		LoadData.refreshTable(Rent_table, modeloRentas, control.obtenerRentas());
+	}
 }
