@@ -47,6 +47,11 @@ import Utilities.PanelRounded;
 
 public class DashView {
 	DashController control;
+	
+	private JLabel disp;
+	private JLabel rent;
+	private JLabel mant;
+	private JLabel total;
 
 	public DashView() {
 
@@ -79,7 +84,7 @@ public class DashView {
 		total_titulo.setFont(new Font("Poppins",Font.PLAIN,25));
 		totalVehiculos.add(total_titulo, BorderLayout.NORTH);
 
-		JLabel total = new JLabel(Integer.toString(control.numeroVehiculos_total()));
+		total = new JLabel(Integer.toString(control.numeroVehiculos_total()));
 		total.setBackground(Color.white);
 		total.setForeground(Color.BLACK);
 		total.setHorizontalAlignment(JLabel.CENTER);
@@ -109,7 +114,7 @@ public class DashView {
 		disp_titulo.setFont(new Font("Poppins",Font.PLAIN,25));
 		totalDisponibles.add(disp_titulo, BorderLayout.NORTH);
 
-		JLabel disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));
+		disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));
 		disp.setBackground(Color.white);
 		disp.setForeground(Color.BLACK);
 		disp.setHorizontalAlignment(JLabel.CENTER);
@@ -139,7 +144,7 @@ public class DashView {
 		rentado_titulo.setFont(new Font("Poppins",Font.PLAIN,25));
 		totalRentados.add(rentado_titulo, BorderLayout.NORTH);
 
-		JLabel rent = new JLabel(Integer.toString(control.numeroVehiculos_renta()));
+		rent = new JLabel(Integer.toString(control.numeroVehiculos_renta()));
 		rent.setBackground(Color.white);
 		rent.setForeground(Color.BLACK);
 		rent.setHorizontalAlignment(JLabel.CENTER);
@@ -168,7 +173,7 @@ public class DashView {
 		mantenimiento_titulo.setFont(new Font("Poppins",Font.PLAIN,25));
 		totalMantenimiento.add(mantenimiento_titulo, BorderLayout.NORTH);
 
-		JLabel mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));
+		mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));
 		mant.setBackground(Color.white);
 		mant.setForeground(Color.BLACK);
 		mant.setHorizontalAlignment(JLabel.CENTER);
@@ -516,6 +521,7 @@ public class DashView {
 
 		
 		ActivityManager.addPanel(panelActividades, 5);
+		actualizarEstadisticas();
 
 		PanelActReciente.add(panelActividades,BorderLayout.CENTER);
 
@@ -533,4 +539,13 @@ public class DashView {
 		return dasboardhPanel;
 	}
 
+	public void actualizarEstadisticas() {
+		if (control != null) {
+			total.setText(Integer.toString(control.numeroVehiculos_total()));
+			disp.setText(Integer.toString(control.numeroVehiculos_dispo()));
+			rent.setText(Integer.toString(control.numeroVehiculos_renta()));
+			mant.setText(Integer.toString(control.numeroVehiculos_manteni()));
+		}
+	}
+	
 }

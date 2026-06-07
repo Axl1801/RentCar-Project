@@ -68,6 +68,12 @@ public class RentView {
 	private JTable Rent_table;
 	private DefaultTableModel modeloRentas;
 	private byte[] fotoSeleccionada;
+	
+	private JLabel disp;
+	private JLabel rent;
+	private JLabel mant;
+	private JLabel total;
+	
 	public RentView(){
 		
 	}
@@ -100,7 +106,7 @@ public class RentView {
 		total_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalVehiculos.add(total_titulo, BorderLayout.NORTH);
 
-		JLabel total = new JLabel(Integer.toString(control.numeroVehiculos_total()));//Etitqueta de total vehiculos num
+		total = new JLabel(Integer.toString(control.numeroVehiculos_total()));//Etitqueta de total vehiculos num
 		total.setBackground(Color.white);
 		total.setForeground(Color.BLACK);
 		total.setHorizontalAlignment(JLabel.CENTER);
@@ -131,7 +137,7 @@ public class RentView {
 		disp_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalDisponibles.add(disp_titulo, BorderLayout.NORTH);
 
-		JLabel disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de total disponibles num
+		disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de total disponibles num
 		disp.setBackground(Color.white);
 		disp.setForeground(Color.BLACK);
 		disp.setHorizontalAlignment(JLabel.CENTER);
@@ -161,7 +167,7 @@ public class RentView {
 		rentado_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalRentados.add(rentado_titulo, BorderLayout.NORTH);
 
-		JLabel rent = new JLabel(Integer.toString(control.numeroVehiculos_renta()));//Etitqueta de totalrentados  num
+		rent = new JLabel(Integer.toString(control.numeroVehiculos_renta()));//Etitqueta de totalrentados  num
 		rent.setBackground(Color.white);
 		rent.setForeground(Color.BLACK);
 		rent.setHorizontalAlignment(JLabel.CENTER);
@@ -191,7 +197,7 @@ public class RentView {
 		mantenimiento_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalMantenimiento.add(mantenimiento_titulo, BorderLayout.NORTH);
 		
-		JLabel mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));//Etitqueta de mantenimiento num
+		mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));//Etitqueta de mantenimiento num
 		mant.setBackground(Color.white);
 		mant.setForeground(Color.BLACK);
 		mant.setHorizontalAlignment(JLabel.CENTER);
@@ -773,6 +779,7 @@ public class RentView {
 		
 		ActivityManager.addActivity("Renta Añadida", listClientes.getSelectedItem().toString(), LocalTime.now(), Color.decode("#4C75B7"));
 		LoadData.refreshTable(Rent_table, modeloRentas, control.obtenerRentas());
+		actualizarEstadisticas();
 		ventana.dispose();
 		
 		});
@@ -982,6 +989,8 @@ public class RentView {
 			String id = String.valueOf(IDrenta);
 			ActivityManager.addActivity("Renta Editada", id, LocalTime.now(), Color.decode("#C79E59"));
 			control.editRent(IDrenta, Cliente, modelo, listFechasInicio.getDate(), listFechasFinal.getDate(), f);
+			LoadData.refreshTable(Rent_table, modeloRentas, control.obtenerRentas());
+			actualizarEstadisticas();
       	ventana.dispose();
 		});
 		editarRenta.setSize(200,60);
@@ -1485,6 +1494,8 @@ public class RentView {
 		volver.setHorizontalAlignment(JLabel.CENTER);
 		volver.setFont(new Font("Poppins",Font.BOLD,15));
 		volver.addActionListener(e->{
+			LoadData.refreshTable(Rent_table, modeloRentas, control.obtenerRentas());
+			actualizarEstadisticas();
 			ventana.dispose();
 		});
 		detallesCliente.add(volver);
@@ -1494,5 +1505,15 @@ public class RentView {
 
 	public void recargarInfo() {
 		LoadData.refreshTable(Rent_table, modeloRentas, control.obtenerRentas());
+		actualizarEstadisticas();
+	}
+	
+	public void actualizarEstadisticas() {
+		if (control != null) {
+			total.setText(Integer.toString(control.numeroVehiculos_total()));
+			disp.setText(Integer.toString(control.numeroVehiculos_dispo()));
+			rent.setText(Integer.toString(control.numeroVehiculos_renta()));
+			mant.setText(Integer.toString(control.numeroVehiculos_manteni()));
+		}
 	}
 }

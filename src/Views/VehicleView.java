@@ -75,6 +75,11 @@ public class VehicleView {
 	private DefaultTableModel modeloVehiculos;
 	private String marcaSelect;
 	
+	private JLabel disp;
+	private JLabel rent;
+	private JLabel mant;
+	private JLabel total;
+	
 	public VehicleView() {
 	}
 	
@@ -106,7 +111,7 @@ public class VehicleView {
 		total_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalVehiculos.add(total_titulo, BorderLayout.NORTH);
 
-		JLabel total = new JLabel(Integer.toString(control.numeroVehiculos_total()));//Etitqueta de total vehiculos num
+		total = new JLabel(Integer.toString(control.numeroVehiculos_total()));//Etitqueta de total vehiculos num
 		total.setBackground(Color.white);
 		total.setForeground(Color.BLACK);
 		total.setHorizontalAlignment(JLabel.CENTER);
@@ -137,7 +142,7 @@ public class VehicleView {
 		disp_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalDisponibles.add(disp_titulo, BorderLayout.NORTH);
 
-		JLabel disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de total disponibles num
+		disp = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de total disponibles num
 		disp.setBackground(Color.white);
 		disp.setForeground(Color.BLACK);
 		disp.setHorizontalAlignment(JLabel.CENTER);
@@ -167,7 +172,7 @@ public class VehicleView {
 		rentado_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalRentados.add(rentado_titulo, BorderLayout.NORTH);
 
-		JLabel rent = new JLabel(Integer.toString(control.numeroVehiculos_dispo()));//Etitqueta de totalrentados  num
+		rent = new JLabel(Integer.toString(control.numeroVehiculos_renta()));//Etitqueta de totalrentados  num
 		rent.setBackground(Color.white);
 		rent.setForeground(Color.BLACK);
 		rent.setHorizontalAlignment(JLabel.CENTER);
@@ -197,7 +202,7 @@ public class VehicleView {
 		mantenimiento_titulo.setFont(new Font("Poppins", Font.PLAIN, 25));
 		totalMantenimiento.add(mantenimiento_titulo, BorderLayout.NORTH);
 
-		JLabel mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));//Etitqueta de mantenimiento num
+		mant = new JLabel(Integer.toString(control.numeroVehiculos_manteni()));//Etitqueta de mantenimiento num
 		mant.setBackground(Color.white);
 		mant.setForeground(Color.BLACK);
 		mant.setHorizontalAlignment(JLabel.CENTER);
@@ -755,6 +760,7 @@ public class VehicleView {
 
 			ActivityManager.addActivity("Vehiculo Añadido", listModeloss.getSelectedItem().toString(), LocalTime.now(), Color.decode("#4C75B7"));
 			LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
+			actualizarEstadisticas();
 			ventana.dispose();
 		});
 		registrarVehiculo.setSize(200,60);
@@ -990,7 +996,7 @@ public class VehicleView {
 	    }
 	    filtrosAvanzados.add(aplicarFiltros);
 		
-		
+	    actualizarEstadisticas();
 		ventana.revalidate();
 		ventana.repaint();
 		ventana.setVisible(true);
@@ -1172,6 +1178,7 @@ public class VehicleView {
 			control.update(idVehiculo,nuevoPrecio, nuevoEstado);
 			ActivityManager.addActivity("Edicion de Vehiculo", id, LocalTime.now(), Color.decode("#C79E59"));
 			LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
+			actualizarEstadisticas();
         	ventana.dispose();
 		});
 		registrarVehiculo.setSize(200,60);
@@ -1461,5 +1468,14 @@ public class VehicleView {
 
 	public void recargarInfo() {
 		LoadData.refreshTable(Vehicle_table, modeloVehiculos, control.obtenerVehiculos());
+	}
+	
+	public void actualizarEstadisticas() {
+		if (control != null) {
+			total.setText(Integer.toString(control.numeroVehiculos_total()));
+			disp.setText(Integer.toString(control.numeroVehiculos_dispo()));
+			rent.setText(Integer.toString(control.numeroVehiculos_renta()));
+			mant.setText(Integer.toString(control.numeroVehiculos_manteni()));
+		}
 	}
 }
