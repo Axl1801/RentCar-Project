@@ -95,7 +95,6 @@ public class VehicleModel implements FilaTabla{
             } catch (Exception e) { e.printStackTrace(); }
             finally { try { if(conn != null) conn.close(); }catch(Exception e) {} }
 		} catch (IOException e) {
-			System.out.println("Error config: " + e.getMessage());
 		}
 		return carros;  	
 	}
@@ -130,7 +129,7 @@ public class VehicleModel implements FilaTabla{
 	    			ps.close();
 	            } catch (Exception e) { e.printStackTrace(); }
 	            finally { try { if(conn!=null) conn.close(); }catch(Exception e) {} }
-		 } catch (IOException e) { System.out.println("Error config: " + e.getMessage()); }  		 
+		 } catch (IOException e) { }  		 
 		 return false;	 
 	 }
 
@@ -159,7 +158,7 @@ public class VehicleModel implements FilaTabla{
 	    			ps.close();
 	            } catch (Exception e) { e.printStackTrace(); }
 	            finally { try { if(conn!=null) conn.close(); }catch(Exception e) {} }
-		 } catch (IOException e) { System.out.println("Error config: " + e.getMessage()); }  		 
+		 } catch (IOException e) { }  		 
 		 return false;		 
 	 }
 	 
@@ -196,10 +195,8 @@ public class VehicleModel implements FilaTabla{
 				 PreparedStatement psAccion;
 				 if (tieneHistorial) {
 					 psAccion = conn.prepareStatement(queryDesactivar);
-					 System.out.println("El vehículo tiene rentas.");
 				 } else {
 					 psAccion = conn.prepareStatement(queryBorrar);
-					 System.out.println("El vehículo está limpio.");
 				 }
 
 				 psAccion.setInt(1, id_vehiculo);
@@ -218,7 +215,6 @@ public class VehicleModel implements FilaTabla{
 				 } catch (Exception e) {}
 			 }
 		 } catch (IOException e) {
-			 System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 		 }
 		 return false;
 	 }
@@ -269,7 +265,6 @@ public class VehicleModel implements FilaTabla{
 				 conn.close();
 
 			 } catch (Exception e) {
-    	       System.out.println("Error al buscar el vehículo: " + e.getMessage());
     	       e.printStackTrace();
 			 } finally {
 				 try {
@@ -280,7 +275,6 @@ public class VehicleModel implements FilaTabla{
 			 }
 
 		 } catch (Exception e) {
-			 System.out.println("Error al leer configuración: " + e.getMessage());
 		 }  
 		 return vehiculo_solo; 
 	 }
@@ -289,7 +283,6 @@ public class VehicleModel implements FilaTabla{
 		
 		 int resultado = 0;
 		 Connection conn = null; 	 
-		 System.out.println(query);
 			
 		 Properties propiedades = new Properties();
 		
@@ -310,7 +303,6 @@ public class VehicleModel implements FilaTabla{
 
 				 if (rs.next()) {
 					 resultado = rs.getInt(1);
-					 System.out.println("Número total: " + resultado);
 				 }
 				 rs.close();
 				 ps.close();
@@ -327,32 +319,27 @@ public class VehicleModel implements FilaTabla{
 				 }
 			 }
 		 } catch (IOException e) {
-			 System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 		 }  		 
 		 return resultado;	 
 	 }
 	
 	 public int numeroVehiculos_total() {
 		 int total = conteo("SELECT COUNT(*) FROM Vehiculos");
-		 System.out.println("numeroVehiculos_total: " + total);
 		 return total;
 	 }
 
 	 public int numeroVehiculos_renta() {
 		 int renta = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Rentado'");
-		 System.out.println("numeroVehiculos_renta: " +renta);
 		 return renta;
 	 }
 
 	 public int numeroVehiculos_dispo() {
 		 int dispo = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Disponible'");
-		 System.out.println("numeroVehiculos_dispo: " + dispo);
 		 return dispo;
 	 }
 
 	 public int numeroVehiculos_manteni() {
 		 int manteni = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Mantenimiento'");
-		 System.out.println("numeroVehiculos_manteni: " + manteni);
 		 return manteni;
  	  }
 	 
@@ -375,7 +362,6 @@ public class VehicleModel implements FilaTabla{
 				 		"WHERE r.id_vehiculo = ?";
 	        
 		 Connection conn = null; 	 
-		 System.out.println("Ejecutando query: " + query);
 		   	
 		 Properties propiedades = new Properties();
 		   	
@@ -385,10 +371,8 @@ public class VehicleModel implements FilaTabla{
 			 String user = propiedades.getProperty("db.user");
 			 String contra = propiedades.getProperty("db.password");
 			 
-			 System.out.println("ANSDJFOKBNADSBFNIJAHKSB");
 			 
 			 try {
-				 System.out.println("561968416548948948");
 				 Class.forName("com.mysql.cj.jdbc.Driver");
 				 conn = DriverManager.getConnection(url, user, contra);
 
@@ -397,7 +381,6 @@ public class VehicleModel implements FilaTabla{
 				 ResultSet rs = ps.executeQuery();
 	    			
 				 while (rs.next()) {
-					 System.out.println("HUEVOS ARIAN - Registro encontrado");
 					 
 					 VehicleModel tmp = new VehicleModel();
 
@@ -407,7 +390,6 @@ public class VehicleModel implements FilaTabla{
 					 tmp.setFin_renta(rs.getDate("fin_renta"));
 					 tmp.setestado(rs.getString("estado"));
 					 
-					 System.out.println("dfadsfsadfs - Agregando a la lista");
 					 rentas.add(tmp);
 				 }
 	                
@@ -415,7 +397,6 @@ public class VehicleModel implements FilaTabla{
 				 ps.close();
 
 			 } catch (Exception e) {
-				 System.out.println("Error en la consulta: " + e.getMessage());
 				 e.printStackTrace();
 			 } finally {
 				 try {
@@ -426,7 +407,6 @@ public class VehicleModel implements FilaTabla{
 			 }
 
 		 } catch (Exception e) {
-			 System.out.println("Error al leer configuración: " + e.getMessage());
 		 }
 		 
 		 return rentas;
@@ -456,7 +436,6 @@ public class VehicleModel implements FilaTabla{
 				 conn.close();
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al obtener marcas: " + e.getMessage());
 		 }
 		 return marcas;
 	 }
@@ -491,7 +470,6 @@ public class VehicleModel implements FilaTabla{
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al consultar la categoría: " + e.getMessage());
 		 }        
 		 return nombreCategoria;
 	 }
@@ -528,7 +506,6 @@ public class VehicleModel implements FilaTabla{
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al obtener modelos filtrados: " + e.getMessage());
 		 }
 		 return modelos;
 	 }
@@ -555,11 +532,9 @@ public class VehicleModel implements FilaTabla{
 				 }
 				 
 			 } catch (Exception e) {
-				 System.out.println("Error al obtener nombres de los modelos: " + e.getMessage());
 			 }
 
 		 } catch (Exception e) {
-			 System.out.println("Error al leer Claves.txt: " + e.getMessage());
 		 }
 	         
 		 return nombres;
@@ -589,7 +564,6 @@ public class VehicleModel implements FilaTabla{
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al buscar el ID del modelo: " + e.getMessage());
 		 }
 		 return idModelo;
 	 }
@@ -616,7 +590,6 @@ public class VehicleModel implements FilaTabla{
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al buscar el ID de la marca: " + e.getMessage());
 		 }
 		 return idMarca;
 	 }
@@ -643,7 +616,6 @@ public class VehicleModel implements FilaTabla{
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al buscar el ID de la Categoria: " + e.getMessage());
 		 }
 		 return idCategoria;
 	 }
@@ -670,7 +642,6 @@ public class VehicleModel implements FilaTabla{
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al buscar el ID del modelo: " + e.getMessage());
 		 }
 		 return idModelo;
 	 }

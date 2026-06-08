@@ -36,7 +36,6 @@ public class HomeModel {
 				 conn.close();
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al obtener marcas: " + e.getMessage());
 		 }
 		 return marcas;
 	 }
@@ -71,7 +70,6 @@ public class HomeModel {
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al consultar la categoría: " + e.getMessage());
 		 }        
 		 return nombreCategoria;
 	 }
@@ -108,7 +106,6 @@ public class HomeModel {
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al obtener modelos filtrados: " + e.getMessage());
 		 }
 		 return modelos;
 	 }
@@ -129,7 +126,6 @@ public class HomeModel {
 				 return filasAfectadas > 0;
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al ejecutar insert: " + e.getMessage());
 			 return false;
 		 }
 	 }
@@ -166,7 +162,6 @@ public class HomeModel {
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al buscar el ID de la marca: " + e.getMessage());
 		 }
 		 return idMarca;
 	 }
@@ -191,7 +186,6 @@ public class HomeModel {
 				 return filasAfectadas > 0;
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al insertar el modelo: " + e.getMessage());
 			 return false;
 		 }
 	 }

@@ -21,9 +21,7 @@ public class AuthModel {
 	public boolean login(String usuario, String contrasena) {
 
 		String query = "SELECT id_agente, usuario, correo, nivel_acceso FROM Agente WHERE usuario = ? AND contrasena = ?";
-		
-		System.out.println("Ejecutando: " + query);
-		
+				
 		Properties propiedades = new Properties();
 		
 		try (InputStream entrada = new FileInputStream("Claves.txt")) {
@@ -52,12 +50,10 @@ public class AuthModel {
 				}
 					
 			} catch (Exception e) {
-				System.out.println("Error en la conexión o consulta de BD: " + e.getMessage());
 				e.printStackTrace();
 			}
 			
 		} catch (IOException e) {
-			System.out.println("Error al leer el archivo de configuración Claves.txt: " + e.getMessage());
 		}  
 		return false;
 	}
