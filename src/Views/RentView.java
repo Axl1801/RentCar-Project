@@ -697,10 +697,40 @@ public class RentView {
 		fotoCliente.setLocation(370,130);
 		añadirRenta.add(fotoCliente);
 		
-		ButtonRounded LabelFotografia = new ButtonRounded("",15,6);
-		LabelFotografia.setBounds(370,160,280,250);
-		LabelFotografia.setOpaque(false);
-		añadirRenta.add(LabelFotografia);
+		ButtonRounded foto = new ButtonRounded("Subir Foto",10,1);
+		foto.setOpaque(false);
+		foto.setSize(280,250);
+		foto.setLocation(370,160);
+		foto.setPreferredSize(new Dimension(500,500));
+		foto.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(Color.black,3,true),
+				BorderFactory.createEmptyBorder(10,20,10,00)
+				));
+		foto.addActionListener(e->{
+			    JFileChooser selector = new JFileChooser();
+			    
+			    selector.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes","jpg", "jpeg", "png", "webp"));
+			    
+			    int resultado = selector.showOpenDialog(null);
+			    
+			    if (resultado == JFileChooser.APPROVE_OPTION) {
+
+			        File archivo = selector.getSelectedFile();
+
+			        if (archivo != null) {
+
+			            try {
+
+			                fotoSeleccionada =
+			                    Files.readAllBytes(archivo.toPath());
+
+			            } catch (IOException ex) {
+			                ex.printStackTrace();
+			            }
+			        }
+			    }
+			});
+		añadirRenta.add(foto);
 		
 		JLabel fotoVehiculo = new JLabel("Foto Del Vehiculo");
 		fotoVehiculo.setOpaque(false);

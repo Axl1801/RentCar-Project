@@ -73,7 +73,7 @@ public class HomeView {
 			    32, 32,
 			    Image.SCALE_SMOOTH
 			);
-		
+		//Creacion de ventana
 		JFrame ventana = new JFrame("Paz Drive");
 		ventana.setSize(1920, 1080);
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +81,7 @@ public class HomeView {
 		ventana.setIconImage(icono);
 		ventana.setLayout(new BorderLayout());
 		ventana.setVisible(true);
-
+		//Creacion del panel principal
 		JPanel principal = new JPanel();
 		principal.setBounds(0,0,1920,1080);
 		principal.setLayout(new BorderLayout());
@@ -89,7 +89,7 @@ public class HomeView {
 		principal.setBackground(Color.white);
 		principal.setVisible(true);
 		ventana.add(principal,BorderLayout.CENTER);
-
+		//Se crea el panel lateral para cambiar de modulos
 		JPanel menuOpciones = new JPanel();
 		menuOpciones.setOpaque(false);
 		menuOpciones.setVisible(true);
@@ -99,7 +99,7 @@ public class HomeView {
 		principal.add(menuOpciones,BorderLayout.WEST);
 
 		GridBagConstraints gbc = new GridBagConstraints();
-
+		//Se cargan y colocan las distintas imagenes y botones
 		ImageIcon logoMenu = new ImageIcon(
 				getClass().getResource("/Imagenes-sprites/paz_drive_logo_2.png")
 				);
@@ -143,7 +143,7 @@ public class HomeView {
 		if (url != null) {
 			dashboard.setIcon(new ImageIcon(url));
 		}
-
+		//Ajuste de parametros de boton
 		dashboard.setFont(new Font("Poppins",Font.PLAIN,20));
 		dashboard.setBorderPainted(false);
 		dashboard.setBorder(null);
@@ -167,7 +167,7 @@ public class HomeView {
 		if (url != null) {
 			clientes.setIcon(new ImageIcon(url));
 		}
-
+		//Ajuste de parametros de boton
 		clientes.setFont(new Font("Poppins",Font.PLAIN,20));
 		clientes.setBorderPainted(false);
 		clientes.setBorder(null);
@@ -190,7 +190,8 @@ public class HomeView {
 		if (url != null) {
 			vehiculos.setIcon(new ImageIcon(url));
 		}
-
+		
+		//Ajuste de parametros de boton
 		vehiculos.setFont(new Font("Poppins",Font.PLAIN,20));
 		vehiculos.setBorderPainted(false);
 		vehiculos.setBorder(null);
@@ -213,7 +214,7 @@ public class HomeView {
 		if (url != null) {
 			rentas.setIcon(new ImageIcon(url));
 		}
-
+		//Ajuste de parametros de boton
 		rentas.setFont(new Font("Poppins",Font.PLAIN,20));
 		rentas.setBorderPainted(false);
 		rentas.setBorder(null);
@@ -236,7 +237,7 @@ public class HomeView {
 		if (url != null) {
 			Locales.setIcon(new ImageIcon(url));
 		}
-
+		//Ajuste de parametros de boton
 		Locales.setFont(new Font("Poppins",Font.PLAIN,20));
 		Locales.setBorderPainted(false);
 		Locales.setBorder(null);
@@ -259,7 +260,7 @@ public class HomeView {
 		if (url != null) {
 			cerrarSesion.setIcon(new ImageIcon(url));
 		}
-
+		//Ajuste de parametros de boton
 		cerrarSesion.setFont(new Font("Poppins",Font.PLAIN,15));
 		cerrarSesion.setContentAreaFilled(false);
 		cerrarSesion.setFocusPainted(false);
@@ -311,6 +312,7 @@ public class HomeView {
 		if (url != null) {
 			botonOpciones.setIcon(new ImageIcon(url));
 		}
+		//Ajuste de parametros de boton
 		botonOpciones.setBorder(null);
 		botonOpciones.setFont(new Font("Poppins",Font.PLAIN,15));
 		botonOpciones.setContentAreaFilled(false);
@@ -321,7 +323,7 @@ public class HomeView {
 			opciones();
 		});
 		panelBotones.add(botonOpciones);
-
+		//Ajuste de parametros de boton
 		JButton botonNotificaciones = new JButton();
 		url = getClass().getResource("/iconos/barra_superior/notificaciones.png");//Carga ubi imagen
 		if (url != null) {
@@ -334,7 +336,7 @@ public class HomeView {
 			showNotification();
 		});
 		panelBotones.add(botonNotificaciones);
-
+		//Ajuste de parametros de boton
 		JButton botonAjustes = new JButton();
 		url = getClass().getResource("/iconos/barra_superior/ajustes.png");//Carga ubi imagen
 		if (url != null) {
@@ -347,7 +349,7 @@ public class HomeView {
 			showSettings();
 		});
 		panelBotones.add(botonAjustes);
-
+		//Ajuste de parametros de boton
 		JButton botonPerfil = new JButton();
 		url = getClass().getResource("/iconos/barra_superior/perfil.png");//Carga ubi imagen
 		if (url != null) {
@@ -400,14 +402,14 @@ public class HomeView {
 		CardLayout cl = new CardLayout();
 		JPanel panelContenido = new JPanel(cl);
 		panelPrincipal.add(panelContenido);
-
+		//Creacion de controladores para el cambio de pestañas y control de actividades
 		AuthController ac = new AuthController();
 		ClientController cc = new ClientController();
 		DashController dc = new DashController();
 		EstablishmentController ec = new EstablishmentController();
 		RentController rc = new RentController();
 		VehicleController vc = new VehicleController();
-
+		//Creacion de el conjunto de Cards para cambiar entre modulos
 		panelContenido.add(hv,"vistaHome");
 		panelContenido.add(cc.showClientView(),"vistaCliente");
 		panelContenido.add(dc.showDashboard(),"vistaDashboard");
@@ -479,12 +481,12 @@ public class HomeView {
 			botonOpciones.setVisible(true);
 			cl.show(panelContenido,"vistaVehiculos");
 		});
-
+		//Mostrar vista de ajustes
 		botonAjustes.addActionListener(e->{
 			botonOpciones.setVisible(false);
 			cl.show(panelContenido,"vistaAjustes");
 		});
-
+		//Mostrar vusta de perfil
 		botonPerfil.addActionListener(e->{
 			botonOpciones.setVisible(false);
 			showProfile();
@@ -525,7 +527,7 @@ public class HomeView {
 		panelSup.setLayout(new BorderLayout());
 		panelSup.setBackground(Color.decode("#000D56"));
 		Notificaciones.add(panelSup,BorderLayout.NORTH);
-
+		//Titulo de notificaciones
 		JLabel tituNotificaciones = new JLabel("Notificaciones");
 		tituNotificaciones.setOpaque(false);
 		tituNotificaciones.setForeground(Color.white);
@@ -536,7 +538,7 @@ public class HomeView {
 		panelSup.add(tituNotificaciones, BorderLayout.CENTER);
 
 		URL url = getClass().getResource("/iconos/adicionales/anterior.png");//Carga ubi imagen
-
+		//Boton de regresar
 		ButtonRounded regresar = new ButtonRounded("",20,1);
 		regresar.setOpaque(false);
 		regresar.setContentAreaFilled(false); // Sin fondo
@@ -584,13 +586,13 @@ public class HomeView {
 		Ajustes.setBackground(Color.decode("#000D56"));
 		Ajustes.setOpaque(false);
 		ventana.add(Ajustes);
-
+		//Creacion de panel superior
 		PanelRounded panelSup = new PanelRounded(20,true,true,false,false);
 		panelSup.setOpaque(false);
 		panelSup.setLayout(new BorderLayout());
 		panelSup.setBackground(Color.decode("#000D56"));
 		Ajustes.add(panelSup,BorderLayout.NORTH);
-
+		//JLabel superior
 		JLabel tituAjustes = new JLabel("Ajustes");
 		tituAjustes.setOpaque(false);
 		tituAjustes.setForeground(Color.white);
@@ -601,7 +603,7 @@ public class HomeView {
 		panelSup.add(tituAjustes, BorderLayout.CENTER);
 
 		URL url = getClass().getResource("/iconos/adicionales/anterior.png");//Carga ubi imagen
-
+		//Boton de regresar
 		ButtonRounded regresar = new ButtonRounded("",20,1);
 		regresar.setOpaque(false);
 		regresar.setContentAreaFilled(false); // Sin fondo

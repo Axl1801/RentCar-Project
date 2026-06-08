@@ -12,7 +12,10 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -21,6 +24,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -58,6 +62,7 @@ public class ClientView {
 	ClientController control;
 	private JTable clientes_table;
 	private DefaultTableModel modeloClientes;
+	private byte[] fotoSeleccionada;
 	
 	private JLabel disp;
 	private JLabel rent;
@@ -582,7 +587,7 @@ public class ClientView {
 		añadirCliente.add(titulofoto);
 
 		//Contorno redondeado
-		LabelRounded foto = new LabelRounded("",20,Color.decode("#FFFFFF"));
+		ButtonRounded foto = new ButtonRounded("Subir Foto",10,1);
 		foto.setOpaque(false);
 		foto.setSize(255,255);
 		foto.setLocation(400,160);
@@ -591,6 +596,30 @@ public class ClientView {
 				BorderFactory.createLineBorder(Color.black,3,true),
 				BorderFactory.createEmptyBorder(10,20,10,00)
 				));
+		foto.addActionListener(e->{
+			    JFileChooser selector = new JFileChooser();
+			    
+			    selector.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes","jpg", "jpeg", "png", "webp"));
+			    
+			    int resultado = selector.showOpenDialog(null);
+			    
+			    if (resultado == JFileChooser.APPROVE_OPTION) {
+
+			        File archivo = selector.getSelectedFile();
+
+			        if (archivo != null) {
+
+			            try {
+
+			                fotoSeleccionada =
+			                    Files.readAllBytes(archivo.toPath());
+
+			            } catch (IOException ex) {
+			                ex.printStackTrace();
+			            }
+			        }
+			    }
+			});
 		añadirCliente.add(foto);
 
 		ButtonRounded cancelarCliente = new ButtonRounded("Cancelar",10,5);

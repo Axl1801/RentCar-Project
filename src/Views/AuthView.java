@@ -47,10 +47,12 @@ public class AuthView {
 	TextFieldRounded correoCampo;
 	
 	public AuthView() {
+		//Asingacion del modelo
 		model = new AuthModel();
 	}
 	
 	public void setControlador(HomeController c) {
+		//Asignacion del controlador
 	    this.control = c;
 	}
 
@@ -365,23 +367,17 @@ public class AuthView {
 	}
 
 	private void cargarConfiguracion() {
-
+		//Metodo para cargar las configuraciones de arranque (Recordar usuario)
 	    Properties props = new Properties();
 
-	    try (FileInputStream in =
-	            new FileInputStream("config.properties")) {
+	    try (FileInputStream in = new FileInputStream("config.properties")) {
 
 	        props.load(in);
+	        //Se carga el usuario anterior en el campo de usuario
+	        correoCampo.setText(props.getProperty("usuario", ""));
 
-	        correoCampo.setText(
-	                props.getProperty("usuario", "")
-	        );
-
-	        recordar.setSelected(
-	                Boolean.parseBoolean(
-	                        props.getProperty("recordar", "false")
-	                )
-	        );
+	        //Asingamos el valor del recordar a false para que se mantengan los datos
+	        recordar.setSelected(Boolean.parseBoolean(props.getProperty("recordar", "false")));
 
 	    } catch (IOException e) {
 	        System.out.println("Primera ejecución");
@@ -391,7 +387,7 @@ public class AuthView {
 	private void guardarConfiguracion() {
 
 	    Properties props = new Properties();
-
+	    //En caso de que recordar este marcado se guarda el usuario en el campo y se le cambia color a negro
 	    if (recordar.isSelected()) {
 
 	    	correoCampo.setForeground(Color.black);
@@ -400,7 +396,7 @@ public class AuthView {
 	        props.setProperty("recordar","true");
 
 	    } else {
-
+	    	//En caso de no estar seleccionado se asignan las propiedades ya guardadas y se cambia a false
 	        props.setProperty("usuario","");
 
 	        props.setProperty("recordar","false");
