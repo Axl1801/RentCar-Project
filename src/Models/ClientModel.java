@@ -29,7 +29,6 @@ public class ClientModel implements FilaTabla{
     private String phone;
     private int totalRentas;
 	private int id_renta;
-	private int id_vehiculo;
 	private Date inicio_renta;
 	private Date fin_renta;
 
@@ -55,7 +54,6 @@ public class ClientModel implements FilaTabla{
 	               "GROUP BY c.id_cliente;";
 	    	
 	   	Connection conn = null; 	 
-		System.out.println(query);
 			
 		Properties propiedades = new Properties();
 		
@@ -100,7 +98,6 @@ public class ClientModel implements FilaTabla{
     		}
     		
 		} catch (IOException e) {
-            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
         }
 		return users;  	
 	}
@@ -141,7 +138,6 @@ public class ClientModel implements FilaTabla{
 				ps.close();
 				conn.close();
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 			finally {
 				try {
@@ -150,7 +146,6 @@ public class ClientModel implements FilaTabla{
 			}
 	    		
 		} catch (IOException e) {
-			System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 		}  		 
 		return false;	 
 	}
@@ -197,7 +192,6 @@ public class ClientModel implements FilaTabla{
 			}
 	    		
 		} catch (IOException e) {
-			System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 		}  		 
 		return false;		 
 	}
@@ -236,7 +230,6 @@ public class ClientModel implements FilaTabla{
 	            }
 	
 	            catch (Exception e) {
-	            	e.printStackTrace();
 	            }
 	            finally {
 	            	try {
@@ -245,26 +238,22 @@ public class ClientModel implements FilaTabla{
 				}
 	            }
 			} catch (IOException e) {
-				System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 			}  		 
 			return dato;	 
 	}
 	
 	public String nombre_Cliente(int id_cliente) {
         String nombre_Cliente = busqueda("SELECT name FROM Clientes WHERE id_cliente = ?", id_cliente);
-        System.out.println("numeroVehiculos_total: " + nombre_Cliente);
         return nombre_Cliente;
     }
 	
 	public String correo_Cliente(int id_cliente) {
         String correo_Cliente = busqueda("SELECT email FROM Clientes WHERE id_cliente = ?", id_cliente);
-        System.out.println("numeroVehiculos_total: " + correo_Cliente);
         return correo_Cliente;
     }
 	
 	public String telefono_Cliente(int id_cliente) {
         String telefono_Cliente = busqueda("SELECT phone FROM Clientes WHERE id_cliente = ?", id_cliente);
-        System.out.println("numeroVehiculos_total: " + telefono_Cliente);
         return telefono_Cliente;
     }
 	
@@ -309,7 +298,6 @@ public class ClientModel implements FilaTabla{
   	         conn.close();
 
 			} catch (Exception e) {
-				System.out.println("Error al buscar el Cliente: " + e.getMessage());
 				e.printStackTrace();
 			} finally {
 				try {
@@ -320,7 +308,6 @@ public class ClientModel implements FilaTabla{
 			}
 
 		} catch (Exception e) {
-			System.out.println("Error al leer configuración: " + e.getMessage());
 		}  
 		return cliente_solo; 
 	}
@@ -360,8 +347,7 @@ public class ClientModel implements FilaTabla{
 	            conn.close();
 
 	        } catch (Exception e) {
-	           System.out.println("Error al verificar las rentas: " + e.getMessage());
-	           e.printStackTrace();
+
 	        } finally {
 	            try {
 	                if (conn != null && !conn.isClosed()) {
@@ -371,7 +357,6 @@ public class ClientModel implements FilaTabla{
 	        }
 
 	    } catch (Exception e) {
-	        System.out.println("Error al leer configuración: " + e.getMessage());
 	    }  
 	    
 	    return estaLibre; 
@@ -407,8 +392,6 @@ public class ClientModel implements FilaTabla{
 	            conn.close();
 
 	        } catch (Exception e) {
-	           System.out.println("Error al intentar borrar el cliente: " + e.getMessage());
-	           e.printStackTrace();
 	        } finally {
 	            try {
 	                if (conn != null && !conn.isClosed()) {
@@ -418,7 +401,6 @@ public class ClientModel implements FilaTabla{
 	        }
 
 	    } catch (Exception e) {
-	        System.out.println("Error al leer configuración: " + e.getMessage());
 	    }  
 	    
 	    return exito; 
@@ -449,7 +431,6 @@ public class ClientModel implements FilaTabla{
 
     			if (rs.next()) {
     		        resultado = rs.getInt(1);
-    		        System.out.println("Número total: " + resultado);
     		    }
     			rs.close();
     			ps.close();
@@ -466,32 +447,27 @@ public class ClientModel implements FilaTabla{
 			}
             }
 		} catch (IOException e) {
-			System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 		}  		 
 		return resultado;	 
 		}
 	
 	public int numeroVehiculos_total() {
         int total = conteo("SELECT COUNT(*) FROM Vehiculos");
-        System.out.println("numeroVehiculos_total: " + total);
         return total;
     }
 
     public int numeroVehiculos_renta() {
         int renta = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Rentado'");
-        System.out.println("numeroVehiculos_renta: " +renta);
         return renta;
     }
 
     public int numeroVehiculos_dispo() {
         int dispo = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Disponible'");
-        System.out.println("numeroVehiculos_dispo: " + dispo);
         return dispo;
     }
 
     public int numeroVehiculos_manteni() {
         int manteni = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Mantenimiento'");
-        System.out.println("numeroVehiculos_manteni: " + manteni);
         return manteni;
     }
     
@@ -552,7 +528,6 @@ public class ClientModel implements FilaTabla{
             }
 
         } catch (IOException e) {
-            System.out.println("Error al leer configuración: " + e.getMessage());
         }
         return rentas;
     }

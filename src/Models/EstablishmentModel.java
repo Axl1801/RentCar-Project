@@ -39,7 +39,6 @@ public class EstablishmentModel {
 		String query = "SELECT nombre_sucursal FROM `Locacion`";
 		
 		Connection conn = null; 	 
-		System.out.println(query);
 			
 		Properties propiedades = new Properties();
 		
@@ -76,7 +75,6 @@ public class EstablishmentModel {
     		}
     		
 		} catch (IOException e) {
-            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
         }
 		return lugar;  	
 	 }
@@ -125,7 +123,6 @@ public class EstablishmentModel {
 			}
 	    		
 		} catch (IOException e) {
-			System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 		}  		 
 		return false;	 
 	}
@@ -171,7 +168,6 @@ public class EstablishmentModel {
 	    		}
 	    		
 			} catch (IOException e) {
-	            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 	        }  		 
 		return false;		 
 	}
@@ -206,7 +202,6 @@ public class EstablishmentModel {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error al consultar el Grafo de Distancias: " + e.getMessage());
             e.printStackTrace();
         }
 

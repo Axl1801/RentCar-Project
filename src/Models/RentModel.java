@@ -68,7 +68,6 @@ public class RentModel implements FilaTabla{
         				"INNER JOIN Vehiculos v ON r.id_vehiculo = v.id_vehiculo " +
         				"INNER JOIN Modelos mo ON v.id_modelo = mo.id_modelo";
         
-        System.out.println("Ejecutando: " + query);
         Properties propiedades = new Properties();
 
         try (InputStream entrada = new FileInputStream("Claves.txt")) {
@@ -102,12 +101,10 @@ public class RentModel implements FilaTabla{
                 }
     			
             } catch (Exception e) {
-                System.out.println("Error en BD al obtener rentas: " + e.getMessage());
                 e.printStackTrace();
             }
 
         } catch (IOException e) {
-            System.out.println("Error al leer configuración: " + e.getMessage());
         }
         
         return rentas;
@@ -118,7 +115,6 @@ public class RentModel implements FilaTabla{
         String query = "INSERT INTO `Rentas` (`id_cliente`, `id_vehiculo`, `id_origen`, `id_destino`, `inicio_renta`, `fin_renta`, `distancia_recorrida`, `costo_total`, `estado`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         
         Connection conn = null; 	 
-		System.out.println(query);
 		
         Properties propiedades = new Properties();
         
@@ -159,7 +155,6 @@ public class RentModel implements FilaTabla{
     		}
     		
 		} catch (IOException e) {
-            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
         }  		 
 		return false;	 
     }
@@ -169,7 +164,6 @@ public class RentModel implements FilaTabla{
         String query = "UPDATE `Rentas` SET `id_cliente` = ?, `id_vehiculo` = ?, `id_origen` = ?, `id_destino` = ?, `inicio_renta` = ?, `fin_renta` = ?, `distancia_recorrida` = ?, `costo_total` = ?, `estado` = ? WHERE `id_renta` = ?;";
         
         Connection conn = null;
-		System.out.println(query);
 		
         Properties propiedades = new Properties();
 
@@ -211,7 +205,6 @@ public class RentModel implements FilaTabla{
     		}
     		
 		} catch (IOException e) {
-            System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
         }  		 
 		return false;	 
     }
@@ -264,14 +257,11 @@ public class RentModel implements FilaTabla{
     			}
     			this.distancia_recorrida = distanciaKm;
     			costoDistancia = BigDecimal.valueOf(distanciaKm * 3.0);
-    			System.out.println("Distancia: " + distanciaKm + "Cargo: " + costoDistancia);
     		}
 
     		costoTotal = costoBase.add(costoDistancia);
-    		System.out.println("Costo Base: " + costoBase + " Cargo Distancia: " + costoDistancia + " Total: " + costoTotal);
          
     	} catch (Exception e) {
-    		System.out.println("Error al calcular el costo total: " + e.getMessage());
     		e.printStackTrace();
     	} finally {
     		try { if (conn != null) conn.close(); } catch (Exception e) {}
@@ -350,7 +340,6 @@ public class RentModel implements FilaTabla{
             conn.close();
 
         } catch (Exception e) {
-            System.out.println("Error al buscar datos del ticket: " + e.getMessage());
             e.printStackTrace();
         }
         
@@ -392,7 +381,6 @@ public class RentModel implements FilaTabla{
     			}
     		}
     	} catch (Exception e) {
-    		System.out.println("Error al validar disponibilidad del vehículo: " + e.getMessage());
     		e.printStackTrace();
     	}
         
@@ -433,7 +421,6 @@ public class RentModel implements FilaTabla{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar un vehículo libre: " + e.getMessage());
         }
         
         return idVehiculo;
@@ -459,12 +446,10 @@ public class RentModel implements FilaTabla{
             	return rowsAffected > 0;
                 
             } catch (Exception e) {
-            	System.out.println("Error en BD al cancelar la renta: " + e.getMessage());
             	e.printStackTrace();
             }
 
     	} catch (IOException e) {
-    		System.out.println("Error al leer configuración: " + e.getMessage());
     	}        
     	return false;
     }
@@ -489,12 +474,10 @@ public class RentModel implements FilaTabla{
             	return rowsAffected > 0;
                 
             } catch (Exception e) {
-            	System.out.println("Error en BD al eliminar la renta: " + e.getMessage());
             	e.printStackTrace();
             }
             
         } catch (IOException e) {
-        	System.out.println("Error al leer configuración: " + e.getMessage());
         }      
         return false;
     }
@@ -503,8 +486,7 @@ public class RentModel implements FilaTabla{
 	
     	int resultado = 0;
 		Connection conn = null; 	 
-		System.out.println(query);
-			
+
 		Properties propiedades = new Properties();
 		
 		try (InputStream entrada = new FileInputStream("Claves.txt")) {
@@ -524,7 +506,6 @@ public class RentModel implements FilaTabla{
 
     			if (rs.next()) {
     		        resultado = rs.getInt(1);
-    		        System.out.println("Número total: " + resultado);
     		    }
     			rs.close();
     			ps.close();
@@ -541,7 +522,6 @@ public class RentModel implements FilaTabla{
 			}
             }
 		} catch (IOException e) {
-			System.out.println("Error al leer el archivo de configuración: " + e.getMessage());
 		}  		 
 		return resultado;	 
     }
@@ -578,7 +558,6 @@ public class RentModel implements FilaTabla{
     			}
     		}
     	} catch (Exception e) {
-    		System.out.println("Error al obtener modelos filtrados: " + e.getMessage());
     	}
     	return modelos;
     }
@@ -605,11 +584,9 @@ public class RentModel implements FilaTabla{
 				 }
 				 
 			 } catch (Exception e) {
-				 System.out.println("Error al obtener nombres de los modelos: " + e.getMessage());
 			 }
 
 		 } catch (Exception e) {
-			 System.out.println("Error al leer Claves.txt: " + e.getMessage());
 		 }
 	         
 		 return nombres;
@@ -637,11 +614,9 @@ public class RentModel implements FilaTabla{
                 }
                 
             } catch (Exception e) {
-                System.out.println("Error al obtener nombres de locaciones: " + e.getMessage());
             }
 
         } catch (Exception e) {
-            System.out.println("Error al leer Claves.txt: " + e.getMessage());
         }
         
         return nombres;
@@ -670,7 +645,6 @@ public class RentModel implements FilaTabla{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar el ID de la sucursal: " + e.getMessage());
         }
         return idLocacion;
     }
@@ -697,11 +671,9 @@ public class RentModel implements FilaTabla{
                 }
                 
             } catch (Exception e) {
-                System.out.println("Error al obtener nombres de clientes: " + e.getMessage());
             }
 
         } catch (Exception e) {
-            System.out.println("Error al leer Claves.txt: " + e.getMessage());
         }
         
         return nombres;
@@ -729,7 +701,6 @@ public class RentModel implements FilaTabla{
 				 }
 			 }
 		 } catch (Exception e) {
-			 System.out.println("Error al buscar el ID del modelo: " + e.getMessage());
 		 }
 		 return idModelo;
 	 }
@@ -758,32 +729,27 @@ public class RentModel implements FilaTabla{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar el ID del cliente: " + e.getMessage());
         }
         return idCliente;
     }
 	
     public int numeroVehiculos_total() {
         int total = conteo("SELECT COUNT(*) FROM Vehiculos");
-        System.out.println("numeroVehiculos_total: " + total);
         return total;
     }
 
     public int numeroVehiculos_renta() {
         int renta = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Rentado'");
-        System.out.println("numeroVehiculos_renta: " +renta);
         return renta;
     }
 
     public int numeroVehiculos_dispo() {
         int dispo = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Disponible'");
-        System.out.println("numeroVehiculos_dispo: " + dispo);
         return dispo;
     }
 
     public int numeroVehiculos_manteni() {
         int manteni = conteo("SELECT COUNT(*) FROM Vehiculos WHERE estado = 'Mantenimiento'");
-        System.out.println("numeroVehiculos_manteni: " + manteni);
         return manteni;
     }
     
@@ -810,7 +776,6 @@ public class RentModel implements FilaTabla{
     			}
     		}
     	} catch (Exception e) {
-    		System.out.println("Error al buscar el origen de la renta: " + e.getMessage());
     	}
     	return idOrigen;
     }
@@ -838,7 +803,6 @@ public class RentModel implements FilaTabla{
     			}
     		}
     	} catch (Exception e) {
-    		System.out.println("Error al buscar el destino de la renta: " + e.getMessage());
     	}
     	return idDestino;
     }
@@ -867,7 +831,6 @@ public class RentModel implements FilaTabla{
             	}
             }
     	} catch (Exception e) {
-    		System.out.println("Error al buscar el ID de la sucursal: " + e.getMessage());
     	}
     	return idSucursal;
     }
@@ -895,7 +858,6 @@ public class RentModel implements FilaTabla{
             	}
             }
     	} catch (Exception e) {
-    		System.out.println("Error al buscar la fecha de inicio: " + e.getMessage());
     	}
         return fechaInicio;
     }
@@ -923,7 +885,6 @@ public class RentModel implements FilaTabla{
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar la fecha de fin: " + e.getMessage());
         }
         return fechaFin;
     }
